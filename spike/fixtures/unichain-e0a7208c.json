@@ -1,0 +1,181 @@
+{
+  "txHash": "0xe0a7208ca3ea14960608d6a2d32b9b5cced5b4480437b2428a72d5a1e09594c1",
+  "chain": "unichain",
+  "nodes": [
+    {
+      "id": "pm",
+      "type": "core",
+      "label": "PoolManager",
+      "address": "0x1f98400000000000000000000000000000000004"
+    },
+    {
+      "id": "hook:0xa0b0d2d00fd544d8e0887f1a3cedd6e24baf10cc",
+      "type": "hook",
+      "label": "0xa0b0…10cc",
+      "address": "0xa0b0d2d00fd544d8e0887f1a3cedd6e24baf10cc",
+      "known": null,
+      "permissions": [
+        "AFTER_INITIALIZE",
+        "BEFORE_SWAP",
+        "AFTER_SWAP",
+        "BEFORE_SWAP_RETURNS_DELTA",
+        "AFTER_SWAP_RETURNS_DELTA"
+      ],
+      "callbacks": [
+        "beforeSwap",
+        "afterSwap"
+      ]
+    },
+    {
+      "id": "ext:0xaaf29f2c9516062dc43c4465ef6d43ce8397cdda",
+      "type": "external",
+      "label": "0xaaf2…cdda",
+      "address": "0xaaf29f2c9516062dc43c4465ef6d43ce8397cdda",
+      "known": null
+    },
+    {
+      "id": "ext:0xe6768629156d4b713e266b87502fbeccc218a028",
+      "type": "external",
+      "label": "0xe676…a028",
+      "address": "0xe6768629156d4b713e266b87502fbeccc218a028",
+      "known": null
+    },
+    {
+      "id": "ext:0x22e086c085fbda3214db238f8a930d22228facb5",
+      "type": "external",
+      "label": "0x22e0…acb5",
+      "address": "0x22e086c085fbda3214db238f8a930d22228facb5",
+      "known": null
+    },
+    {
+      "id": "ext:0xa7ce35e886e58926ad0c149f4cc558e27d458a2c",
+      "type": "external",
+      "label": "0xa7ce…8a2c",
+      "address": "0xa7ce35e886e58926ad0c149f4cc558e27d458a2c",
+      "known": null
+    },
+    {
+      "id": "actor:0xef740bf23acae26f6492b10de645d6b98dc8eaf3",
+      "type": "router",
+      "label": "0xef74…eaf3",
+      "address": "0xef740bf23acae26f6492b10de645d6b98dc8eaf3",
+      "known": null
+    },
+    {
+      "id": "actor:0xa7ce35e886e58926ad0c149f4cc558e27d458a2c",
+      "type": "router",
+      "label": "0xa7ce…8a2c",
+      "address": "0xa7ce35e886e58926ad0c149f4cc558e27d458a2c",
+      "known": null
+    },
+    {
+      "id": "actor:0xd56ba84e4c10f9c4a4cdc0447380526a921cd1dd",
+      "type": "router",
+      "label": "0xd56b…d1dd",
+      "address": "0xd56ba84e4c10f9c4a4cdc0447380526a921cd1dd",
+      "known": null
+    }
+  ],
+  "edges": [
+    {
+      "from": "actor:0xef740bf23acae26f6492b10de645d6b98dc8eaf3",
+      "to": "pm",
+      "token": "0x078d782b760474a361dda0af3839290b0ef57ad6",
+      "amount": "2241466",
+      "engineer": {
+        "call": "swap",
+        "side": "in",
+        "delta": "-2241466"
+      }
+    },
+    {
+      "from": "pm",
+      "to": "actor:0xef740bf23acae26f6492b10de645d6b98dc8eaf3",
+      "token": "0x12e96c2bfea6e835cf8dd38a5834fa61cf723736",
+      "amount": "31316167330635321344",
+      "engineer": {
+        "call": "swap",
+        "side": "out",
+        "delta": "31316167330635321344"
+      }
+    },
+    {
+      "from": "pm",
+      "to": "hook:0xa0b0d2d00fd544d8e0887f1a3cedd6e24baf10cc",
+      "token": "0x078d782b760474a361dda0af3839290b0ef57ad6",
+      "amount": "499",
+      "engineer": {
+        "call": "beforeSwap/afterSwap returnDelta",
+        "note": "hook fee — no ERC20 Transfer emitted",
+        "delta": "499"
+      }
+    },
+    {
+      "from": "pm",
+      "to": "actor:0xa7ce35e886e58926ad0c149f4cc558e27d458a2c",
+      "token": "0x078d782b760474a361dda0af3839290b0ef57ad6",
+      "amount": "499",
+      "engineer": {
+        "call": "mint (ERC-6909 claim)",
+        "note": "stays inside PoolManager — invisible to Transfer-based tools"
+      }
+    },
+    {
+      "from": "actor:0xef740bf23acae26f6492b10de645d6b98dc8eaf3",
+      "to": "pm",
+      "token": "0x078d782b760474a361dda0af3839290b0ef57ad6",
+      "amount": "2241466",
+      "engineer": {
+        "call": "settle",
+        "native": false
+      }
+    },
+    {
+      "from": "pm",
+      "to": "actor:0xd56ba84e4c10f9c4a4cdc0447380526a921cd1dd",
+      "token": "0x12e96c2bfea6e835cf8dd38a5834fa61cf723736",
+      "amount": "31316167330635321344",
+      "engineer": {
+        "call": "take",
+        "by": "0xef740bf23acae26f6492b10de645d6b98dc8eaf3"
+      }
+    },
+    {
+      "from": "hook:0xa0b0d2d00fd544d8e0887f1a3cedd6e24baf10cc",
+      "to": "ext:0xaaf29f2c9516062dc43c4465ef6d43ce8397cdda",
+      "token": null,
+      "amount": null,
+      "engineer": {
+        "call": "external call"
+      }
+    },
+    {
+      "from": "hook:0xa0b0d2d00fd544d8e0887f1a3cedd6e24baf10cc",
+      "to": "ext:0xe6768629156d4b713e266b87502fbeccc218a028",
+      "token": null,
+      "amount": null,
+      "engineer": {
+        "call": "external call"
+      }
+    },
+    {
+      "from": "hook:0xa0b0d2d00fd544d8e0887f1a3cedd6e24baf10cc",
+      "to": "ext:0x22e086c085fbda3214db238f8a930d22228facb5",
+      "token": null,
+      "amount": null,
+      "engineer": {
+        "call": "external call"
+      }
+    },
+    {
+      "from": "hook:0xa0b0d2d00fd544d8e0887f1a3cedd6e24baf10cc",
+      "to": "ext:0xa7ce35e886e58926ad0c149f4cc558e27d458a2c",
+      "token": null,
+      "amount": null,
+      "engineer": {
+        "call": "external call"
+      }
+    }
+  ],
+  "balanced": true
+}

@@ -1,0 +1,64 @@
+{
+  "txHash": "0xa5e79837530b749b9b1d9942256d43e90f7d5cf924a8264ef85eb5f238e34ac8",
+  "chain": "unichain",
+  "nodes": [
+    {
+      "id": "pm",
+      "type": "core",
+      "label": "PoolManager",
+      "address": "0x1f98400000000000000000000000000000000004"
+    },
+    {
+      "id": "actor:0x099b1a87ded758e99d5a33a7df5ba9cf3a0907c9",
+      "type": "router",
+      "label": "0x099b…07c9",
+      "address": "0x099b1a87ded758e99d5a33a7df5ba9cf3a0907c9",
+      "known": null
+    }
+  ],
+  "edges": [
+    {
+      "from": "actor:0x099b1a87ded758e99d5a33a7df5ba9cf3a0907c9",
+      "to": "pm",
+      "token": "0x078d782b760474a361dda0af3839290b0ef57ad6",
+      "amount": "118907849",
+      "engineer": {
+        "call": "swap",
+        "side": "in",
+        "delta": "-118907849"
+      }
+    },
+    {
+      "from": "pm",
+      "to": "actor:0x099b1a87ded758e99d5a33a7df5ba9cf3a0907c9",
+      "token": "native",
+      "amount": "56939092452761145",
+      "engineer": {
+        "call": "swap",
+        "side": "out",
+        "delta": "56939092452761145"
+      }
+    },
+    {
+      "from": "pm",
+      "to": "actor:0x099b1a87ded758e99d5a33a7df5ba9cf3a0907c9",
+      "token": "native",
+      "amount": "56939092452761145",
+      "engineer": {
+        "call": "take",
+        "by": "0x099b1a87ded758e99d5a33a7df5ba9cf3a0907c9"
+      }
+    },
+    {
+      "from": "actor:0x099b1a87ded758e99d5a33a7df5ba9cf3a0907c9",
+      "to": "pm",
+      "token": "0x078d782b760474a361dda0af3839290b0ef57ad6",
+      "amount": "118907849",
+      "engineer": {
+        "call": "settle",
+        "native": false
+      }
+    }
+  ],
+  "balanced": true
+}

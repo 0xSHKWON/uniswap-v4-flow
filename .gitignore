@@ -1,0 +1,4 @@
+node_modules/
+
+# Cached debug_traceTransaction responses — large, regenerable, RPC-specific.
+spike/cache/

@@ -1,0 +1,457 @@
+{
+  "txHash": "0xa3d4e0d3b18b5d6f63783b9774bfb92234450987fb39dda38c5bc284aa40c899",
+  "chain": "base",
+  "nodes": [
+    {
+      "id": "pm",
+      "type": "core",
+      "label": "PoolManager",
+      "address": "0x498581ff718922c3f8e6a244956af099b2652b2b"
+    },
+    {
+      "id": "hook:0x7cbbff9c4fcd74b221c535f4fb4b1db04f1b9044",
+      "type": "hook",
+      "label": "0x7cbb…9044",
+      "address": "0x7cbbff9c4fcd74b221c535f4fb4b1db04f1b9044",
+      "known": null,
+      "permissions": [
+        "AFTER_INITIALIZE",
+        "AFTER_SWAP",
+        "AFTER_SWAP_RETURNS_DELTA"
+      ],
+      "callbacks": [
+        "afterSwap"
+      ]
+    },
+    {
+      "id": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "type": "router",
+      "label": "0x5692…eab4",
+      "address": "0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "known": null
+    }
+  ],
+  "edges": [
+    {
+      "from": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "to": "pm",
+      "token": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "amount": "24894400",
+      "engineer": {
+        "call": "settle",
+        "native": false
+      }
+    },
+    {
+      "from": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "to": "pm",
+      "token": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "amount": "24894400",
+      "engineer": {
+        "call": "swap",
+        "side": "in",
+        "delta": "-24894400"
+      }
+    },
+    {
+      "from": "pm",
+      "to": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "token": "native",
+      "amount": "11922035979071170",
+      "engineer": {
+        "call": "swap",
+        "side": "out",
+        "delta": "11922035979071170"
+      }
+    },
+    {
+      "from": "pm",
+      "to": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "token": "native",
+      "amount": "11922035979071170",
+      "engineer": {
+        "call": "take",
+        "by": "0x5692193a40e908d94bddbc988356cd7f1679eab4"
+      }
+    },
+    {
+      "from": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "to": "pm",
+      "token": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "amount": "12167393",
+      "engineer": {
+        "call": "settle",
+        "native": false
+      }
+    },
+    {
+      "from": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "to": "pm",
+      "token": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "amount": "12167393",
+      "engineer": {
+        "call": "swap",
+        "side": "in",
+        "delta": "-12167393"
+      }
+    },
+    {
+      "from": "pm",
+      "to": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "token": "native",
+      "amount": "5827008545529673",
+      "engineer": {
+        "call": "swap",
+        "side": "out",
+        "delta": "5827008545529673"
+      }
+    },
+    {
+      "from": "pm",
+      "to": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "token": "native",
+      "amount": "5827008545529673",
+      "engineer": {
+        "call": "take",
+        "by": "0x5692193a40e908d94bddbc988356cd7f1679eab4"
+      }
+    },
+    {
+      "from": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "to": "pm",
+      "token": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "amount": "12045313",
+      "engineer": {
+        "call": "settle",
+        "native": false
+      }
+    },
+    {
+      "from": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "to": "pm",
+      "token": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "amount": "12045313",
+      "engineer": {
+        "call": "swap",
+        "side": "in",
+        "delta": "-12045313"
+      }
+    },
+    {
+      "from": "pm",
+      "to": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "token": "0x37f0c2915cecc7e977183b8543fc0864d03e064c",
+      "amount": "156475348465954093096",
+      "engineer": {
+        "call": "swap",
+        "side": "out",
+        "delta": "156475348465954093096"
+      }
+    },
+    {
+      "from": "pm",
+      "to": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "token": "0x37f0c2915cecc7e977183b8543fc0864d03e064c",
+      "amount": "156475348465954093096",
+      "engineer": {
+        "call": "take",
+        "by": "0x5692193a40e908d94bddbc988356cd7f1679eab4"
+      }
+    },
+    {
+      "from": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "to": "pm",
+      "token": "0x37f0c2915cecc7e977183b8543fc0864d03e064c",
+      "amount": "101241591907429395825",
+      "engineer": {
+        "call": "settle",
+        "native": false
+      }
+    },
+    {
+      "from": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "to": "pm",
+      "token": "0x37f0c2915cecc7e977183b8543fc0864d03e064c",
+      "amount": "101241591907429395825",
+      "engineer": {
+        "call": "swap",
+        "side": "in",
+        "delta": "-101241591907429395825"
+      }
+    },
+    {
+      "from": "pm",
+      "to": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "token": "native",
+      "amount": "3732863960042127",
+      "engineer": {
+        "call": "swap",
+        "side": "out",
+        "delta": "3732863960042127"
+      }
+    },
+    {
+      "from": "pm",
+      "to": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "token": "native",
+      "amount": "3732863960042127",
+      "engineer": {
+        "call": "take",
+        "by": "0x5692193a40e908d94bddbc988356cd7f1679eab4"
+      }
+    },
+    {
+      "from": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "to": "pm",
+      "token": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "amount": "3498926",
+      "engineer": {
+        "call": "settle",
+        "native": false
+      }
+    },
+    {
+      "from": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "to": "pm",
+      "token": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "amount": "3498926",
+      "engineer": {
+        "call": "swap",
+        "side": "in",
+        "delta": "-3498926"
+      }
+    },
+    {
+      "from": "pm",
+      "to": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "token": "native",
+      "amount": "1676223896246368",
+      "engineer": {
+        "call": "swap",
+        "side": "out",
+        "delta": "1676223896246368"
+      }
+    },
+    {
+      "from": "pm",
+      "to": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "token": "native",
+      "amount": "1676223896246368",
+      "engineer": {
+        "call": "take",
+        "by": "0x5692193a40e908d94bddbc988356cd7f1679eab4"
+      }
+    },
+    {
+      "from": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "to": "pm",
+      "token": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "amount": "2864677",
+      "engineer": {
+        "call": "settle",
+        "native": false
+      }
+    },
+    {
+      "from": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "to": "pm",
+      "token": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "amount": "2864677",
+      "engineer": {
+        "call": "swap",
+        "side": "in",
+        "delta": "-2864677"
+      }
+    },
+    {
+      "from": "pm",
+      "to": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "token": "native",
+      "amount": "1372446065601947",
+      "engineer": {
+        "call": "swap",
+        "side": "out",
+        "delta": "1372446065601947"
+      }
+    },
+    {
+      "from": "pm",
+      "to": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "token": "native",
+      "amount": "1372446065601947",
+      "engineer": {
+        "call": "take",
+        "by": "0x5692193a40e908d94bddbc988356cd7f1679eab4"
+      }
+    },
+    {
+      "from": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "to": "pm",
+      "token": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "amount": "6078993",
+      "engineer": {
+        "call": "settle",
+        "native": false
+      }
+    },
+    {
+      "from": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "to": "pm",
+      "token": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "amount": "6078993",
+      "engineer": {
+        "call": "swap",
+        "side": "in",
+        "delta": "-6078993"
+      }
+    },
+    {
+      "from": "pm",
+      "to": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "token": "native",
+      "amount": "2911227507144851",
+      "engineer": {
+        "call": "swap",
+        "side": "out",
+        "delta": "2911227507144851"
+      }
+    },
+    {
+      "from": "pm",
+      "to": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "token": "native",
+      "amount": "2911227507144851",
+      "engineer": {
+        "call": "take",
+        "by": "0x5692193a40e908d94bddbc988356cd7f1679eab4"
+      }
+    },
+    {
+      "from": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "to": "pm",
+      "token": "0x37f0c2915cecc7e977183b8543fc0864d03e064c",
+      "amount": "55233756558524697271",
+      "engineer": {
+        "call": "settle",
+        "native": false
+      }
+    },
+    {
+      "from": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "to": "pm",
+      "token": "0x37f0c2915cecc7e977183b8543fc0864d03e064c",
+      "amount": "55233756558524697271",
+      "engineer": {
+        "call": "swap",
+        "side": "in",
+        "delta": "-55233756558524697271"
+      }
+    },
+    {
+      "from": "pm",
+      "to": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "token": "native",
+      "amount": "2036730530590391",
+      "engineer": {
+        "call": "swap",
+        "side": "out",
+        "delta": "2036730530590391"
+      }
+    },
+    {
+      "from": "pm",
+      "to": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "token": "native",
+      "amount": "2036730530590391",
+      "engineer": {
+        "call": "take",
+        "by": "0x5692193a40e908d94bddbc988356cd7f1679eab4"
+      }
+    },
+    {
+      "from": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "to": "pm",
+      "token": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "amount": "1485796",
+      "engineer": {
+        "call": "settle",
+        "native": false
+      }
+    },
+    {
+      "from": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "to": "pm",
+      "token": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "amount": "1485796",
+      "engineer": {
+        "call": "swap",
+        "side": "in",
+        "delta": "-1485796"
+      }
+    },
+    {
+      "from": "pm",
+      "to": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "token": "native",
+      "amount": "712053512798051",
+      "engineer": {
+        "call": "swap",
+        "side": "out",
+        "delta": "712053512798051"
+      }
+    },
+    {
+      "from": "pm",
+      "to": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "token": "native",
+      "amount": "712053512798051",
+      "engineer": {
+        "call": "take",
+        "by": "0x5692193a40e908d94bddbc988356cd7f1679eab4"
+      }
+    },
+    {
+      "from": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "to": "pm",
+      "token": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "amount": "1502440",
+      "engineer": {
+        "call": "settle",
+        "native": false
+      }
+    },
+    {
+      "from": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "to": "pm",
+      "token": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "amount": "1502440",
+      "engineer": {
+        "call": "swap",
+        "side": "in",
+        "delta": "-1502440"
+      }
+    },
+    {
+      "from": "pm",
+      "to": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "token": "native",
+      "amount": "719827850912046",
+      "engineer": {
+        "call": "swap",
+        "side": "out",
+        "delta": "719827850912046"
+      }
+    },
+    {
+      "from": "pm",
+      "to": "actor:0x5692193a40e908d94bddbc988356cd7f1679eab4",
+      "token": "native",
+      "amount": "719827850912046",
+      "engineer": {
+        "call": "take",
+        "by": "0x5692193a40e908d94bddbc988356cd7f1679eab4"
+      }
+    }
+  ],
+  "balanced": true
+}
