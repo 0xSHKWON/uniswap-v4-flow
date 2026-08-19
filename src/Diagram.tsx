@@ -60,14 +60,17 @@ export function Diagram({ graph, locale }: Props) {
 
   // 라벨은 배치가 끝난 뒤 실제 글자 폭으로 한 번 더 정리한다.
   // 같은 글상자를 겹침 해소와 경계 계산에 함께 쓴다 — 따로 재면 어긋나서 라벨이 잘린다.
+  // 줄기 하나의 블록(금액 목록 + 배지)이 상자 하나다.
   const labelBoxes = useMemo<LabelBox[]>(
     () =>
       view.edges.map((e) => {
-        const text = formatEdgeAmount(graph.tokens, e.amount, e.token);
-        const w = Math.max(text.length * 7.6, e.hidden ? 110 : 0);
+        const texts = e.rows.map((r) => formatEdgeAmount(graph.tokens, r.amount, r.token));
+        const w = Math.max(...texts.map((x) => x.length * 7.6), e.hidden ? 110 : 0);
+        const top = e.label.rowsY[0] - 11;
+        const bottom = (e.label.badgeY ?? e.label.rowsY[e.label.rowsY.length - 1]) + 4;
         const cx =
           e.label.anchor === 'start' ? e.label.x + w / 2 : e.label.anchor === 'end' ? e.label.x - w / 2 : e.label.x;
-        return { key: e.key, x: cx, y: e.label.y, w, h: e.hidden ? 26 : 14 };
+        return { key: e.key, x: cx, y: (top + bottom) / 2, w, h: bottom - top };
       }),
     [view, graph.tokens],
   );
@@ -195,26 +198,31 @@ export function Diagram({ graph, locale }: Props) {
           );
         })}
 
-        {/* 라벨은 마지막에 — 선이나 노드 박스에 가리지 않도록 */}
-        {view.edges.map((e) => {
-          const amount = formatEdgeAmount(graph.tokens, e.amount, e.token);
-          return (
-            <g
-              key={`label-${e.key}`}
-              className={`edge-labels${e.hidden ? ' is-hidden-value' : ''}`}
-              transform={`translate(${e.label.x}, ${e.label.y + (nudge.get(e.key) ?? 0)})`}
-            >
-              <text className="edge-label" textAnchor={e.label.anchor} dy={e.hidden ? '-4' : '0'}>
-                {amount}
+        {/* 라벨은 마지막에 — 선이나 노드 박스에 가리지 않도록. 블록 전체가 함께 밀린다. */}
+        {view.edges.map((e) => (
+          <g
+            key={`label-${e.key}`}
+            className={`edge-labels${e.hidden ? ' is-hidden-value' : ''}`}
+            transform={`translate(0, ${nudge.get(e.key) ?? 0})`}
+          >
+            {e.rows.map((row, ri) => (
+              <text
+                key={ri}
+                className="edge-label"
+                textAnchor={e.label.anchor}
+                x={e.label.x}
+                y={e.label.rowsY[ri]}
+              >
+                {formatEdgeAmount(graph.tokens, row.amount, row.token)}
               </text>
-              {e.hidden && (
-                <text className="edge-sub" textAnchor={e.label.anchor} dy="11">
-                  {t(locale, 'edge.noTransfer')}
-                </text>
-              )}
-            </g>
-          );
-        })}
+            ))}
+            {e.label.badgeY !== null && (
+              <text className="edge-sub" textAnchor={e.label.anchor} x={e.label.x} y={e.label.badgeY}>
+                {t(locale, 'edge.noTransfer')}
+              </text>
+            )}
+          </g>
+        ))}
         {view.intervene.map((i) => (
           <text key={`ilabel-${i.key}`} className="intervene-label" x={i.label.x} y={i.label.y}>
             {t(locale, 'edge.intervened')}
@@ -235,20 +243,25 @@ export function Diagram({ graph, locale }: Props) {
 }
 
 function EdgeDetail({ edge, graph, locale }: { edge: RoutedEdge; graph: Graph; locale: Locale }) {
-  const amount = formatEdgeAmount(graph.tokens, edge.amount, edge.token);
-  const calls = edge.calls.map((c) => c.engineer.call);
-  const unique = [...new Set(calls)];
+  const headline =
+    edge.rows.length > 1
+      ? t(locale, 'detail.movements', { n: edge.rows.length })
+      : formatEdgeAmount(graph.tokens, edge.rows[0].amount, edge.rows[0].token);
   return (
     <aside className="edge-detail" aria-live="polite">
-      <div className="edge-detail-amount">{amount}</div>
-      <div className="edge-detail-row">
-        <span>{t(locale, 'detail.call')}</span>
-        <code>
-          {unique.join(', ')}
-          {calls.length > unique.length ? ` ×${calls.length}` : ''}
-        </code>
+      <div className="edge-detail-amount">{headline}</div>
+      <div className="edge-detail-rows">
+        {edge.rows.map((row, i) => {
+          const unique = [...new Set(row.calls.map((c) => c.engineer.call))];
+          return (
+            <div className="edge-detail-line" key={i}>
+              <span className="amt">{formatEdgeAmount(graph.tokens, row.amount, row.token)}</span>
+              <code>{unique.join(', ')}</code>
+            </div>
+          );
+        })}
       </div>
-      {edge.claim && <p className="edge-detail-note">{t(locale, 'detail.claimNote')}</p>}
+      {edge.rows.some((r) => r.claim) && <p className="edge-detail-note">{t(locale, 'detail.claimNote')}</p>}
     </aside>
   );
 }

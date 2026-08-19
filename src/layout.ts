@@ -3,6 +3,10 @@
 // 배치 원리: PoolManager가 허브다. 돈을 낸 쪽이 왼쪽, 받은 쪽이 오른쪽,
 // 훅은 PoolManager 아래 레인에 둔다. 훅을 거쳐서만 값을 받은 주소는 오른쪽 위가 아니라
 // 그 훅 옆에 붙인다 — 그래야 선이 교차하지 않고 "PM → 훅 → 어디로" 가 한 줄로 읽힌다.
+//
+// 엣지는 줄기(trunk)로 묶는다. 같은 구간(from→to)의 정산이 여러 토큰이면 화살표를
+// 토큰 수만큼 긋는 게 아니라 화살표 하나에 금액을 목록으로 쌓는다. 한 트랜잭션이
+// 토큰 8종을 만지는 경우(04-dense) 레인 방식은 라벨이 자기 화살표에서 떨어져 떠다녔다.
 import type { Graph, GraphEdge, GraphNode } from './types';
 
 export interface PlacedNode extends GraphNode {
@@ -13,18 +17,32 @@ export interface PlacedNode extends GraphNode {
   role: 'pool' | 'payer' | 'recipient' | 'hook' | 'external';
 }
 
-export interface RoutedEdge {
-  key: string;
-  from: string;
-  to: string;
-  via: string | null;
+/** 줄기 하나에 쌓이는 금액 한 줄. */
+export interface EdgeRow {
   token: string | null;
   amount: string;
   hidden: boolean;
   claim: boolean;
   calls: GraphEdge[];
+}
+
+export interface EdgeLabel {
+  x: number;
+  anchor: 'middle' | 'start' | 'end';
+  /** 줄별 베이스라인 y. 겹침 해소(nudge)는 블록 전체를 함께 움직인다. */
+  rowsY: number[];
+  /** "Transfer 이벤트 없음" 배지 — 숨은 줄기에 하나만 단다. */
+  badgeY: number | null;
+}
+
+export interface RoutedEdge {
+  key: string;
+  from: string;
+  to: string;
+  hidden: boolean;
+  rows: EdgeRow[];
   points: Array<{ x: number; y: number }>;
-  label: { x: number; y: number; anchor: 'middle' | 'start' | 'end' };
+  label: EdgeLabel;
 }
 
 /** 값은 안 움직였지만 호출은 된 훅 — 이것도 보여줘야 "훅이 뭘 했는지"가 정직해진다. */
@@ -62,29 +80,42 @@ const SIZE = {
 const COL = { left: 48, mid: 436, right: 820 };
 const PAD_TOP = 36;
 const GAP = 34;
-/** 라벨 두 줄이 들어갈 만큼 벌린다. 이보다 좁으면 겹친다. */
-const LANE = 40;
+/** 같은 통로를 지나는 줄기 사이 간격. */
+const LANE = 44;
+export const ROW_H = 15;
+export const BADGE_H = 13;
 
-function aggregate(edges: GraphEdge[]): Omit<RoutedEdge, 'points' | 'label'>[] {
-  const groups = new Map<string, Omit<RoutedEdge, 'points' | 'label'>>();
+interface FineEdge {
+  key: string;
+  from: string;
+  to: string;
+  via: string | null;
+  row: EdgeRow;
+}
+
+/** 같은 (from, to, token, via, 숨김)끼리 금액을 합쳐 토큰 단위 흐름으로 만든다. */
+function aggregate(edges: GraphEdge[]): FineEdge[] {
+  const groups = new Map<string, FineEdge>();
   for (const e of edges) {
     if (!e.amount) continue;
     const key = [e.from, e.to, e.token, e.via ?? '', e.hidden ? 'h' : ''].join('|');
     const found = groups.get(key);
     if (found) {
-      found.amount = (BigInt(found.amount) + BigInt(e.amount)).toString();
-      found.calls.push(e);
+      found.row.amount = (BigInt(found.row.amount) + BigInt(e.amount)).toString();
+      found.row.calls.push(e);
     } else {
       groups.set(key, {
         key,
         from: e.from,
         to: e.to,
         via: e.via ?? null,
-        token: e.token,
-        amount: e.amount,
-        hidden: Boolean(e.hidden),
-        claim: Boolean(e.claim),
-        calls: [e],
+        row: {
+          token: e.token,
+          amount: e.amount,
+          hidden: Boolean(e.hidden),
+          claim: Boolean(e.claim),
+          calls: [e],
+        },
       });
     }
   }
@@ -182,46 +213,107 @@ export function layout(graph: Graph, expandedHooks: Set<string>): Layout {
   const top = (n: PlacedNode) => ({ x: n.x + n.w / 2, y: n.y });
   const bottom = (n: PlacedNode) => ({ x: n.x + n.w / 2, y: n.y + n.h });
 
-  const routed: RoutedEdge[] = [];
+  // 1) 훅 경유 흐름을 두 구간으로 나눈다. PM → 훅 → 최종 수령자.
+  //    훅이 경로 위에 실제로 놓여야 "훅이 뭘 했는지"가 각주가 아니라 선의 모양이 된다.
+  interface Segment {
+    from: string;
+    to: string;
+    row: EdgeRow;
+  }
+  const segments: Segment[] = [];
   for (const e of aggregated) {
-    const a = pos.get(e.from);
-    const b = pos.get(e.to);
-    if (!a || !b) continue;
+    if (!pos.has(e.from) || !pos.has(e.to)) continue;
     const viaNode = e.via ? pos.get(e.via) : null;
-
-    if (viaNode && viaNode.role === 'hook') {
-      // PoolManager → 훅 → 최종 수령자. 훅이 경로 위에 실제로 놓인다.
-      const inSeg = [bottom(a), top(viaNode)];
-      routed.push({ ...e, key: `${e.key}#in`, to: viaNode.id, points: inSeg, label: labelFor(inSeg) });
-      const outSeg = [right(viaNode), left(b)];
-      routed.push({ ...e, key: `${e.key}#out`, from: viaNode.id, points: outSeg, label: labelFor(outSeg) });
-      continue;
+    if (viaNode && viaNode.role === 'hook' && e.from !== viaNode.id && e.to !== viaNode.id) {
+      segments.push({ from: e.from, to: viaNode.id, row: e.row });
+      segments.push({ from: viaNode.id, to: e.to, row: e.row });
+    } else {
+      segments.push({ from: e.from, to: e.to, row: e.row });
     }
-
-    const seg = a.x < b.x ? [right(a), left(b)] : a.x > b.x ? [left(a), right(b)] : [bottom(a), top(b)];
-    routed.push({ ...e, points: seg, label: labelFor(seg) });
   }
 
-  // 같은 두 노드 사이 선이 여러 개면 벌린다 — 가로 선은 세로로, 세로 선은 가로로.
-  // 방향 무관하게 묶고(반대 방향 엣지가 겹치던 문제), 노드 중심을 기준으로 좌우 대칭 배치한다.
-  // 한쪽으로만 밀면 아래 훅 레인을 침범한다.
-  const laneKey = (r: RoutedEdge) => [r.from, r.to].sort().join('|');
-  const laneSize = new Map<string, number>();
-  for (const r of routed) laneSize.set(laneKey(r), (laneSize.get(laneKey(r)) ?? 0) + 1);
+  // 2) 같은 (from, to, 숨김) 구간을 줄기 하나로 묶는다. 화살표 하나, 금액은 목록.
+  const trunkMap = new Map<string, { from: string; to: string; hidden: boolean; rows: EdgeRow[] }>();
+  for (const s of segments) {
+    const key = `${s.from}|${s.to}|${s.row.hidden ? 'h' : ''}`;
+    const found = trunkMap.get(key);
+    if (found) found.rows.push(s.row);
+    else trunkMap.set(key, { from: s.from, to: s.to, hidden: s.row.hidden, rows: [s.row] });
+  }
 
-  const laneSeen = new Map<string, number>();
-  for (const r of routed) {
-    const key = laneKey(r);
-    const n = laneSize.get(key) ?? 1;
-    if (n < 2) continue;
-    const i = laneSeen.get(key) ?? 0;
-    laneSeen.set(key, i + 1);
+  // 3) 같은 통로(방향 무관)를 지나는 줄기들을 대칭으로 벌리고 라벨 블록을 단다.
+  //    블록은 선에서 직교 방향으로 밀어낸다 — 선이 글자를 관통하면 안 읽힌다.
+  const trunks = [...trunkMap.entries()];
+  const corridorSize = new Map<string, number>();
+  const corridorKey = (t: { from: string; to: string }) => [t.from, t.to].sort().join('|');
+  for (const [, t] of trunks) corridorSize.set(corridorKey(t), (corridorSize.get(corridorKey(t)) ?? 0) + 1);
 
-    const [p, q] = [r.points[0], r.points[r.points.length - 1]];
-    const horizontal = Math.abs(q.x - p.x) > Math.abs(q.y - p.y);
+  const corridorSeen = new Map<string, number>();
+  const routed: RoutedEdge[] = [];
+  for (const [key, t] of trunks) {
+    const a = pos.get(t.from)!;
+    const b = pos.get(t.to)!;
+    const n = corridorSize.get(corridorKey(t)) ?? 1;
+    const i = corridorSeen.get(corridorKey(t)) ?? 0;
+    corridorSeen.set(corridorKey(t), i + 1);
     const shift = (i - (n - 1) / 2) * LANE;
-    r.points = r.points.map((pt) => (horizontal ? { ...pt, y: pt.y + shift } : { ...pt, x: pt.x + shift }));
-    r.label = labelFor(r.points, 0.5 + (i - (n - 1) / 2) * 0.14, i % 2 === 0 ? 1 : -1);
+
+    let points: Array<{ x: number; y: number }>;
+    let horizontal: boolean;
+    if (a.x < b.x) {
+      points = [right(a), left(b)];
+      horizontal = true;
+    } else if (a.x > b.x) {
+      points = [left(a), right(b)];
+      horizontal = true;
+    } else {
+      points = [bottom(a), top(b)];
+      horizontal = false;
+    }
+    points = points.map((pt) => (horizontal ? { ...pt, y: pt.y + shift } : { ...pt, x: pt.x + shift }));
+
+    const mid = {
+      x: (points[0].x + points[1].x) / 2,
+      y: (points[0].y + points[1].y) / 2,
+    };
+    const rows = t.rows.length;
+    const badge = t.hidden;
+
+    let label: EdgeLabel;
+    if (horizontal) {
+      // 위 레인(shift ≤ 0)은 블록을 선 위로, 아래 레인은 선 아래로.
+      if (shift <= 0) {
+        const badgeY = badge ? mid.y - 12 : null;
+        const lastRowY = mid.y - 12 - (badge ? BADGE_H : 0);
+        label = {
+          x: mid.x,
+          anchor: 'middle',
+          rowsY: Array.from({ length: rows }, (_, r) => lastRowY - (rows - 1 - r) * ROW_H),
+          badgeY,
+        };
+      } else {
+        const firstRowY = mid.y + 22;
+        label = {
+          x: mid.x,
+          anchor: 'middle',
+          rowsY: Array.from({ length: rows }, (_, r) => firstRowY + r * ROW_H),
+          badgeY: badge ? firstRowY + rows * ROW_H - 2 : null,
+        };
+      }
+    } else {
+      // 세로 줄기는 좌우 번갈아, 블록은 세로로 중앙 정렬.
+      const side: 'start' | 'end' = i % 2 === 0 ? 'start' : 'end';
+      const total = rows * ROW_H + (badge ? BADGE_H : 0);
+      const firstRowY = mid.y - total / 2 + 11;
+      label = {
+        x: side === 'start' ? mid.x + 12 : mid.x - 12,
+        anchor: side,
+        rowsY: Array.from({ length: rows }, (_, r) => firstRowY + r * ROW_H),
+        badgeY: badge ? firstRowY + rows * ROW_H - 2 : null,
+      };
+    }
+
+    routed.push({ key, from: t.from, to: t.to, hidden: t.hidden, rows: t.rows, points, label });
   }
 
   const reach: ReachEdge[] = [];
@@ -277,14 +369,19 @@ export function layout(graph: Graph, expandedHooks: Set<string>): Layout {
       xs.push(pt.x);
       ys.push(pt.y);
     }
-    ys.push(r.label.y - 18, r.label.y + 18);
+    const blockTop = r.label.rowsY[0] - 12;
+    const blockBottom = (r.label.badgeY ?? r.label.rowsY[r.label.rowsY.length - 1]) + 6;
+    ys.push(blockTop, blockBottom);
+    if (r.label.anchor === 'middle') xs.push(r.label.x - 90, r.label.x + 90);
+    else if (r.label.anchor === 'start') xs.push(r.label.x, r.label.x + 150);
+    else xs.push(r.label.x - 150, r.label.x);
   }
   for (const group of [...intervene, ...reach]) {
     for (const pt of group.points) {
       xs.push(pt.x);
       ys.push(pt.y);
     }
-    xs.push(group.label.x - 110, group.label.x + 20);
+    xs.push(group.label.x - 170, group.label.x + 20);
     ys.push(group.label.y - 14, group.label.y + 8);
   }
 
@@ -294,19 +391,6 @@ export function layout(graph: Graph, expandedHooks: Set<string>): Layout {
   const w = Math.max(...xs) + PAD - minX;
   const h = Math.max(...ys) + PAD - minY;
   return { viewBox: { x: minX, y: minY, w, h }, width: w, height: h, nodes: placed, edges: routed, reach, intervene };
-}
-
-/**
- * 라벨을 선 위에 얹지 않고 선과 직교하는 방향으로 밀어낸다.
- * 얹으면 선이 글자를 관통해서 읽기 어려워진다.
- */
-function labelFor(points: Array<{ x: number; y: number }>, t = 0.5, side: 1 | -1 = 1): RoutedEdge['label'] {
-  const [a, b] = [points[0], points[points.length - 1]];
-  const at = { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
-  const horizontal = Math.abs(b.x - a.x) > Math.abs(b.y - a.y);
-  if (horizontal) return { x: at.x, y: at.y - 14, anchor: 'middle' };
-  // 세로 선은 좌우 번갈아 — 같은 쪽에 쌓으면 폭 넓은 금액 라벨끼리 겹친다.
-  return side > 0 ? { x: at.x + 12, y: at.y, anchor: 'start' } : { x: at.x - 12, y: at.y, anchor: 'end' };
 }
 
 export interface LabelBox {

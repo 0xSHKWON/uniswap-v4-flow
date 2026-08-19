@@ -38,6 +38,7 @@ const en = {
   note: 'A factual account of what happened in this transaction — it does not rate pools or hooks.',
 
   'detail.call': 'Call',
+  'detail.movements': '{n} movements',
   'detail.claimNote':
     'This is an ERC-6909 claim: the tokens never leave PoolManager, so no Transfer event is emitted and ordinary explorers do not show this movement.',
 
@@ -80,6 +81,7 @@ const ko: Record<StringKey, string> = {
   note: '이 화면은 이 트랜잭션에서 일어난 일을 그대로 서술한다. 풀이나 훅에 대한 평가는 하지 않는다.',
 
   'detail.call': '호출',
+  'detail.movements': '이동 {n}건',
   'detail.claimNote':
     'ERC-6909 청구권이라 토큰이 PoolManager 밖으로 나가지 않는다. Transfer 이벤트가 없으므로 일반 익스플로러에는 이 이동이 표시되지 않는다.',
 
