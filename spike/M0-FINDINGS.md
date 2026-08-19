@@ -110,12 +110,20 @@ PoolManager가 그 값을 **무시한다.** 리턴값만 믿고 집계하면 틀
 
 ## 4. 열린 질문(§12)에 대한 답
 
-**첫 지원 체인 → Base를 추천한다.**
-훅이 붙은 풀을 거치는 트랜잭션 비율이 크게 다르다. Unichain 25.8%(89건 중 23건) vs
-**Base 66.3%(98건 중 65건)**. 관측된 서로 다른 훅도 Unichain 12종 vs Base 24종.
-"훅이 뭘 했는지 보여준다"가 제품의 핵심인데, Unichain은 방문자가 아무 해시나 넣으면
-훅 없는 밋밋한 그림이 나올 확률이 훨씬 높다. 데모 임팩트는 Base가 낫다.
-복원 로직은 체인 무관하게 동일하게 작동하므로(PoolManager 주소만 다름) 둘 다 지원해도 비용이 거의 없다.
+**첫 지원 체인 → Unichain으로 결정.** (거래량 우선, 기획서 §8 M5의 판단 유지)
+
+검토 과정에서 나온 수치는 남겨둔다. 훅이 붙은 풀을 거치는 트랜잭션 비율은
+Unichain 25.8%(89건 중 23건) vs **Base 66.3%(98건 중 65건)**, 관측된 훅 종류는 12종 vs 24종이다.
+즉 Unichain에서는 방문자가 아무 해시나 넣으면 **약 74% 확률로 훅 없는 밋밋한 그림**이 나온다.
+
+이건 체인을 바꾸지 않고 해결한다. 기획서 §6이 이미 예시 해시 버튼을 요구하고 있으므로,
+그 예시를 훅이 잘 드러나는 트랜잭션으로 **큐레이션**했다 (`fixtures/`, `curate.mjs`).
+훅 없는 기준선 1건 + 훅 사례 5건을 노드 2→3→9→8→14→22 순의 복잡도 사다리로 배치했고,
+훅 사례는 전부 "Transfer 이벤트에 안 보이는 값 이동"을 포함한다.
+첫 화면에서 제품의 핵심 주장이 바로 보이게 하는 것이 목적이다.
+
+복원 로직은 체인 무관하게 동일하게 작동하므로(PoolManager 주소만 다름),
+나중에 Base를 추가하는 비용은 거의 없다 — M5에서 다루면 된다.
 
 **멀티홉 → 한 그림에 담을 수 있다.** 3개 훅이 얽힌 5-홉 트랜잭션(`0x74803911…`)도
 노드 22개 / 엣지 47개로 복원됐다. 홉별 분리는 불필요하고, 레이아웃 문제로 다루면 된다.
@@ -153,19 +161,20 @@ M0 코드는 버려도 된다고 했지만, 버릴 필요가 없는 부분이 �
 - `graph.mjs` — 복원 결과를 **기획서 §7 데이터 모델 그대로** 뽑는다.
   `engineer` 필드까지 채워져 있어서 M3 모드 토글의 근거가 이미 준비돼 있다.
   훅이 호출한 외부 컨트랙트도 `type: "external"` 노드로 나온다 (§7 "열린 집합" 요구사항 충족).
-- `fixtures/` — 검증된 그래프 JSON 5건. 해시 하드코딩 대신 이걸 쓰면
-  M1을 RPC 없이 순수 렌더링 작업으로 진행할 수 있다.
+- `fixtures/` — 큐레이션된 예시 6건 + `index.json`. 해시 하드코딩 대신 이걸 쓰면
+  M1을 RPC 없이 순수 렌더링 작업으로 진행할 수 있고, 그대로 M2의 예시 해시 버튼이 된다.
+  (정적 JSON 고정은 §10의 RPC 비용/제한 리스크 대응이기도 하다.)
 
 M1의 남은 일은 사실상 **SVG 렌더링뿐**이다. 데이터 문제는 여기서 끝났다.
 
 ### 실행 방법
 
 ```bash
-node collect-pools.mjs unichain 8 450 swap   # 풀별 표본 수집
-node verify.mjs --file pools-unichain.txt    # 복원 + 이중 검증
+node verify.mjs --file corpus-unichain.txt   # 복원 + 이중 검증 (89/89)
 node verify.mjs -v <txHash>                  # 단건 상세
-node stats.mjs pools-unichain.txt            # 코퍼스 통계
+node stats.mjs corpus-unichain.txt           # 코퍼스 통계
 node graph.mjs <txHash>                      # §7 JSON 출력
+node build-fixtures.mjs                      # 예시 재생성
 
-CHAIN=base RPC_URL=https://base.drpc.org node verify.mjs --file base-sample.txt
+CHAIN=base RPC_URL=https://base.drpc.org node verify.mjs --file corpus-base.txt
 ```

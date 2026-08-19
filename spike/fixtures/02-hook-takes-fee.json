@@ -1,0 +1,102 @@
+{
+  "txHash": "0x7d92432dd0b63a002f295f5be79218988589071acd5a88d71c20aecc99059b23",
+  "chain": "unichain",
+  "nodes": [
+    {
+      "id": "pm",
+      "type": "core",
+      "label": "PoolManager",
+      "address": "0x1f98400000000000000000000000000000000004"
+    },
+    {
+      "id": "hook:0x3002a90b7c510d33debee13e46854711f45a50c4",
+      "type": "hook",
+      "label": "0x3002…50c4",
+      "address": "0x3002a90b7c510d33debee13e46854711f45a50c4",
+      "known": null,
+      "permissions": [
+        "AFTER_INITIALIZE",
+        "BEFORE_SWAP",
+        "AFTER_SWAP",
+        "AFTER_SWAP_RETURNS_DELTA"
+      ],
+      "callbacks": [
+        "beforeSwap",
+        "afterSwap"
+      ]
+    },
+    {
+      "id": "actor:0xd15163e04ea1c92448b3b78cc4909e52d196aae5",
+      "type": "router",
+      "label": "0xd151…aae5",
+      "address": "0xd15163e04ea1c92448b3b78cc4909e52d196aae5",
+      "known": null
+    }
+  ],
+  "edges": [
+    {
+      "from": "actor:0xd15163e04ea1c92448b3b78cc4909e52d196aae5",
+      "to": "pm",
+      "token": "0x078d782b760474a361dda0af3839290b0ef57ad6",
+      "amount": "500060",
+      "engineer": {
+        "call": "swap",
+        "side": "in",
+        "delta": "-500060"
+      }
+    },
+    {
+      "from": "pm",
+      "to": "actor:0xd15163e04ea1c92448b3b78cc4909e52d196aae5",
+      "token": "native",
+      "amount": "239898686884164",
+      "engineer": {
+        "call": "swap",
+        "side": "out",
+        "delta": "239898686884164"
+      }
+    },
+    {
+      "from": "pm",
+      "to": "hook:0x3002a90b7c510d33debee13e46854711f45a50c4",
+      "token": "native",
+      "amount": "2399010858",
+      "engineer": {
+        "call": "beforeSwap/afterSwap returnDelta",
+        "note": "hook fee — no ERC20 Transfer emitted",
+        "delta": "2399010858"
+      }
+    },
+    {
+      "from": "pm",
+      "to": "hook:0x3002a90b7c510d33debee13e46854711f45a50c4",
+      "token": "native",
+      "amount": "2399010858",
+      "engineer": {
+        "call": "mint (ERC-6909 claim)",
+        "note": "stays inside PoolManager — invisible to Transfer-based tools"
+      }
+    },
+    {
+      "from": "pm",
+      "to": "actor:0xd15163e04ea1c92448b3b78cc4909e52d196aae5",
+      "token": "native",
+      "amount": "239898686884164",
+      "engineer": {
+        "call": "take",
+        "by": "0xd15163e04ea1c92448b3b78cc4909e52d196aae5"
+      }
+    },
+    {
+      "from": "actor:0xd15163e04ea1c92448b3b78cc4909e52d196aae5",
+      "to": "pm",
+      "token": "0x078d782b760474a361dda0af3839290b0ef57ad6",
+      "amount": "500060",
+      "engineer": {
+        "call": "settle",
+        "native": false
+      }
+    }
+  ],
+  "balanced": true
+}

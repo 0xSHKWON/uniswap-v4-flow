@@ -115,8 +115,8 @@ export function toGraph(root, { chain = CHAIN, txHash } = {}) {
   return { txHash, chain, nodes: [...nodes.values()], edges, balanced: r.balanced };
 }
 
-const hash = process.argv[2];
-if (hash) {
-  const g = toGraph(await trace(hash), { txHash: hash });
-  console.log(JSON.stringify(g, null, 2));
+// CLI only when run directly — this module is also imported by curate.mjs.
+if (process.argv[1] === new URL(import.meta.url).pathname) {
+  const hash = process.argv[2];
+  if (hash) console.log(JSON.stringify(toGraph(await trace(hash), { txHash: hash }), null, 2));
 }

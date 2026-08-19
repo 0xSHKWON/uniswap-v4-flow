@@ -1,0 +1,533 @@
+[
+  {
+    "hash": "0x161b0ba23da2ac3ea73202fffe0aa558bf1e26a04e520f67357ef26e26c81c01",
+    "score": 114,
+    "nodes": 9,
+    "edges": 12,
+    "hooks": 1,
+    "hiddenEdges": 2,
+    "externalReach": 4,
+    "transferTouchesHook": false,
+    "permissions": [
+      [
+        "AFTER_INITIALIZE",
+        "BEFORE_SWAP",
+        "AFTER_SWAP",
+        "BEFORE_SWAP_RETURNS_DELTA",
+        "AFTER_SWAP_RETURNS_DELTA"
+      ]
+    ],
+    "hookAddrs": [
+      "0xa0b0d2d00fd544d8e0887f1a3cedd6e24baf10cc"
+    ]
+  },
+  {
+    "hash": "0x35bc7dc0cd829f5a8240fda49e0d30868ee1bd4485720c9687808615780f3c70",
+    "score": 114,
+    "nodes": 9,
+    "edges": 10,
+    "hooks": 1,
+    "hiddenEdges": 2,
+    "externalReach": 4,
+    "transferTouchesHook": false,
+    "permissions": [
+      [
+        "AFTER_INITIALIZE",
+        "BEFORE_SWAP",
+        "AFTER_SWAP",
+        "BEFORE_SWAP_RETURNS_DELTA",
+        "AFTER_SWAP_RETURNS_DELTA"
+      ]
+    ],
+    "hookAddrs": [
+      "0xa0b0d2d00fd544d8e0887f1a3cedd6e24baf10cc"
+    ]
+  },
+  {
+    "hash": "0x465366894c27a85ad5cadd575848b0c00b4b8f262ed7c3524fcb1365fdf4c489",
+    "score": 114,
+    "nodes": 9,
+    "edges": 10,
+    "hooks": 1,
+    "hiddenEdges": 2,
+    "externalReach": 4,
+    "transferTouchesHook": false,
+    "permissions": [
+      [
+        "AFTER_INITIALIZE",
+        "BEFORE_SWAP",
+        "AFTER_SWAP",
+        "BEFORE_SWAP_RETURNS_DELTA",
+        "AFTER_SWAP_RETURNS_DELTA"
+      ]
+    ],
+    "hookAddrs": [
+      "0xa0b0d2d00fd544d8e0887f1a3cedd6e24baf10cc"
+    ]
+  },
+  {
+    "hash": "0x9917a3d74af30e34f0adf5c24fe7891315dca350fb1e7e912fc93d4cbc96e84e",
+    "score": 114,
+    "nodes": 9,
+    "edges": 10,
+    "hooks": 1,
+    "hiddenEdges": 2,
+    "externalReach": 4,
+    "transferTouchesHook": false,
+    "permissions": [
+      [
+        "AFTER_INITIALIZE",
+        "BEFORE_SWAP",
+        "AFTER_SWAP",
+        "BEFORE_SWAP_RETURNS_DELTA",
+        "AFTER_SWAP_RETURNS_DELTA"
+      ]
+    ],
+    "hookAddrs": [
+      "0xa0b0d2d00fd544d8e0887f1a3cedd6e24baf10cc"
+    ]
+  },
+  {
+    "hash": "0xb8b17b6b49116721e99965117fae8eee15fdd3698108ca6d34a72bf891e57981",
+    "score": 114,
+    "nodes": 9,
+    "edges": 10,
+    "hooks": 1,
+    "hiddenEdges": 2,
+    "externalReach": 4,
+    "transferTouchesHook": false,
+    "permissions": [
+      [
+        "AFTER_INITIALIZE",
+        "BEFORE_SWAP",
+        "AFTER_SWAP",
+        "BEFORE_SWAP_RETURNS_DELTA",
+        "AFTER_SWAP_RETURNS_DELTA"
+      ]
+    ],
+    "hookAddrs": [
+      "0xa0b0d2d00fd544d8e0887f1a3cedd6e24baf10cc"
+    ]
+  },
+  {
+    "hash": "0xe0a7208ca3ea14960608d6a2d32b9b5cced5b4480437b2428a72d5a1e09594c1",
+    "score": 114,
+    "nodes": 9,
+    "edges": 10,
+    "hooks": 1,
+    "hiddenEdges": 2,
+    "externalReach": 4,
+    "transferTouchesHook": false,
+    "permissions": [
+      [
+        "AFTER_INITIALIZE",
+        "BEFORE_SWAP",
+        "AFTER_SWAP",
+        "BEFORE_SWAP_RETURNS_DELTA",
+        "AFTER_SWAP_RETURNS_DELTA"
+      ]
+    ],
+    "hookAddrs": [
+      "0xa0b0d2d00fd544d8e0887f1a3cedd6e24baf10cc"
+    ]
+  },
+  {
+    "hash": "0xe84009a28799a4bb408a7a4991d7170ee9d35a0083cabb1702ab5e25a60fc0bf",
+    "score": 114,
+    "nodes": 8,
+    "edges": 42,
+    "hooks": 1,
+    "hiddenEdges": 6,
+    "externalReach": 4,
+    "transferTouchesHook": false,
+    "permissions": [
+      [
+        "AFTER_INITIALIZE",
+        "BEFORE_ADD_LIQUIDITY",
+        "BEFORE_REMOVE_LIQUIDITY",
+        "BEFORE_SWAP",
+        "AFTER_SWAP",
+        "BEFORE_SWAP_RETURNS_DELTA",
+        "AFTER_SWAP_RETURNS_DELTA"
+      ]
+    ],
+    "hookAddrs": [
+      "0x88c9ff9fc0b22cca42265d3f1d1c2c39e41cdacc"
+    ]
+  },
+  {
+    "hash": "0xbd31a2249ce2d5e6ed10a3de7a6e2aa7d32830295fd0f446925bfec3fa8fc10a",
+    "score": 105,
+    "nodes": 14,
+    "edges": 30,
+    "hooks": 2,
+    "hiddenEdges": 6,
+    "externalReach": 8,
+    "transferTouchesHook": false,
+    "permissions": [
+      [
+        "AFTER_INITIALIZE",
+        "BEFORE_SWAP",
+        "AFTER_SWAP",
+        "BEFORE_SWAP_RETURNS_DELTA",
+        "AFTER_SWAP_RETURNS_DELTA"
+      ],
+      [
+        "AFTER_INITIALIZE",
+        "BEFORE_ADD_LIQUIDITY",
+        "BEFORE_REMOVE_LIQUIDITY",
+        "BEFORE_SWAP",
+        "AFTER_SWAP",
+        "BEFORE_SWAP_RETURNS_DELTA",
+        "AFTER_SWAP_RETURNS_DELTA"
+      ]
+    ],
+    "hookAddrs": [
+      "0xa0b0d2d00fd544d8e0887f1a3cedd6e24baf10cc",
+      "0x88c9ff9fc0b22cca42265d3f1d1c2c39e41cdacc"
+    ]
+  },
+  {
+    "hash": "0xb7ba37dc7adc8100152ed48da9f8ca754626955b2763b8db7fd1f9a10895e27d",
+    "score": 96,
+    "nodes": 5,
+    "edges": 6,
+    "hooks": 1,
+    "hiddenEdges": 1,
+    "externalReach": 1,
+    "transferTouchesHook": false,
+    "permissions": [
+      [
+        "BEFORE_SWAP",
+        "AFTER_SWAP"
+      ]
+    ],
+    "hookAddrs": [
+      "0x2016c0e4f8bb1d6fea777dc791be919e2eda40c0"
+    ]
+  },
+  {
+    "hash": "0xc9fd8c1737fc6a674ade6e5af50b06fb9899f895175a28edcaf667faf979f838",
+    "score": 96,
+    "nodes": 5,
+    "edges": 6,
+    "hooks": 1,
+    "hiddenEdges": 1,
+    "externalReach": 1,
+    "transferTouchesHook": false,
+    "permissions": [
+      [
+        "BEFORE_SWAP",
+        "AFTER_SWAP"
+      ]
+    ],
+    "hookAddrs": [
+      "0x2016c0e4f8bb1d6fea777dc791be919e2eda40c0"
+    ]
+  },
+  {
+    "hash": "0x7d92432dd0b63a002f295f5be79218988589071acd5a88d71c20aecc99059b23",
+    "score": 90,
+    "nodes": 3,
+    "edges": 6,
+    "hooks": 1,
+    "hiddenEdges": 2,
+    "externalReach": 0,
+    "transferTouchesHook": false,
+    "permissions": [
+      [
+        "AFTER_INITIALIZE",
+        "BEFORE_SWAP",
+        "AFTER_SWAP",
+        "AFTER_SWAP_RETURNS_DELTA"
+      ]
+    ],
+    "hookAddrs": [
+      "0x3002a90b7c510d33debee13e46854711f45a50c4"
+    ]
+  },
+  {
+    "hash": "0x74803911a975a65f424bf2bce3bfa8ec46892c794629fa401ecfc5ea3f8ab088",
+    "score": 85,
+    "nodes": 22,
+    "edges": 47,
+    "hooks": 3,
+    "hiddenEdges": 4,
+    "externalReach": 17,
+    "transferTouchesHook": true,
+    "permissions": [
+      [
+        "BEFORE_INITIALIZE",
+        "BEFORE_ADD_LIQUIDITY",
+        "BEFORE_SWAP",
+        "BEFORE_DONATE",
+        "BEFORE_SWAP_RETURNS_DELTA"
+      ],
+      [
+        "BEFORE_SWAP",
+        "AFTER_SWAP"
+      ],
+      [
+        "AFTER_INITIALIZE",
+        "BEFORE_SWAP",
+        "BEFORE_SWAP_RETURNS_DELTA"
+      ]
+    ],
+    "hookAddrs": [
+      "0xb5c643879006742699d1cc2581c28f177963a8a8",
+      "0x2016c0e4f8bb1d6fea777dc791be919e2eda40c0",
+      "0xad78e0a3b5a552813feb5eb8ecbe842f7b5e9088"
+    ]
+  },
+  {
+    "hash": "0xfb268361e51000e18825cf32d800db2262a7640ee693549126b2c7ea064e0c37",
+    "score": 83,
+    "nodes": 6,
+    "edges": 37,
+    "hooks": 1,
+    "hiddenEdges": 2,
+    "externalReach": 3,
+    "transferTouchesHook": true,
+    "permissions": [
+      [
+        "AFTER_INITIALIZE",
+        "BEFORE_SWAP",
+        "BEFORE_SWAP_RETURNS_DELTA"
+      ]
+    ],
+    "hookAddrs": [
+      "0xad78e0a3b5a552813feb5eb8ecbe842f7b5e9088"
+    ]
+  },
+  {
+    "hash": "0xa9ce5a09256abd53a2a8091e62ca6e3973f35d42930ccd793e204410e715c1c3",
+    "score": 80,
+    "nodes": 21,
+    "edges": 73,
+    "hooks": 2,
+    "hiddenEdges": 8,
+    "externalReach": 17,
+    "transferTouchesHook": true,
+    "permissions": [
+      [
+        "AFTER_INITIALIZE",
+        "BEFORE_SWAP",
+        "BEFORE_SWAP_RETURNS_DELTA"
+      ],
+      [
+        "BEFORE_INITIALIZE",
+        "BEFORE_ADD_LIQUIDITY",
+        "BEFORE_SWAP",
+        "BEFORE_DONATE",
+        "BEFORE_SWAP_RETURNS_DELTA"
+      ]
+    ],
+    "hookAddrs": [
+      "0xad78e0a3b5a552813feb5eb8ecbe842f7b5e9088",
+      "0xb5c643879006742699d1cc2581c28f177963a8a8"
+    ]
+  },
+  {
+    "hash": "0x616c88e8a70eb94eb7241f69357529c9ea6bbeda39d82d2c942d2b17a60f21da",
+    "score": 56,
+    "nodes": 4,
+    "edges": 5,
+    "hooks": 1,
+    "hiddenEdges": 0,
+    "externalReach": 1,
+    "transferTouchesHook": false,
+    "permissions": [
+      [
+        "BEFORE_SWAP",
+        "AFTER_SWAP"
+      ]
+    ],
+    "hookAddrs": [
+      "0xcab5a0b38b36bacd781a6ab9cc931fc6560ac0c0"
+    ]
+  },
+  {
+    "hash": "0x95f8e3adae13181bf353b76cc1e99101a9c5ec00e6a00e9dbee4a80fbb1d1d31",
+    "score": 56,
+    "nodes": 5,
+    "edges": 7,
+    "hooks": 1,
+    "hiddenEdges": 0,
+    "externalReach": 1,
+    "transferTouchesHook": false,
+    "permissions": [
+      [
+        "BEFORE_SWAP",
+        "AFTER_SWAP"
+      ]
+    ],
+    "hookAddrs": [
+      "0x2016c0e4f8bb1d6fea777dc791be919e2eda40c0"
+    ]
+  },
+  {
+    "hash": "0xb1500a286f0ad7accc602ee63c6283510b5c2fe3a90b5d9c8e387993f6d81f6e",
+    "score": 56,
+    "nodes": 4,
+    "edges": 5,
+    "hooks": 1,
+    "hiddenEdges": 0,
+    "externalReach": 1,
+    "transferTouchesHook": false,
+    "permissions": [
+      [
+        "AFTER_INITIALIZE",
+        "BEFORE_REMOVE_LIQUIDITY",
+        "AFTER_REMOVE_LIQUIDITY",
+        "BEFORE_SWAP",
+        "AFTER_SWAP"
+      ]
+    ],
+    "hookAddrs": [
+      "0x8987d61840155c2256c8cbeb5dbaafd5e6f4d3c0"
+    ]
+  },
+  {
+    "hash": "0xc703ae1449168b3f7585d2986b4123b9adebabdb3d77c1a21dd7e108828701c1",
+    "score": 56,
+    "nodes": 4,
+    "edges": 9,
+    "hooks": 1,
+    "hiddenEdges": 0,
+    "externalReach": 1,
+    "transferTouchesHook": false,
+    "permissions": [
+      [
+        "AFTER_INITIALIZE",
+        "BEFORE_REMOVE_LIQUIDITY",
+        "AFTER_REMOVE_LIQUIDITY",
+        "BEFORE_SWAP",
+        "AFTER_SWAP"
+      ]
+    ],
+    "hookAddrs": [
+      "0x8987d61840155c2256c8cbeb5dbaafd5e6f4d3c0"
+    ]
+  },
+  {
+    "hash": "0x20c58196c4365808d53d15662da700ecaa3c0644acdf9b6982693c6e8046d74e",
+    "score": 55,
+    "nodes": 4,
+    "edges": 16,
+    "hooks": 2,
+    "hiddenEdges": 0,
+    "externalReach": 0,
+    "transferTouchesHook": false,
+    "permissions": [
+      [
+        "AFTER_INITIALIZE",
+        "BEFORE_SWAP",
+        "AFTER_SWAP",
+        "BEFORE_SWAP_RETURNS_DELTA"
+      ],
+      [
+        "AFTER_INITIALIZE",
+        "BEFORE_SWAP",
+        "AFTER_SWAP",
+        "BEFORE_SWAP_RETURNS_DELTA"
+      ]
+    ],
+    "hookAddrs": [
+      "0x5753ced012155da10431564b9cfde7ca238250c8",
+      "0x5f35c46ac75cb102ff092dbbd9934cd02b4050c8"
+    ]
+  },
+  {
+    "hash": "0x5c146270cf05fe1fbbcdb1925b9281486bf3951983143d0eeaad6ae697cbd51d",
+    "score": 50,
+    "nodes": 3,
+    "edges": 8,
+    "hooks": 1,
+    "hiddenEdges": 0,
+    "externalReach": 0,
+    "transferTouchesHook": false,
+    "permissions": [
+      [
+        "BEFORE_INITIALIZE",
+        "AFTER_INITIALIZE",
+        "BEFORE_ADD_LIQUIDITY",
+        "BEFORE_REMOVE_LIQUIDITY",
+        "BEFORE_SWAP",
+        "AFTER_SWAP",
+        "AFTER_SWAP_RETURNS_DELTA"
+      ]
+    ],
+    "hookAddrs": [
+      "0x54bd666ea7fd8d5404c0593eab3dcf9b6e2a3ac4"
+    ]
+  },
+  {
+    "hash": "0x65c8aeb0a3724cd3760308de861bab99fa2867b2de0cf186abc43e4f24acda68",
+    "score": 50,
+    "nodes": 3,
+    "edges": 4,
+    "hooks": 1,
+    "hiddenEdges": 0,
+    "externalReach": 0,
+    "transferTouchesHook": false,
+    "permissions": [
+      [
+        "BEFORE_INITIALIZE",
+        "AFTER_INITIALIZE",
+        "BEFORE_ADD_LIQUIDITY",
+        "BEFORE_REMOVE_LIQUIDITY",
+        "BEFORE_SWAP",
+        "AFTER_SWAP",
+        "AFTER_SWAP_RETURNS_DELTA"
+      ]
+    ],
+    "hookAddrs": [
+      "0x54bd666ea7fd8d5404c0593eab3dcf9b6e2a3ac4"
+    ]
+  },
+  {
+    "hash": "0xa3ceb8c4dea30ab7184fc534c9fc1cf943c08e47e41865d459afde1145ab4a64",
+    "score": 50,
+    "nodes": 3,
+    "edges": 8,
+    "hooks": 1,
+    "hiddenEdges": 0,
+    "externalReach": 0,
+    "transferTouchesHook": false,
+    "permissions": [
+      [
+        "AFTER_INITIALIZE",
+        "BEFORE_SWAP",
+        "AFTER_SWAP",
+        "BEFORE_SWAP_RETURNS_DELTA"
+      ]
+    ],
+    "hookAddrs": [
+      "0xcfd781e4c0e75c4137faa8299839cc765ca710c8"
+    ]
+  },
+  {
+    "hash": "0xbb3f5dcc2f6ff09674351712b80c1dc81e9ad0d7f57ac042a5040c695cbfc667",
+    "score": 50,
+    "nodes": 3,
+    "edges": 8,
+    "hooks": 1,
+    "hiddenEdges": 0,
+    "externalReach": 0,
+    "transferTouchesHook": false,
+    "permissions": [
+      [
+        "BEFORE_INITIALIZE",
+        "AFTER_INITIALIZE",
+        "BEFORE_ADD_LIQUIDITY",
+        "BEFORE_REMOVE_LIQUIDITY",
+        "BEFORE_SWAP",
+        "AFTER_SWAP",
+        "AFTER_SWAP_RETURNS_DELTA"
+      ]
+    ],
+    "hookAddrs": [
+      "0x54bd666ea7fd8d5404c0593eab3dcf9b6e2a3ac4"
+    ]
+  }
+]
