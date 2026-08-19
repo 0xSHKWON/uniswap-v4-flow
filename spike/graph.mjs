@@ -11,6 +11,7 @@ const short = (a) => `${a.slice(0, 6)}…${a.slice(-4)}`;
 
 export function toGraph(root, { chain = CHAIN, txHash } = {}) {
   const r = reconstruct(root, { poolManager: PM });
+  const origin = root.from?.toLowerCase() ?? null; // the EOA that sent the tx
 
   const nodes = new Map();
   const addNode = (id, type, label, extra = {}) => {
@@ -42,19 +43,40 @@ export function toGraph(root, { chain = CHAIN, txHash } = {}) {
   };
   const ensureActor = (addr) => {
     const id = actorId(addr);
-    if (!nodes.has(id)) addNode(id, 'router', short(addr), { address: addr, known: null });
+    if (!nodes.has(id)) addNode(id, addr === origin ? 'eoa' : 'router', short(addr), { address: addr, known: null });
     return id;
   };
 
   const edges = [];
-  const push = (from, to, token, amount, engineer) => {
+
+  /**
+   * Edges come in two layers, and mixing them double-counts.
+   *
+   *   settlement — value that actually moved (settle/take/mint/burn/clear).
+   *                Flash accounting guarantees these fully describe the transfer.
+   *   accounting — the obligations that explain it (swap/liquidity deltas, the
+   *                hook's cut). Same value, seen from the other side of the ledger.
+   *
+   * trader mode renders settlement; engineer mode overlays accounting (§4).
+   */
+  const push = (layer, from, to, token, amount, engineer, extra = {}) => {
     if (amount === 0n) return;
     edges.push({
-      from, to,
+      layer, from, to,
       token: token === NATIVE ? 'native' : token,
       amount: (amount < 0n ? -amount : amount).toString(),
       engineer,
+      ...extra,
     });
+  };
+
+  // A settlement whose caller is neither endpoint passes *through* that actor —
+  // typically a hook minting its fee onward to a treasury. Routing the edge through
+  // it is what makes "훅이 뭘 했는지" legible instead of a footnote.
+  const settle = (from, to, token, amount, engineer, extra = {}) => {
+    const via = extra.via && extra.via !== from && extra.via !== to ? extra.via : null;
+    const { via: _drop, ...rest } = extra;
+    push('settlement', from, to, token, amount, engineer, { ...rest, via });
   };
 
   for (const s of r.steps) {
@@ -64,42 +86,52 @@ export function toGraph(root, { chain = CHAIN, txHash } = {}) {
         const { currency0: c0, currency1: c1 } = s.pool;
         const d = s.callerDelta;
         // negative delta = caller owes the pool; positive = pool owes the caller
-        if (d.amount0 < 0n) push(caller, 'pm', c0, d.amount0, { call: 'swap', side: 'in', delta: d.amount0.toString() });
-        if (d.amount1 < 0n) push(caller, 'pm', c1, d.amount1, { call: 'swap', side: 'in', delta: d.amount1.toString() });
-        if (d.amount0 > 0n) push('pm', caller, c0, d.amount0, { call: 'swap', side: 'out', delta: d.amount0.toString() });
-        if (d.amount1 > 0n) push('pm', caller, c1, d.amount1, { call: 'swap', side: 'out', delta: d.amount1.toString() });
+        const swapNote = { call: 'swap', zeroForOne: s.params.zeroForOne };
+        if (d.amount0 < 0n) push('accounting', caller, 'pm', c0, d.amount0, { ...swapNote, side: 'in', delta: d.amount0.toString() });
+        if (d.amount1 < 0n) push('accounting', caller, 'pm', c1, d.amount1, { ...swapNote, side: 'in', delta: d.amount1.toString() });
+        if (d.amount0 > 0n) push('accounting', 'pm', caller, c0, d.amount0, { ...swapNote, side: 'out', delta: d.amount0.toString() });
+        if (d.amount1 > 0n) push('accounting', 'pm', caller, c1, d.amount1, { ...swapNote, side: 'out', delta: d.amount1.toString() });
 
         if (s.hookDelta) {
           const hid = hookIds.get(s.pool.hooks.toLowerCase()) ?? ensureActor(s.pool.hooks.toLowerCase());
-          const label = { call: 'beforeSwap/afterSwap returnDelta', note: 'hook fee — no ERC20 Transfer emitted' };
-          if (s.hookDelta.amount0 > 0n) push('pm', hid, c0, s.hookDelta.amount0, { ...label, delta: s.hookDelta.amount0.toString() });
-          if (s.hookDelta.amount1 > 0n) push('pm', hid, c1, s.hookDelta.amount1, { ...label, delta: s.hookDelta.amount1.toString() });
-          if (s.hookDelta.amount0 < 0n) push(hid, 'pm', c0, s.hookDelta.amount0, { ...label, delta: s.hookDelta.amount0.toString() });
-          if (s.hookDelta.amount1 < 0n) push(hid, 'pm', c1, s.hookDelta.amount1, { ...label, delta: s.hookDelta.amount1.toString() });
+          const label = { call: 'beforeSwap/afterSwap returnDelta', note: '훅이 가져간 몫' };
+          for (const [amt, cur] of [[s.hookDelta.amount0, c0], [s.hookDelta.amount1, c1]]) {
+            if (amt > 0n) push('accounting', 'pm', hid, cur, amt, { ...label, delta: amt.toString() }, { hookCut: true });
+            if (amt < 0n) push('accounting', hid, 'pm', cur, amt, { ...label, delta: amt.toString() }, { hookCut: true });
+          }
         }
         break;
       }
       case 'take':
-        push('pm', ensureActor(s.recipient), s.currency, s.amount, { call: 'take', by: s.caller });
+        settle('pm', ensureActor(s.recipient), s.currency, s.amount, { call: 'take' }, { via: ensureActor(s.caller) });
         break;
       case 'settle':
       case 'settleFor':
-        push(ensureActor(s.payer), 'pm', s.currency, s.amount, { call: s.kind, native: s.native });
+        settle(ensureActor(s.payer), 'pm', s.currency, s.amount, { call: s.kind, native: s.native }, { via: ensureActor(s.caller) });
         break;
       case 'mint6909':
-        push('pm', ensureActor(s.recipient), s.currency, s.amount, {
-          call: 'mint (ERC-6909 claim)', note: 'stays inside PoolManager — invisible to Transfer-based tools',
-        });
+        // ERC-6909 claims never leave PoolManager, so no ERC20 Transfer is emitted.
+        settle('pm', ensureActor(s.recipient), s.currency, s.amount,
+          { call: 'mint', note: 'ERC-6909 청구권 — Transfer 이벤트 없음' },
+          { via: ensureActor(s.caller), claim: true, hidden: true });
         break;
       case 'burn6909':
-        push(ensureActor(s.holder), 'pm', s.currency, s.amount, { call: 'burn (ERC-6909 claim)' });
+        settle(ensureActor(s.holder), 'pm', s.currency, s.amount,
+          { call: 'burn', note: 'ERC-6909 청구권 — Transfer 이벤트 없음' },
+          { via: ensureActor(s.caller), claim: true, hidden: true });
+        break;
+      case 'clear':
+        settle(ensureActor(s.caller), 'pm', s.currency, s.amount,
+          { call: 'clear', note: '잔여 크레딧 포기' }, { hidden: true });
         break;
       case 'modifyLiquidity': {
         const caller = ensureActor(s.caller);
         const { currency0: c0, currency1: c1 } = s.pool;
         const d = s.callerDelta;
-        if (d.amount0 !== 0n) (d.amount0 < 0n ? push(caller, 'pm', c0, d.amount0, { call: 'modifyLiquidity' }) : push('pm', caller, c0, d.amount0, { call: 'modifyLiquidity' }));
-        if (d.amount1 !== 0n) (d.amount1 < 0n ? push(caller, 'pm', c1, d.amount1, { call: 'modifyLiquidity' }) : push('pm', caller, c1, d.amount1, { call: 'modifyLiquidity' }));
+        for (const [amt, cur] of [[d.amount0, c0], [d.amount1, c1]]) {
+          if (amt < 0n) push('accounting', caller, 'pm', cur, amt, { call: 'modifyLiquidity', delta: amt.toString() });
+          if (amt > 0n) push('accounting', 'pm', caller, cur, amt, { call: 'modifyLiquidity', delta: amt.toString() });
+        }
         break;
       }
     }
@@ -108,11 +140,16 @@ export function toGraph(root, { chain = CHAIN, txHash } = {}) {
   // hook -> external contract edges carry no amount; they show reach, not value
   for (const h of r.hooks) {
     for (const target of new Set(h.externalCalls.map((c) => c.to))) {
-      edges.push({ from: hookIds.get(h.address), to: `ext:${target}`, token: null, amount: null, engineer: { call: 'external call' } });
+      const calls = h.externalCalls.filter((c) => c.to === target);
+      edges.push({
+        layer: 'reach', from: hookIds.get(h.address), to: `ext:${target}`,
+        token: null, amount: null, via: null,
+        engineer: { call: 'external call', count: calls.length },
+      });
     }
   }
 
-  return { txHash, chain, nodes: [...nodes.values()], edges, balanced: r.balanced };
+  return { txHash, chain, origin, nodes: [...nodes.values()], edges, balanced: r.balanced };
 }
 
 // CLI only when run directly — this module is also imported by curate.mjs.

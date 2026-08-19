@@ -1,0 +1,394 @@
+/* 색은 dataviz 스킬의 검증된 기본 팔레트에서 가져왔고 validate_palette.js 로 확인했다.
+   두 개의 accent 만 쓴다: 훅 = blue(slot 1), Transfer에 안 잡히는 이동 = orange(slot 2).
+   나머지는 전부 중립색 — 이 그림의 주인공은 훅이고, 나머지는 맥락이다 (emphasis 형식). */
+
+.viz-root {
+  color-scheme: light;
+  --surface-1: #fcfcfb;
+  --surface-2: #f0efec;
+  --text-primary: #0b0b0b;
+  --text-secondary: #52514e;
+  --text-muted: #7c7b76;
+  --line: #d6d5d0;
+  --hook: #2a78d6;
+  --hidden: #eb6834;
+  --flow: #52514e;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme='light'])) .viz-root {
+    color-scheme: dark;
+    --surface-1: #1a1a19;
+    --surface-2: #262624;
+    --text-primary: #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted: #918f86;
+    --line: #3c3b38;
+    --hook: #3987e5;
+    --hidden: #d95926;
+    --flow: #c3c2b7;
+  }
+}
+
+:root[data-theme='dark'] .viz-root {
+  color-scheme: dark;
+  --surface-1: #1a1a19;
+  --surface-2: #262624;
+  --text-primary: #ffffff;
+  --text-secondary: #c3c2b7;
+  --text-muted: #918f86;
+  --line: #3c3b38;
+  --hook: #3987e5;
+  --hidden: #d95926;
+  --flow: #c3c2b7;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+  background: var(--surface-1, #fcfcfb);
+}
+
+.viz-root {
+  min-height: 100vh;
+  padding: 28px 32px 20px;
+  background: var(--surface-1);
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.tx-hash {
+  margin: 6px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.tx-hash code {
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 11.5px;
+}
+
+.chain {
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text-secondary);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.blurb {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+  max-width: 70ch;
+  line-height: 1.5;
+}
+
+.blurb strong {
+  color: var(--text-primary);
+}
+
+/* --- 다이어그램 --- */
+
+.diagram-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.diagram {
+  width: 100%;
+  height: auto;
+  max-height: 68vh;
+  display: block;
+}
+
+/* 노드 — 빈 박스가 아니라 내용을 담는다 (§9) */
+.node rect {
+  fill: var(--surface-2);
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.node-core rect {
+  fill: var(--surface-2);
+  stroke: var(--text-muted);
+}
+
+.node-hook rect {
+  fill: color-mix(in srgb, var(--hook) 10%, var(--surface-1));
+  stroke: var(--hook);
+  stroke-width: 1.5;
+}
+
+.node-external rect {
+  fill: none;
+  stroke: var(--line);
+  stroke-dasharray: 3 3;
+}
+
+.node text {
+  font-size: 12px;
+  fill: var(--text-primary);
+}
+
+.node-role {
+  font-size: 10px !important;
+  fill: var(--text-muted) !important;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.node-hook .node-role {
+  fill: var(--hook) !important;
+}
+
+.node-label {
+  font-size: 14px !important;
+  font-weight: 600;
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+}
+
+.node-sub {
+  font-size: 10.5px !important;
+  fill: var(--text-secondary) !important;
+}
+
+.node-toggle {
+  font-size: 10.5px !important;
+  fill: var(--hook) !important;
+  font-weight: 500;
+}
+
+/* 엣지 — 2px 선, 금액은 직접 라벨 */
+.edge-line {
+  fill: none;
+  stroke: var(--flow);
+  stroke-width: 2;
+}
+
+.edge-hit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 18;
+}
+
+.arrow-head {
+  fill: var(--flow);
+}
+
+.arrow-head.hidden {
+  fill: var(--hidden);
+}
+
+.arrow-head.muted {
+  fill: var(--text-muted);
+}
+
+.intervene path {
+  fill: none;
+  stroke: var(--text-muted);
+  stroke-width: 1.5;
+  stroke-dasharray: 2 5;
+}
+
+.intervene-label {
+  text-anchor: end;
+}
+
+.intervene-label,
+.reach-label {
+  font-size: 10.5px;
+  fill: var(--text-muted);
+  paint-order: stroke;
+  stroke: var(--surface-1);
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}
+
+.reach-label {
+  text-anchor: middle;
+}
+
+.edge.is-hidden-value .edge-line {
+  stroke: var(--hidden);
+}
+
+.edge.is-hovered .edge-line {
+  stroke-width: 3;
+}
+
+.edge-labels {
+  pointer-events: none;
+}
+
+.edge-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  fill: var(--text-primary);
+  paint-order: stroke;
+  stroke: var(--surface-1);
+  stroke-width: 6px;
+  stroke-linejoin: round;
+}
+
+.edge-sub {
+  font-size: 10px;
+  fill: var(--hidden);
+  paint-order: stroke;
+  stroke: var(--surface-1);
+  stroke-width: 6px;
+  stroke-linejoin: round;
+}
+
+.reach path {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+}
+
+
+
+/* --- 툴팁 --- */
+
+.edge-detail {
+  position: absolute;
+  right: 0;
+  /* 노드는 대부분 위쪽에 모이므로 아래쪽에 띄운다. */
+  bottom: 0;
+  width: 260px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-1);
+  box-shadow: 0 4px 16px rgb(0 0 0 / 8%);
+}
+
+.edge-detail-amount {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.edge-detail-row {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+  font-size: 11.5px;
+  color: var(--text-secondary);
+}
+
+.edge-detail-row code {
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  color: var(--text-primary);
+}
+
+.edge-detail-note {
+  margin: 10px 0 0;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  border-top: 1px solid var(--line);
+  padding-top: 9px;
+}
+
+/* --- 범례 / 푸터 --- */
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.legend {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11.5px;
+  color: var(--text-secondary);
+}
+
+.swatch {
+  width: 14px;
+  height: 3px;
+  border-radius: 2px;
+  margin-left: 12px;
+}
+
+.swatch:first-child {
+  margin-left: 0;
+}
+
+.swatch-flow {
+  background: var(--flow);
+}
+
+.swatch-hidden {
+  background: var(--hidden);
+}
+
+.swatch-hook {
+  background: var(--hook);
+  height: 10px;
+  width: 10px;
+  border-radius: 3px;
+}
+
+.note {
+  margin: 0;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* --- 개발용 예시 전환 --- */
+
+.devbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--line);
+}
+
+.devbar button {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 11.5px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.devbar button span {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.devbar button.is-active {
+  border-color: var(--hook);
+  color: var(--text-primary);
+}

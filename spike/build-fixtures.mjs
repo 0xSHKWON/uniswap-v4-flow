@@ -7,6 +7,7 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { trace } from './rpc.mjs';
 import { toGraph } from './graph.mjs';
+import { resolveTokens } from './tokens.mjs';
 
 const EXAMPLES = [
   {
@@ -47,8 +48,10 @@ const EXAMPLES = [
   },
 ];
 
-const dir = new URL('./fixtures/', import.meta.url);
-mkdirSync(dir, { recursive: true });
+// 앱이 읽는 사본과 스파이크의 사본을 동시에 쓴다. 한쪽만 갱신되면 조용히 어긋난다.
+const targets = [new URL('./fixtures/', import.meta.url), new URL('../src/fixtures/', import.meta.url)];
+for (const t of targets) mkdirSync(t, { recursive: true });
+const writeAll = (name, body) => targets.forEach((t) => writeFileSync(new URL(name, t), body));
 
 const index = [];
 for (const ex of EXAMPLES) {
@@ -59,12 +62,13 @@ for (const ex of EXAMPLES) {
     console.error(`SKIP ${ex.slug}: ${e.message}`);
     continue;
   }
-  writeFileSync(new URL(`${ex.slug}.json`, dir), JSON.stringify(graph, null, 2));
+  graph.tokens = await resolveTokens(graph);
+  writeAll(`${ex.slug}.json`, JSON.stringify(graph, null, 2));
   const hookNodes = graph.nodes.filter((n) => n.type === 'hook').length;
   const hiddenEdges = graph.edges.filter((e) => e.engineer?.note && e.amount).length;
   index.push({ ...ex, nodes: graph.nodes.length, edges: graph.edges.length, hooks: hookNodes, hiddenValueEdges: hiddenEdges, file: `${ex.slug}.json`, balanced: graph.balanced });
   console.log(`${ex.slug.padEnd(26)} nodes=${String(graph.nodes.length).padStart(2)} edges=${String(graph.edges.length).padStart(2)} hooks=${hookNodes} hidden=${hiddenEdges} balanced=${graph.balanced}`);
 }
 
-writeFileSync(new URL('index.json', dir), JSON.stringify(index, null, 2));
-console.log(`\nwrote ${index.length} fixtures + index.json`);
+writeAll('index.json', JSON.stringify(index, null, 2));
+console.log(`\nwrote ${index.length} fixtures + index.json to ${targets.length} locations`);
