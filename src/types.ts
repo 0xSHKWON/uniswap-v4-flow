@@ -63,11 +63,16 @@ export interface Graph {
   balanced: boolean;
 }
 
+export interface LocalizedText {
+  ko: string;
+  en: string;
+}
+
 export interface FixtureIndexEntry {
   slug: string;
   hash: string;
-  title: string;
-  blurb: string;
+  title: LocalizedText;
+  blurb: LocalizedText;
   nodes: number;
   edges: number;
   hooks: number;

@@ -2,8 +2,10 @@
 //
 // 입력창은 M2, 모드 토글은 M3이므로 여기엔 없다.
 // 예시 선택기는 레이아웃이 복잡도 사다리 전체에서 무너지지 않는지 확인하려고 둔 개발용 장치다.
+// 언어는 EN 기본, ?lang=ko 또는 우상단 토글 (i18n.ts).
 import { useState } from 'react';
 import { Diagram } from './Diagram';
+import { t, useLocale } from './i18n';
 import type { FixtureIndexEntry, Graph } from './types';
 
 import index from './fixtures/index.json';
@@ -27,52 +29,66 @@ const FIXTURES = index as FixtureIndexEntry[];
 const DEFAULT_SLUG = '03-hook-with-reach';
 
 export default function App() {
+  const [locale, setLocale] = useLocale();
   const [slug, setSlug] = useState(DEFAULT_SLUG);
   const graph = GRAPHS[slug];
   const meta = FIXTURES.find((f) => f.slug === slug);
 
   return (
     <div className="viz-root">
-      <header className="header">
-        <div>
-          <h1>Uniswap v4 트랜잭션 흐름</h1>
-          <p className="tx-hash">
-            <span className="chain">{graph.chain}</span>
-            <code>{graph.txHash}</code>
-          </p>
+      <header className="topbar">
+        <div className="brand">
+          <span className="brand-mark" aria-hidden="true" />
+          <h1>{t(locale, 'title')}</h1>
+        </div>
+        <div className="lang-toggle" role="group" aria-label="Language">
+          <button className={locale === 'ko' ? 'is-active' : ''} onClick={() => setLocale('ko')}>
+            KR
+          </button>
+          <button className={locale === 'en' ? 'is-active' : ''} onClick={() => setLocale('en')}>
+            EN
+          </button>
         </div>
       </header>
 
-      {meta && (
-        <p className="blurb">
-          <strong>{meta.title}</strong> — {meta.blurb}
-        </p>
-      )}
+      <main className="page">
+        <div className="tx-meta">
+          <span className="chain">{graph.chain}</span>
+          <code className="hash" title={graph.txHash}>
+            {graph.txHash}
+          </code>
+        </div>
 
-      <Diagram key={slug} graph={graph} />
+        {meta && (
+          <p className="blurb">
+            <strong>{meta.title[locale]}</strong> — {meta.blurb[locale]}
+          </p>
+        )}
 
-      <footer className="footer">
-        <p className="legend">
-          <span className="swatch swatch-flow" /> 정산된 이동
-          <span className="swatch swatch-hidden" /> Transfer 이벤트가 없는 이동
-          <span className="swatch swatch-hook" /> 훅
-        </p>
-        <p className="note">
-          이 화면은 이 트랜잭션에서 일어난 일을 그대로 서술한다. 풀이나 훅에 대한 평가는 하지 않는다.
-        </p>
-      </footer>
+        <section className="canvas">
+          <Diagram key={slug} graph={graph} locale={locale} />
+          <div className="canvas-foot">
+            <p className="legend">
+              <span className="swatch swatch-flow" /> {t(locale, 'legend.settled')}
+              <span className="swatch swatch-hidden" /> {t(locale, 'legend.hidden')}
+              <span className="swatch swatch-hook" /> {t(locale, 'legend.hook')}
+            </p>
+            <p className="note">{t(locale, 'note')}</p>
+          </div>
+        </section>
 
-      {/* 개발용: 복잡도 사다리를 훑어보며 레이아웃을 점검한다. M2의 예시 버튼과는 별개. */}
-      <nav className="devbar" aria-label="개발용 예시 전환">
-        {FIXTURES.map((f) => (
-          <button key={f.slug} className={f.slug === slug ? 'is-active' : ''} onClick={() => setSlug(f.slug)}>
-            {f.title}
-            <span>
-              노드 {f.nodes} · 훅 {f.hooks}
-            </span>
-          </button>
-        ))}
-      </nav>
+        <nav className="examples" aria-label={t(locale, 'examples.label')}>
+          <span className="examples-label">{t(locale, 'examples.label')}</span>
+          <div className="examples-row">
+            {FIXTURES.map((f) => (
+              <button key={f.slug} className={f.slug === slug ? 'is-active' : ''} onClick={() => setSlug(f.slug)}>
+                {f.title[locale]}
+                <span>{t(locale, 'examples.meta', { nodes: f.nodes, hooks: f.hooks })}</span>
+              </button>
+            ))}
+          </div>
+        </nav>
+      </main>
     </div>
   );
 }

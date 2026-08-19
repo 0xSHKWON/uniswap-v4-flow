@@ -46,23 +46,26 @@ export function formatEdgeAmount(
 
 export const shortAddress = (a: string) => (a.length > 12 ? `${a.slice(0, 6)}…${a.slice(-4)}` : a);
 
-/**
- * 훅 권한 비트를 사람 말로. 주소에서 공짜로 읽히므로 M4 매핑 전에도 쓸 수 있다.
- * 노드 박스 폭을 넘기면 옆 라벨과 부딪히므로 개수를 제한한다.
- */
-export function describeHook(permissions: string[] = [], max = 2): string[] {
-  const all = describeHookAll(permissions);
-  return all.length > max ? [...all.slice(0, max), '…'] : all;
-}
+export type HookTraitKey =
+  | 'trait.aroundSwap'
+  | 'trait.beforeSwap'
+  | 'trait.afterSwap'
+  | 'trait.fees'
+  | 'trait.addLiquidity'
+  | 'trait.removeLiquidity';
 
-function describeHookAll(permissions: string[]): string[] {
-  const out: string[] = [];
+/**
+ * 훅 권한 비트 → i18n 키. 주소에서 공짜로 읽히므로 M4 매핑 전에도 쓸 수 있다.
+ * 번역과 말줄임은 렌더링 쪽 몫 — 언어에 따라 글자 폭이 달라서 여기서 자르면 틀린다.
+ */
+export function describeHookKeys(permissions: string[] = []): HookTraitKey[] {
+  const out: HookTraitKey[] = [];
   const has = (p: string) => permissions.includes(p);
-  if (has('BEFORE_SWAP') && has('AFTER_SWAP')) out.push('스왑 전후 개입');
-  else if (has('BEFORE_SWAP')) out.push('스왑 전 개입');
-  else if (has('AFTER_SWAP')) out.push('스왑 후 개입');
-  if (has('BEFORE_SWAP_RETURNS_DELTA') || has('AFTER_SWAP_RETURNS_DELTA')) out.push('수수료 회수 가능');
-  if (has('BEFORE_ADD_LIQUIDITY') || has('AFTER_ADD_LIQUIDITY')) out.push('유동성 공급 개입');
-  if (has('BEFORE_REMOVE_LIQUIDITY') || has('AFTER_REMOVE_LIQUIDITY')) out.push('유동성 회수 개입');
+  if (has('BEFORE_SWAP') && has('AFTER_SWAP')) out.push('trait.aroundSwap');
+  else if (has('BEFORE_SWAP')) out.push('trait.beforeSwap');
+  else if (has('AFTER_SWAP')) out.push('trait.afterSwap');
+  if (has('BEFORE_SWAP_RETURNS_DELTA') || has('AFTER_SWAP_RETURNS_DELTA')) out.push('trait.fees');
+  if (has('BEFORE_ADD_LIQUIDITY') || has('AFTER_ADD_LIQUIDITY')) out.push('trait.addLiquidity');
+  if (has('BEFORE_REMOVE_LIQUIDITY') || has('AFTER_REMOVE_LIQUIDITY')) out.push('trait.removeLiquidity');
   return out;
 }

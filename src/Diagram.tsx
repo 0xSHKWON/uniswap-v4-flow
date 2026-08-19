@@ -2,14 +2,15 @@
 import { useMemo, useState } from 'react';
 import type { Graph } from './types';
 import { declutter, layout, nodeObstacles, type LabelBox, type PlacedNode, type RoutedEdge } from './layout';
-import { describeHook, formatEdgeAmount, shortAddress } from './format';
+import { describeHookKeys, formatEdgeAmount, shortAddress } from './format';
+import { t, type Locale, type StringKey } from './i18n';
 
-const ROLE_LABEL: Record<PlacedNode['role'], string> = {
-  pool: 'v4 코어',
-  payer: '지불',
-  recipient: '수령',
-  hook: '훅',
-  external: '훅이 호출한 컨트랙트',
+const ROLE_KEY: Record<PlacedNode['role'], StringKey> = {
+  pool: 'role.pool',
+  payer: 'role.payer',
+  recipient: 'role.recipient',
+  hook: 'role.hook',
+  external: 'role.external',
 };
 
 /** 직교 폴리라인 — 모서리를 둥글게. 훅 박스를 피해 도는 개입선에 쓴다. */
@@ -48,9 +49,10 @@ function pathOf(points: Array<{ x: number; y: number }>): string {
 
 interface Props {
   graph: Graph;
+  locale: Locale;
 }
 
-export function Diagram({ graph }: Props) {
+export function Diagram({ graph, locale }: Props) {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [hovered, setHovered] = useState<RoutedEdge | null>(null);
 
@@ -104,7 +106,7 @@ export function Diagram({ graph }: Props) {
         style={{ maxWidth: box.w }}
         viewBox={`${box.x} ${box.y} ${box.w} ${box.h}`}
         role="img"
-        aria-label={`트랜잭션 ${graph.txHash} 자금 흐름도`}
+        aria-label={t(locale, 'diagram.aria', { hash: graph.txHash })}
       >
         <defs>
           <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -148,7 +150,8 @@ export function Diagram({ graph }: Props) {
         })}
 
         {view.nodes.map((n) => {
-          const traits = n.type === 'hook' ? describeHook(n.permissions) : [];
+          const allTraits = n.type === 'hook' ? describeHookKeys(n.permissions).map((k) => t(locale, k)) : [];
+          const traits = allTraits.length > 2 ? [...allTraits.slice(0, 2), '…'] : allTraits;
           const extras = n.type === 'hook' ? reachCount(n.id) : 0;
           const isOpen = expanded.has(n.id);
           return (
@@ -161,34 +164,29 @@ export function Diagram({ graph }: Props) {
             >
               <rect width={n.w} height={n.h} rx="10" />
               <text className="node-role" x="14" y="20">
-                {n.known ?? ROLE_LABEL[n.role]}
+                {n.known ?? t(locale, ROLE_KEY[n.role])}
               </text>
               <text className="node-label" x="14" y="42">
                 {n.type === 'core' ? 'PoolManager' : n.address ? shortAddress(n.address) : n.label}
               </text>
               {n.type === 'core' && (
                 <text className="node-sub" x="14" y="60">
-                  모든 정산이 여기를 통과한다
+                  {t(locale, 'node.pm.sub')}
                 </text>
               )}
-              {n.role === 'payer' && n.type === 'eoa' && (
+              {n.type === 'eoa' && (n.role === 'payer' || n.role === 'recipient') && (
                 <text className="node-sub" x="14" y="60">
-                  이 트랜잭션을 보낸 지갑
-                </text>
-              )}
-              {n.role === 'recipient' && n.type === 'eoa' && (
-                <text className="node-sub" x="14" y="60">
-                  이 트랜잭션을 보낸 지갑
+                  {t(locale, 'node.wallet.sub')}
                 </text>
               )}
               {n.type === 'hook' && (
                 <>
                   <text className="node-sub" x="14" y="60">
-                    {traits.join(' · ') || '권한 정보 없음'}
+                    {traits.join(' · ') || t(locale, 'node.hook.noInfo')}
                   </text>
                   {extras > 0 && (
                     <text className="node-toggle" x="14" y="78">
-                      {isOpen ? '▾' : '▸'} 외부 컨트랙트 {extras}개
+                      {isOpen ? '▾' : '▸'} {t(locale, 'node.hook.externals', { n: extras })}
                     </text>
                   )}
                 </>
@@ -211,7 +209,7 @@ export function Diagram({ graph }: Props) {
               </text>
               {e.hidden && (
                 <text className="edge-sub" textAnchor={e.label.anchor} dy="11">
-                  Transfer 이벤트 없음
+                  {t(locale, 'edge.noTransfer')}
                 </text>
               )}
             </g>
@@ -219,24 +217,24 @@ export function Diagram({ graph }: Props) {
         })}
         {view.intervene.map((i) => (
           <text key={`ilabel-${i.key}`} className="intervene-label" x={i.label.x} y={i.label.y}>
-            개입 · 값 이동 없음
+            {t(locale, 'edge.intervened')}
           </text>
         ))}
         {view.reach.map((r) =>
           r.count > 1 ? (
             <text key={`rlabel-${r.key}`} className="reach-label" x={r.label.x} y={r.label.y}>
-              호출 {r.count}회
+              {t(locale, 'edge.calls', { n: r.count })}
             </text>
           ) : null,
         )}
       </svg>
 
-      {hovered && <EdgeDetail edge={hovered} graph={graph} />}
+      {hovered && <EdgeDetail edge={hovered} graph={graph} locale={locale} />}
     </div>
   );
 }
 
-function EdgeDetail({ edge, graph }: { edge: RoutedEdge; graph: Graph }) {
+function EdgeDetail({ edge, graph, locale }: { edge: RoutedEdge; graph: Graph; locale: Locale }) {
   const amount = formatEdgeAmount(graph.tokens, edge.amount, edge.token);
   const calls = edge.calls.map((c) => c.engineer.call);
   const unique = [...new Set(calls)];
@@ -244,18 +242,13 @@ function EdgeDetail({ edge, graph }: { edge: RoutedEdge; graph: Graph }) {
     <aside className="edge-detail" aria-live="polite">
       <div className="edge-detail-amount">{amount}</div>
       <div className="edge-detail-row">
-        <span>호출</span>
+        <span>{t(locale, 'detail.call')}</span>
         <code>
           {unique.join(', ')}
           {calls.length > unique.length ? ` ×${calls.length}` : ''}
         </code>
       </div>
-      {edge.claim && (
-        <p className="edge-detail-note">
-          ERC-6909 청구권이라 토큰이 PoolManager 밖으로 나가지 않는다. Transfer 이벤트가 없으므로
-          일반 익스플로러에는 이 이동이 표시되지 않는다.
-        </p>
-      )}
+      {edge.claim && <p className="edge-detail-note">{t(locale, 'detail.claimNote')}</p>}
     </aside>
   );
 }

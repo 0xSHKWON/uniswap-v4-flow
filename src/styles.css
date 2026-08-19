@@ -1,15 +1,20 @@
 /* 색은 dataviz 스킬의 검증된 기본 팔레트에서 가져왔고 validate_palette.js 로 확인했다.
    두 개의 accent 만 쓴다: 훅 = blue(slot 1), Transfer에 안 잡히는 이동 = orange(slot 2).
-   나머지는 전부 중립색 — 이 그림의 주인공은 훅이고, 나머지는 맥락이다 (emphasis 형식). */
+   나머지는 전부 중립색 — 이 그림의 주인공은 훅이고, 나머지는 맥락이다 (emphasis 형식).
+
+   구조: 페이지(--bg) 위에 캔버스 카드(--surface-1)가 뜨고, 그 안에 점 격자가 깔린다.
+   다이어그램이 "문서 위의 그림"이 아니라 "도구의 캔버스"로 읽히게 하는 장치. */
 
 .viz-root {
   color-scheme: light;
+  --bg: #f1f0ee;
   --surface-1: #fcfcfb;
   --surface-2: #f0efec;
   --text-primary: #0b0b0b;
   --text-secondary: #52514e;
   --text-muted: #7c7b76;
   --line: #d6d5d0;
+  --dot: #e2e1dc;
   --hook: #2a78d6;
   --hidden: #eb6834;
   --flow: #52514e;
@@ -18,12 +23,14 @@
 @media (prefers-color-scheme: dark) {
   :root:where(:not([data-theme='light'])) .viz-root {
     color-scheme: dark;
+    --bg: #121211;
     --surface-1: #1a1a19;
     --surface-2: #262624;
     --text-primary: #ffffff;
     --text-secondary: #c3c2b7;
     --text-muted: #918f86;
     --line: #3c3b38;
+    --dot: #292927;
     --hook: #3987e5;
     --hidden: #d95926;
     --flow: #c3c2b7;
@@ -32,12 +39,14 @@
 
 :root[data-theme='dark'] .viz-root {
   color-scheme: dark;
+  --bg: #121211;
   --surface-1: #1a1a19;
   --surface-2: #262624;
   --text-primary: #ffffff;
   --text-secondary: #c3c2b7;
   --text-muted: #918f86;
   --line: #3c3b38;
+  --dot: #292927;
   --hook: #3987e5;
   --hidden: #d95926;
   --flow: #c3c2b7;
@@ -50,54 +59,135 @@
 body {
   margin: 0;
   font-family: ui-sans-serif, system-ui, -apple-system, 'Helvetica Neue', sans-serif;
-  background: var(--surface-1, #fcfcfb);
+  background: #f1f0ee;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #121211;
+  }
 }
 
 .viz-root {
   min-height: 100vh;
-  padding: 28px 32px 20px;
-  background: var(--surface-1);
+  background: var(--bg);
   color: var(--text-primary);
+}
+
+/* --- 상단 바 --- */
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 28px;
+  background: var(--surface-1);
+  border-bottom: 1px solid var(--line);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.brand-mark {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  background: var(--hook);
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lang-toggle {
+  flex: none;
+  display: flex;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.lang-toggle button {
+  padding: 5px 12px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+}
+
+.lang-toggle button + button {
+  border-left: 1px solid var(--line);
+}
+
+.lang-toggle button.is-active {
+  background: var(--surface-2);
+  color: var(--text-primary);
+}
+
+/* --- 본문 --- */
+
+.page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 18px 28px 32px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
 }
 
-.header h1 {
-  margin: 0;
-  font-size: 19px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-
-.tx-hash {
-  margin: 6px 0 0;
+.tx-meta {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
-  color: var(--text-muted);
-}
-
-.tx-hash code {
-  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
-  font-size: 11.5px;
+  min-width: 0;
 }
 
 .chain {
-  padding: 2px 7px;
+  flex: none;
+  padding: 2px 8px;
   border-radius: 999px;
   background: var(--surface-2);
+  border: 1px solid var(--line);
   color: var(--text-secondary);
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 550;
   letter-spacing: 0.02em;
+}
+
+.hash {
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .blurb {
   margin: 0;
   font-size: 13px;
   color: var(--text-secondary);
-  max-width: 70ch;
+  max-width: 78ch;
   line-height: 1.5;
 }
 
@@ -105,19 +195,40 @@ body {
   color: var(--text-primary);
 }
 
-/* --- 다이어그램 --- */
+/* --- 캔버스 카드 --- */
+
+.canvas {
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
+}
 
 .diagram-wrap {
   position: relative;
-  flex: 1;
-  min-height: 0;
+  padding: 26px 28px;
+  background-image: radial-gradient(var(--dot) 1px, transparent 1.4px);
+  background-size: 22px 22px;
 }
 
 .diagram {
+  display: block;
+  margin: 0 auto;
   width: 100%;
   height: auto;
-  max-height: 68vh;
-  display: block;
+  max-height: 62vh;
+}
+
+.canvas-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 24px;
+  padding: 10px 18px;
+  border-top: 1px solid var(--line);
+  background: var(--surface-1);
 }
 
 /* 노드 — 빈 박스가 아니라 내용을 담는다 (§9) */
@@ -139,7 +250,7 @@ body {
 }
 
 .node-external rect {
-  fill: none;
+  fill: var(--surface-1);
   stroke: var(--line);
   stroke-dasharray: 3 3;
 }
@@ -265,21 +376,18 @@ body {
   stroke-dasharray: 4 4;
 }
 
-
-
 /* --- 툴팁 --- */
 
 .edge-detail {
   position: absolute;
-  right: 0;
-  /* 노드는 대부분 위쪽에 모이므로 아래쪽에 띄운다. */
-  bottom: 0;
-  width: 260px;
+  right: 16px;
+  bottom: 16px;
+  width: 264px;
   padding: 12px 14px;
   border: 1px solid var(--line);
   border-radius: 10px;
   background: var(--surface-1);
-  box-shadow: 0 4px 16px rgb(0 0 0 / 8%);
+  box-shadow: 0 6px 20px rgb(0 0 0 / 12%);
 }
 
 .edge-detail-amount {
@@ -309,13 +417,7 @@ body {
   padding-top: 9px;
 }
 
-/* --- 범례 / 푸터 --- */
-
-.footer {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
+/* --- 범례 --- */
 
 .legend {
   margin: 0;
@@ -358,37 +460,58 @@ body {
   color: var(--text-muted);
 }
 
-/* --- 개발용 예시 전환 --- */
+/* --- 예시 --- */
 
-.devbar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  padding-top: 12px;
-  border-top: 1px dashed var(--line);
-}
-
-.devbar button {
+.examples {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding: 6px 10px;
-  border: 1px solid var(--line);
-  border-radius: 7px;
-  background: transparent;
-  color: var(--text-secondary);
-  font: inherit;
-  font-size: 11.5px;
-  cursor: pointer;
-  text-align: left;
+  gap: 8px;
+  margin-top: 4px;
 }
 
-.devbar button span {
-  font-size: 10px;
+.examples-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--text-muted);
 }
 
-.devbar button.is-active {
+.examples-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.examples-row button {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 9px 13px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-1);
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 550;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 120ms ease;
+}
+
+.examples-row button span {
+  font-size: 10.5px;
+  font-weight: 450;
+  color: var(--text-muted);
+}
+
+.examples-row button:hover {
+  border-color: var(--text-muted);
+}
+
+.examples-row button.is-active {
   border-color: var(--hook);
   color: var(--text-primary);
+  background: color-mix(in srgb, var(--hook) 6%, var(--surface-1));
 }

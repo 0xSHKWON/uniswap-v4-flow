@@ -2,8 +2,14 @@
   {
     "slug": "01-no-hook",
     "hash": "0xa5e79837530b749b9b1d9942256d43e90f7d5cf924a8264ef85eb5f238e34ac8",
-    "title": "훅 없는 스왑",
-    "blurb": "기준선. 지갑에서 나가고 들어오는 두 방향이 전부다.",
+    "title": {
+      "ko": "훅 없는 스왑",
+      "en": "Swap without a hook"
+    },
+    "blurb": {
+      "ko": "기준선. 지갑에서 나가고 들어오는 두 방향이 전부다.",
+      "en": "The baseline. Two arrows — out of the wallet and back — and nothing else."
+    },
     "nodes": 2,
     "edges": 4,
     "hooks": 0,
@@ -14,8 +20,14 @@
   {
     "slug": "02-hook-takes-fee",
     "hash": "0x7d92432dd0b63a002f295f5be79218988589071acd5a88d71c20aecc99059b23",
-    "title": "훅이 수수료를 가져가는 스왑",
-    "blurb": "가장 단순한 훅. 훅이 가져간 몫이 Transfer 이벤트에는 없다.",
+    "title": {
+      "ko": "훅이 수수료를 가져가는 스왑",
+      "en": "Hook takes a fee"
+    },
+    "blurb": {
+      "ko": "가장 단순한 훅. 훅이 가져간 몫이 Transfer 이벤트에는 없다.",
+      "en": "The simplest hook. The cut it takes never appears in a Transfer event."
+    },
     "nodes": 3,
     "edges": 6,
     "hooks": 1,
@@ -26,8 +38,14 @@
   {
     "slug": "03-hook-with-reach",
     "hash": "0xe0a7208ca3ea14960608d6a2d32b9b5cced5b4480437b2428a72d5a1e09594c1",
-    "title": "훅이 외부 프로토콜을 부르는 스왑",
-    "blurb": "ERC-6909 청구권으로 수수료를 챙기고, 컨트랙트 4개를 추가로 호출한다. 실제 ERC20 Transfer는 2건뿐.",
+    "title": {
+      "ko": "훅이 외부 프로토콜을 부르는 스왑",
+      "en": "Hook calls external protocols"
+    },
+    "blurb": {
+      "ko": "ERC-6909 청구권으로 수수료를 챙기고, 컨트랙트 4개를 추가로 호출한다. 실제 ERC20 Transfer는 2건뿐.",
+      "en": "Takes its fee as an ERC-6909 claim and reaches four other contracts. Only two real ERC20 Transfers."
+    },
     "nodes": 9,
     "edges": 10,
     "hooks": 1,
@@ -38,8 +56,14 @@
   {
     "slug": "04-dense",
     "hash": "0xe84009a28799a4bb408a7a4991d7170ee9d35a0083cabb1702ab5e25a60fc0bf",
-    "title": "한 훅이 많이 움직이는 스왑",
-    "blurb": "노드는 적은데 엣지가 42개. 접기/펼치기가 필요해지는 지점.",
+    "title": {
+      "ko": "한 훅이 많이 움직이는 스왑",
+      "en": "One busy hook"
+    },
+    "blurb": {
+      "ko": "노드는 적은데 엣지가 42개. 접기/펼치기가 필요해지는 지점.",
+      "en": "Few nodes, 42 edges. The point where collapsing becomes necessary."
+    },
     "nodes": 8,
     "edges": 42,
     "hooks": 1,
@@ -50,8 +74,14 @@
   {
     "slug": "05-two-hooks",
     "hash": "0xbd31a2249ce2d5e6ed10a3de7a6e2aa7d32830295fd0f446925bfec3fa8fc10a",
-    "title": "서로 다른 훅 두 개",
-    "blurb": "한 트랜잭션이 성격이 다른 훅 두 개를 거친다.",
+    "title": {
+      "ko": "서로 다른 훅 두 개",
+      "en": "Two different hooks"
+    },
+    "blurb": {
+      "ko": "한 트랜잭션이 성격이 다른 훅 두 개를 거친다.",
+      "en": "One transaction passing through two hooks with different behavior."
+    },
     "nodes": 14,
     "edges": 30,
     "hooks": 2,
@@ -62,8 +92,14 @@
   {
     "slug": "06-multihop-three-hooks",
     "hash": "0x74803911a975a65f424bf2bce3bfa8ec46892c794629fa401ecfc5ea3f8ab088",
-    "title": "멀티홉 · 훅 세 개",
-    "blurb": "노드 22 / 엣지 47. 레이아웃 상한을 시험하는 케이스 (기획서 §10 \"스파게티\" 리스크).",
+    "title": {
+      "ko": "멀티홉 · 훅 세 개",
+      "en": "Multihop · three hooks"
+    },
+    "blurb": {
+      "ko": "노드 22 / 엣지 47. 레이아웃 상한을 시험하는 케이스 (기획서 §10 \"스파게티\" 리스크).",
+      "en": "22 nodes / 47 edges. The layout stress test (the \"spaghetti\" risk from the plan)."
+    },
     "nodes": 22,
     "edges": 47,
     "hooks": 3,

@@ -29,6 +29,7 @@ npm run build
 ```
 
 RPC는 필요 없다. 렌더링은 `src/fixtures/`의 정적 그래프 JSON만 읽는다.
+언어는 **영어 기본**, 우상단 KR|EN 토글 또는 `?lang=ko`. 언어도 URL에 담긴다 (§4의 규칙을 언어에 적용).
 
 ## 구조
 
@@ -38,6 +39,7 @@ src/
   layout.ts     손으로 짠 노드 배치 + 엣지 라우팅 + 라벨 겹침 해소
   Diagram.tsx   SVG 렌더링 (다이어그램 라이브러리 없음)
   format.ts     금액/주소/훅 권한 표기
+  i18n.ts       KR/EN 사전과 ?lang= 처리 (기본 EN)
   fixtures/     검증된 예시 6건 + index.json
 spike/          M0 스파이크 — 트레이스 복원 엔진과 검증 하네스
 ```
