@@ -48,6 +48,14 @@ const en = {
   'diagram.aria': 'Money flow diagram for transaction {hash}',
 
   'hash.copied': 'Copied',
+
+  'side.tx': 'Transaction',
+  'side.summary': 'Summary',
+  'sum.movements': 'Value movements',
+  'sum.hidden': 'No Transfer event',
+  'sum.tokens': 'Tokens',
+  'sum.hooks': 'Hooks',
+
   'zoom.in': 'Zoom in',
   'zoom.out': 'Zoom out',
   'zoom.fit': 'Fit to view',
@@ -96,6 +104,14 @@ const ko: Record<StringKey, string> = {
   'diagram.aria': '트랜잭션 {hash} 자금 흐름도',
 
   'hash.copied': '복사됨',
+
+  'side.tx': '트랜잭션',
+  'side.summary': '요약',
+  'sum.movements': '값 이동',
+  'sum.hidden': 'Transfer 이벤트 없음',
+  'sum.tokens': '토큰',
+  'sum.hooks': '훅',
+
   'zoom.in': '확대',
   'zoom.out': '축소',
   'zoom.fit': '전체 보기',

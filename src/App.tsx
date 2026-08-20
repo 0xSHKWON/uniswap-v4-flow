@@ -1,10 +1,10 @@
 // M1 — 단일 트랜잭션 렌더링. 해시 하드코딩, 배포 안 함 (기획서 §8).
 //
-// 입력창은 M2, 모드 토글은 M3이므로 여기엔 없다.
-// 예시 선택기는 레이아웃이 복잡도 사다리 전체에서 무너지지 않는지 확인하려고 둔 개발용 장치다.
-// 언어는 EN 기본, ?lang=ko 또는 우상단 토글 (i18n.ts).
-import { useState } from 'react';
+// 레이아웃은 인스펙터 구조다: 왼쪽 사이드바(트랜잭션 정보 · 요약 · 예시 목록),
+// 오른쪽 풀블리드 캔버스. 입력창(M2)은 사이드바의 트랜잭션 섹션 자리에 들어온다.
+import { useMemo, useState } from 'react';
 import { Diagram } from './Diagram';
+import { describeHookKeys, shortAddress, tokenOf } from './format';
 import { t, useLocale } from './i18n';
 import type { FixtureIndexEntry, Graph } from './types';
 
@@ -42,6 +42,22 @@ export default function App() {
     });
   };
 
+  // 요약 통계 — 전부 그래프 JSON에서 유도한다. RPC 없음.
+  const summary = useMemo(() => {
+    const settlements = graph.edges.filter((e) => e.layer === 'settlement' && e.amount);
+    const hiddenCount = settlements.filter((e) => e.hidden).length;
+    const symbols = [
+      ...new Set(settlements.map((e) => tokenOf(graph.tokens, e.token).symbol).filter(Boolean)),
+    ];
+    const hooks = graph.nodes
+      .filter((n) => n.type === 'hook')
+      .map((n) => ({
+        address: n.address ?? '',
+        traits: describeHookKeys(n.permissions).map((k) => t(locale, k)),
+      }));
+    return { movements: settlements.length, hiddenCount, symbols, hooks };
+  }, [graph, locale]);
+
   return (
     <div className="viz-root">
       <header className="topbar">
@@ -49,13 +65,6 @@ export default function App() {
           <span className="brand-mark" aria-hidden="true" />
           <h1>{t(locale, 'title')}</h1>
         </div>
-
-        {/* 해시는 헤더에 산다 — 본문 위에 메타 줄을 쌓으면 캔버스 시작이 밀린다. */}
-        <button className="tx-chip" onClick={copyHash} title={graph.txHash}>
-          <span className="chain">{graph.chain}</span>
-          <code>{copied ? t(locale, 'hash.copied') : `${graph.txHash.slice(0, 10)}…${graph.txHash.slice(-8)}`}</code>
-        </button>
-
         <div className="lang-toggle" role="group" aria-label="Language">
           <button className={locale === 'ko' ? 'is-active' : ''} onClick={() => setLocale('ko')}>
             KR
@@ -66,15 +75,76 @@ export default function App() {
         </div>
       </header>
 
-      <main className="page">
+      <div className="workspace">
+        <aside className="sidebar">
+          <section className="side-section">
+            <h2>{t(locale, 'side.tx')}</h2>
+            <button className="tx-chip" onClick={copyHash} title={graph.txHash}>
+              <span className="chain">{graph.chain}</span>
+              <code>{copied ? t(locale, 'hash.copied') : `${graph.txHash.slice(0, 10)}…${graph.txHash.slice(-8)}`}</code>
+            </button>
+            {meta && (
+              <>
+                <h3 className="side-title">{meta.title[locale]}</h3>
+                <p className="side-blurb">{meta.blurb[locale]}</p>
+              </>
+            )}
+          </section>
+
+          <section className="side-section">
+            <h2>{t(locale, 'side.summary')}</h2>
+            <dl className="stats">
+              <div>
+                <dt>{t(locale, 'sum.movements')}</dt>
+                <dd>{summary.movements}</dd>
+              </div>
+              <div className={summary.hiddenCount ? 'is-hidden-stat' : ''}>
+                <dt>{t(locale, 'sum.hidden')}</dt>
+                <dd>{summary.hiddenCount}</dd>
+              </div>
+            </dl>
+            {summary.symbols.length > 0 && (
+              <div className="side-row">
+                <span className="side-row-label">{t(locale, 'sum.tokens')}</span>
+                <div className="token-chips">
+                  {summary.symbols.map((s) => (
+                    <span key={s} className="token-chip">
+                      {s}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {summary.hooks.length > 0 && (
+              <div className="side-row">
+                <span className="side-row-label">{t(locale, 'sum.hooks')}</span>
+                <ul className="hook-list">
+                  {summary.hooks.map((h) => (
+                    <li key={h.address}>
+                      <code>{shortAddress(h.address)}</code>
+                      <span>{h.traits.join(' · ')}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </section>
+
+          <section className="side-section side-examples">
+            <h2>{t(locale, 'examples.label')}</h2>
+            <div className="example-list">
+              {FIXTURES.map((f) => (
+                <button key={f.slug} className={f.slug === slug ? 'is-active' : ''} onClick={() => setSlug(f.slug)}>
+                  <span className="example-title">{f.title[locale]}</span>
+                  <span className="example-meta">{t(locale, 'examples.meta', { nodes: f.nodes, hooks: f.hooks })}</span>
+                </button>
+              ))}
+            </div>
+          </section>
+        </aside>
+
         <section className="canvas">
           <Diagram key={slug} graph={graph} locale={locale} />
-          {meta && (
-            <div className="caption" aria-hidden="true">
-              <strong>{meta.title[locale]}</strong>
-              <span>{meta.blurb[locale]}</span>
-            </div>
-          )}
           <div className="canvas-foot">
             <p className="legend">
               <span className="swatch swatch-flow" /> {t(locale, 'legend.settled')}
@@ -84,19 +154,7 @@ export default function App() {
             <p className="note">{t(locale, 'note')}</p>
           </div>
         </section>
-
-        <nav className="examples" aria-label={t(locale, 'examples.label')}>
-          <span className="examples-label">{t(locale, 'examples.label')}</span>
-          <div className="examples-row">
-            {FIXTURES.map((f) => (
-              <button key={f.slug} className={f.slug === slug ? 'is-active' : ''} onClick={() => setSlug(f.slug)}>
-                {f.title[locale]}
-                <span>{t(locale, 'examples.meta', { nodes: f.nodes, hooks: f.hooks })}</span>
-              </button>
-            ))}
-          </div>
-        </nav>
-      </main>
+      </div>
     </div>
   );
 }
