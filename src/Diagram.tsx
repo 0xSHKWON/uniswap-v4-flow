@@ -1,5 +1,5 @@
 // SVG를 직접 쓴다 (기획서 §9). 다이어그램 라이브러리 없음.
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Graph } from './types';
 import { declutter, layout, nodeObstacles, type LabelBox, type PlacedNode, type RoutedEdge } from './layout';
 import { describeHookKeys, formatEdgeAmount, shortAddress } from './format';
@@ -52,6 +52,26 @@ interface Props {
   locale: Locale;
 }
 
+interface Box {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+/** 화면 픽셀 → SVG 좌표. preserveAspectRatio "meet"의 레터박스 오프셋까지 계산한다. */
+function clientToSvg(svg: SVGSVGElement, vb: Box, clientX: number, clientY: number) {
+  const r = svg.getBoundingClientRect();
+  const scale = Math.min(r.width / vb.w, r.height / vb.h);
+  const ox = (r.width - vb.w * scale) / 2;
+  const oy = (r.height - vb.h * scale) / 2;
+  return {
+    x: vb.x + (clientX - r.left - ox) / scale,
+    y: vb.y + (clientY - r.top - oy) / scale,
+    scale,
+  };
+}
+
 export function Diagram({ graph, locale }: Props) {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [hovered, setHovered] = useState<RoutedEdge | null>(null);
@@ -102,14 +122,107 @@ export function Diagram({ graph, locale }: Props) {
   const reachCount = (hookId: string) =>
     graph.edges.filter((e) => e.layer === 'reach' && e.from === hookId).length;
 
+  // --- 줌/팬 ---
+  // box(전체가 들어오는 뷰)가 기본값. 사용자가 휠/드래그로 만지면 userBox가 우선한다.
+  // 훅을 펼쳐 box가 바뀌어도 사용자가 잡은 시점은 유지한다.
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [userBox, setUserBox] = useState<Box | null>(null);
+  const [dragging, setDragging] = useState(false);
+  const fitRef = useRef(box);
+  fitRef.current = box;
+  const vb = userBox ?? box;
+  const vbRef = useRef(vb);
+  vbRef.current = vb;
+  const zoomPct = Math.round((box.w / vb.w) * 100);
+
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    // React의 onWheel은 passive라 preventDefault가 안 먹는다 — 직접 단다.
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const svg = svgRef.current;
+      if (!svg) return;
+      const cur = vbRef.current;
+      const fit = fitRef.current;
+      const factor = Math.exp(e.deltaY * 0.0016);
+      const w = Math.min(Math.max(cur.w * factor, fit.w / 6), fit.w * 2.5);
+      const f = w / cur.w;
+      const p = clientToSvg(svg, cur, e.clientX, e.clientY);
+      setUserBox({
+        x: p.x - (p.x - cur.x) * f,
+        y: p.y - (p.y - cur.y) * f,
+        w,
+        h: cur.h * f,
+      });
+    };
+    el.addEventListener('wheel', onWheel, { passive: false });
+    return () => el.removeEventListener('wheel', onWheel);
+  }, []);
+
+  const zoomBy = (factor: number) => {
+    const cur = vbRef.current;
+    const fit = fitRef.current;
+    const w = Math.min(Math.max(cur.w * factor, fit.w / 6), fit.w * 2.5);
+    const f = w / cur.w;
+    const cx = cur.x + cur.w / 2;
+    const cy = cur.y + cur.h / 2;
+    setUserBox({ x: cx - (cx - cur.x) * f, y: cy - (cy - cur.y) * f, w, h: cur.h * f });
+  };
+
+  // 드래그 팬. 4px 넘게 움직였으면 이어지는 click을 삼켜 노드 클릭과 충돌하지 않게 한다.
+  const drag = useRef<{ x: number; y: number; moved: boolean } | null>(null);
+  const onPointerDown = (e: React.PointerEvent<SVGSVGElement>) => {
+    if (e.button !== 0) return;
+    // 캡처는 여기서 걸지 않는다 — pointerdown에서 걸면 click이 svg로
+    // 재타게팅되어 노드 클릭(훅 펼치기)이 죽는다. 실제 드래그가 시작되면 건다.
+    drag.current = { x: e.clientX, y: e.clientY, moved: false };
+  };
+  const onPointerMove = (e: React.PointerEvent<SVGSVGElement>) => {
+    const d = drag.current;
+    const svg = svgRef.current;
+    if (!d || !svg) return;
+    const dx = e.clientX - d.x;
+    const dy = e.clientY - d.y;
+    if (!d.moved && Math.abs(dx) + Math.abs(dy) > 4) {
+      d.moved = true;
+      e.currentTarget.setPointerCapture(e.pointerId);
+      setDragging(true);
+    }
+    if (!d.moved) return;
+    const cur = vbRef.current;
+    const { scale } = clientToSvg(svg, cur, e.clientX, e.clientY);
+    setUserBox({ ...cur, x: cur.x - dx / scale, y: cur.y - dy / scale });
+    d.x = e.clientX;
+    d.y = e.clientY;
+  };
+  const onPointerUp = () => {
+    setDragging(false);
+    // click 이벤트가 pointer up 뒤에 오므로 moved 플래그는 클릭 캡처에서 지운다.
+    if (drag.current && !drag.current.moved) drag.current = null;
+  };
+  const onClickCapture = (e: React.MouseEvent) => {
+    if (drag.current?.moved) {
+      e.stopPropagation();
+    }
+    drag.current = null;
+  };
+
   return (
-    <div className="diagram-wrap">
+    <div ref={wrapRef} className={`diagram-wrap${dragging ? ' is-dragging' : ''}`}>
       <svg
+        ref={svgRef}
         className="diagram"
-        style={{ maxWidth: box.w }}
-        viewBox={`${box.x} ${box.y} ${box.w} ${box.h}`}
+        viewBox={`${vb.x} ${vb.y} ${vb.w} ${vb.h}`}
+        preserveAspectRatio="xMidYMid meet"
         role="img"
         aria-label={t(locale, 'diagram.aria', { hash: graph.txHash })}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+        onClickCapture={onClickCapture}
       >
         <defs>
           <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -236,6 +349,18 @@ export function Diagram({ graph, locale }: Props) {
           ) : null,
         )}
       </svg>
+
+      <div className="zoom-controls" role="group" aria-label="Zoom">
+        <button onClick={() => zoomBy(1.25)} aria-label={t(locale, 'zoom.out')}>
+          −
+        </button>
+        <button className="zoom-pct" onClick={() => setUserBox(null)} title={t(locale, 'zoom.fit')}>
+          {zoomPct}%
+        </button>
+        <button onClick={() => zoomBy(0.8)} aria-label={t(locale, 'zoom.in')}>
+          +
+        </button>
+      </div>
 
       {hovered && <EdgeDetail edge={hovered} graph={graph} locale={locale} />}
     </div>

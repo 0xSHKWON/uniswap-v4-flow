@@ -46,6 +46,10 @@ const en = {
   'examples.meta': '{nodes} nodes · {hooks} hooks',
 
   'diagram.aria': 'Money flow diagram for transaction {hash}',
+
+  'zoom.in': 'Zoom in',
+  'zoom.out': 'Zoom out',
+  'zoom.fit': 'Fit to view',
 } as const;
 
 export type StringKey = keyof typeof en;
@@ -89,6 +93,10 @@ const ko: Record<StringKey, string> = {
   'examples.meta': '노드 {nodes} · 훅 {hooks}',
 
   'diagram.aria': '트랜잭션 {hash} 자금 흐름도',
+
+  'zoom.in': '확대',
+  'zoom.out': '축소',
+  'zoom.fit': '전체 보기',
 };
 
 const STRINGS: Record<Locale, Record<StringKey, string>> = { en, ko };

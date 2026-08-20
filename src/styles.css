@@ -56,10 +56,17 @@
   box-sizing: border-box;
 }
 
+html,
+body,
+#root {
+  height: 100%;
+}
+
 body {
   margin: 0;
   font-family: ui-sans-serif, system-ui, -apple-system, 'Helvetica Neue', sans-serif;
   background: #f1f0ee;
+  overflow: hidden;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -69,7 +76,12 @@ body {
 }
 
 .viz-root {
-  min-height: 100vh;
+  /* 고정 화면: 페이지 스크롤 없음. 캔버스가 남는 높이를 다 차지하고
+     범례/예시 패널은 아래 고정, 다이어그램은 휠 줌/드래그 팬으로 본다. */
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   background: var(--bg);
   color: var(--text-primary);
 }
@@ -77,8 +89,7 @@ body {
 /* --- 상단 바 --- */
 
 .topbar {
-  position: sticky;
-  top: 0;
+  flex: none;
   z-index: 10;
   display: flex;
   align-items: center;
@@ -146,12 +157,15 @@ body {
 /* --- 본문 --- */
 
 .page {
-  max-width: 1280px;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: 1360px;
   margin: 0 auto;
-  padding: 18px 28px 32px;
+  padding: 14px 28px 18px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .tx-meta {
@@ -198,6 +212,10 @@ body {
 /* --- 캔버스 카드 --- */
 
 .canvas {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
   background: var(--surface-1);
   border: 1px solid var(--line);
   border-radius: 14px;
@@ -207,20 +225,27 @@ body {
 
 .diagram-wrap {
   position: relative;
-  padding: 26px 28px;
+  flex: 1;
+  min-height: 0;
   background-image: radial-gradient(var(--dot) 1px, transparent 1.4px);
   background-size: 22px 22px;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.diagram-wrap.is-dragging {
+  cursor: grabbing;
 }
 
 .diagram {
   display: block;
-  margin: 0 auto;
   width: 100%;
-  height: auto;
-  max-height: 62vh;
+  height: 100%;
 }
 
 .canvas-foot {
+  flex: none;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -376,6 +401,46 @@ body {
   stroke-dasharray: 4 4;
 }
 
+/* --- 줌 컨트롤 --- */
+
+.zoom-controls {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-1);
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+}
+
+.zoom-controls button {
+  padding: 4px 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.zoom-controls button:hover {
+  color: var(--text-primary);
+  background: var(--surface-2);
+}
+
+.zoom-controls .zoom-pct {
+  min-width: 52px;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+  border-left: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+}
+
 /* --- 툴팁 --- */
 
 .edge-detail {
@@ -478,10 +543,11 @@ body {
 /* --- 예시 --- */
 
 .examples {
+  flex: none;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 4px;
+  gap: 7px;
+  margin-top: 2px;
 }
 
 .examples-label {
@@ -494,8 +560,14 @@ body {
 
 .examples-row {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 3px;
+}
+
+.examples-row button {
+  flex: none;
 }
 
 .examples-row button {
