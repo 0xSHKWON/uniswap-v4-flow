@@ -31,8 +31,16 @@ const DEFAULT_SLUG = '03-hook-with-reach';
 export default function App() {
   const [locale, setLocale] = useLocale();
   const [slug, setSlug] = useState(DEFAULT_SLUG);
+  const [copied, setCopied] = useState(false);
   const graph = GRAPHS[slug];
   const meta = FIXTURES.find((f) => f.slug === slug);
+
+  const copyHash = () => {
+    navigator.clipboard?.writeText(graph.txHash).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1200);
+    });
+  };
 
   return (
     <div className="viz-root">
@@ -41,6 +49,13 @@ export default function App() {
           <span className="brand-mark" aria-hidden="true" />
           <h1>{t(locale, 'title')}</h1>
         </div>
+
+        {/* 해시는 헤더에 산다 — 본문 위에 메타 줄을 쌓으면 캔버스 시작이 밀린다. */}
+        <button className="tx-chip" onClick={copyHash} title={graph.txHash}>
+          <span className="chain">{graph.chain}</span>
+          <code>{copied ? t(locale, 'hash.copied') : `${graph.txHash.slice(0, 10)}…${graph.txHash.slice(-8)}`}</code>
+        </button>
+
         <div className="lang-toggle" role="group" aria-label="Language">
           <button className={locale === 'ko' ? 'is-active' : ''} onClick={() => setLocale('ko')}>
             KR
@@ -52,21 +67,14 @@ export default function App() {
       </header>
 
       <main className="page">
-        <div className="tx-meta">
-          <span className="chain">{graph.chain}</span>
-          <code className="hash" title={graph.txHash}>
-            {graph.txHash}
-          </code>
-        </div>
-
-        {meta && (
-          <p className="blurb">
-            <strong>{meta.title[locale]}</strong> — {meta.blurb[locale]}
-          </p>
-        )}
-
         <section className="canvas">
           <Diagram key={slug} graph={graph} locale={locale} />
+          {meta && (
+            <div className="caption" aria-hidden="true">
+              <strong>{meta.title[locale]}</strong>
+              <span>{meta.blurb[locale]}</span>
+            </div>
+          )}
           <div className="canvas-foot">
             <p className="legend">
               <span className="swatch swatch-flow" /> {t(locale, 'legend.settled')}

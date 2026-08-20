@@ -47,6 +47,7 @@ const en = {
 
   'diagram.aria': 'Money flow diagram for transaction {hash}',
 
+  'hash.copied': 'Copied',
   'zoom.in': 'Zoom in',
   'zoom.out': 'Zoom out',
   'zoom.fit': 'Fit to view',
@@ -94,6 +95,7 @@ const ko: Record<StringKey, string> = {
 
   'diagram.aria': '트랜잭션 {hash} 자금 흐름도',
 
+  'hash.copied': '복사됨',
   'zoom.in': '확대',
   'zoom.out': '축소',
   'zoom.fit': '전체 보기',
