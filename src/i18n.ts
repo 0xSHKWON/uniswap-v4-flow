@@ -60,6 +60,9 @@ const en = {
   'zoom.out': 'Zoom out',
   'zoom.fit': 'Fit to view',
 
+  'chain.select': 'Select chain',
+  'chain.soon': 'Soon',
+
   'follow.label': 'Follow the flow',
   'follow.prev': 'Previous step',
   'follow.next': 'Next step',
@@ -120,6 +123,9 @@ const ko: Record<StringKey, string> = {
   'zoom.in': '확대',
   'zoom.out': '축소',
   'zoom.fit': '전체 보기',
+
+  'chain.select': '체인 선택',
+  'chain.soon': '예정',
 
   'follow.label': '흐름 따라가기',
   'follow.prev': '이전 단계',
