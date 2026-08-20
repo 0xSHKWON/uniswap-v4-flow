@@ -1,10 +1,11 @@
 # uniswapv4-flow
 
-Uniswap v4 위에 올라온 앱(훅 프로토콜)들이 **스왑 한 번에 돈을 어떻게 움직이는지**를
-흐름도 한 장으로 보여준다.
+Shows how apps (hook protocols) on Uniswap v4 **move money in a single swap**,
+as one flow diagram.
 
-기존 익스플로러는 ERC20 `Transfer` 이벤트로 흐름을 그리는데, v4는 플래시 어카운팅이라
-훅이 가져간 값이 Transfer 로그에 아예 안 잡힌다. 그 안 보이는 흐름까지 그려주는 도구다.
+Ordinary explorers draw flows from ERC20 `Transfer` events, but v4's flash
+accounting means the value a hook takes never shows up in a Transfer log.
+This tool draws that invisible flow too.
 
 ```bash
 npm install
