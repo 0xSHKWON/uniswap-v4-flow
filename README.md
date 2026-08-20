@@ -1,4 +1,4 @@
-# uniswapv4-flow
+# uniswap-v4-flow
 
 Shows how apps (hook protocols) on Uniswap v4 **move money in a single swap**,
 as one flow diagram.
