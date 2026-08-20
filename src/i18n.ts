@@ -59,6 +59,11 @@ const en = {
   'zoom.in': 'Zoom in',
   'zoom.out': 'Zoom out',
   'zoom.fit': 'Fit to view',
+
+  'follow.label': 'Follow the flow',
+  'follow.prev': 'Previous step',
+  'follow.next': 'Next step',
+  'follow.exit': 'Exit',
 } as const;
 
 export type StringKey = keyof typeof en;
@@ -115,6 +120,11 @@ const ko: Record<StringKey, string> = {
   'zoom.in': '확대',
   'zoom.out': '축소',
   'zoom.fit': '전체 보기',
+
+  'follow.label': '흐름 따라가기',
+  'follow.prev': '이전 단계',
+  'follow.next': '다음 단계',
+  'follow.exit': '닫기',
 };
 
 const STRINGS: Record<Locale, Record<StringKey, string>> = { en, ko };

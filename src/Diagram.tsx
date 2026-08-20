@@ -141,6 +141,7 @@ export function Diagram({ graph, locale }: Props) {
   const svgRef = useRef<SVGSVGElement>(null);
   const [userBox, setUserBox] = useState<Box | null>(null);
   const [dragging, setDragging] = useState(false);
+  const animCancelRef = useRef<(() => void) | null>(null);
   const fitRef = useRef(box);
   fitRef.current = box;
   const vb = userBox ?? box;
@@ -156,6 +157,7 @@ export function Diagram({ graph, locale }: Props) {
       e.preventDefault();
       const svg = svgRef.current;
       if (!svg) return;
+      if (animCancelRef.current) animCancelRef.current();
       const cur = vbRef.current;
       const fit = fitRef.current;
       const factor = Math.exp(e.deltaY * 0.0016);
@@ -183,6 +185,117 @@ export function Diagram({ graph, locale }: Props) {
     setUserBox({ x: cx - (cx - cur.x) * f, y: cy - (cy - cur.y) * f, w, h: cur.h * f });
   };
 
+  // --- 흐름 따라가기 (기획서 §6 "단계별 보기") ---
+  // 정산 줄기는 layout에서 시간순(첫 movement 기준)으로 나온다. 그 순서대로
+  // 하나씩 포커스하며 카메라를 맞추고 나머지는 흐리게 한다.
+  const steps = view.edges;
+  const [focusIdx, setFocusIdx] = useState<number | null>(null);
+  const focusEdge = focusIdx === null ? null : (steps[Math.min(focusIdx, steps.length - 1)] ?? null);
+
+  const animRef = useRef<number | null>(null);
+  const cancelAnim = () => {
+    if (animRef.current !== null) {
+      cancelAnimationFrame(animRef.current);
+      animRef.current = null;
+    }
+  };
+
+  animCancelRef.current = cancelAnim;
+  const animateTo = (target: Box, onDone?: () => void) => {
+    cancelAnim();
+    const from = vbRef.current;
+    const t0 = performance.now();
+    const DUR = 300;
+    const ease = (p: number) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
+    const tick = (now: number) => {
+      const p = Math.min(1, (now - t0) / DUR);
+      const k = ease(p);
+      setUserBox({
+        x: from.x + (target.x - from.x) * k,
+        y: from.y + (target.y - from.y) * k,
+        w: from.w + (target.w - from.w) * k,
+        h: from.h + (target.h - from.h) * k,
+      });
+      if (p < 1) animRef.current = requestAnimationFrame(tick);
+      else {
+        animRef.current = null;
+        onDone?.();
+      }
+    };
+    animRef.current = requestAnimationFrame(tick);
+  };
+
+  /** 현재 화살표 + 라벨 블록 + 양쪽 노드가 들어오는 상자. */
+  const focusBoxFor = (e: RoutedEdge): Box => {
+    const xs: number[] = [];
+    const ys: number[] = [];
+    for (const pt of e.points) {
+      xs.push(pt.x);
+      ys.push(pt.y);
+    }
+    const lb = labelBoxes.find((b) => b.key === e.key);
+    if (lb) {
+      const dy = nudge.get(e.key) ?? 0;
+      xs.push(lb.x - lb.w / 2, lb.x + lb.w / 2);
+      ys.push(lb.y + dy - lb.h / 2, lb.y + dy + lb.h / 2);
+    }
+    for (const id of [e.from, e.to]) {
+      const n = view.nodes.find((nn) => nn.id === id);
+      if (n) {
+        xs.push(n.x, n.x + n.w);
+        ys.push(n.y, n.y + n.h);
+      }
+    }
+    const PAD = 56;
+    const minX = Math.min(...xs) - PAD;
+    const minY = Math.min(...ys) - PAD;
+    return { x: minX, y: minY, w: Math.max(...xs) + PAD - minX, h: Math.max(...ys) + PAD - minY };
+  };
+
+  const stepTo = (idx: number | null) => {
+    if (idx === null) {
+      setFocusIdx(null);
+      // 전체 보기로 되돌아온 뒤 fit 추적 상태(null)로 복귀시킨다.
+      animateTo(fitRef.current, () => setUserBox(null));
+      return;
+    }
+    setFocusIdx(Math.max(0, Math.min(steps.length - 1, idx)));
+  };
+  const stepNext = () => {
+    if (focusIdx === null) stepTo(0);
+    else if (focusIdx < steps.length - 1) stepTo(focusIdx + 1);
+  };
+  const stepPrev = () => {
+    if (focusIdx === null) return;
+    if (focusIdx === 0) stepTo(null);
+    else stepTo(focusIdx - 1);
+  };
+
+  useEffect(() => {
+    if (focusEdge) animateTo(focusBoxFor(focusEdge));
+    // focusIdx가 바뀔 때만 카메라를 옮긴다. 훅 펼침(view 변경) 중에는 사용자가 잡은 시점 유지.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focusIdx]);
+
+  // 키보드: ←/→ 스텝, Esc 종료. 핸들러는 ref로 최신을 참조한다.
+  const keyRef = useRef({ stepNext, stepPrev, exit: () => stepTo(null), active: focusIdx !== null });
+  keyRef.current = { stepNext, stepPrev, exit: () => stepTo(null), active: focusIdx !== null };
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        keyRef.current.stepNext();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        keyRef.current.stepPrev();
+      } else if (e.key === 'Escape' && keyRef.current.active) {
+        keyRef.current.exit();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
   // 드래그 팬. 4px 넘게 움직였으면 이어지는 click을 삼켜 노드 클릭과 충돌하지 않게 한다.
   const drag = useRef<{ x: number; y: number; moved: boolean } | null>(null);
   const onPointerDown = (e: React.PointerEvent<SVGSVGElement>) => {
@@ -199,6 +312,7 @@ export function Diagram({ graph, locale }: Props) {
     const dy = e.clientY - d.y;
     if (!d.moved && Math.abs(dx) + Math.abs(dy) > 4) {
       d.moved = true;
+      cancelAnim();
       e.currentTarget.setPointerCapture(e.pointerId);
       setDragging(true);
     }
@@ -225,7 +339,7 @@ export function Diagram({ graph, locale }: Props) {
     <div ref={wrapRef} className={`diagram-wrap${dragging ? ' is-dragging' : ''}`}>
       <svg
         ref={svgRef}
-        className="diagram"
+        className={`diagram${focusEdge ? ' is-following' : ''}`}
         viewBox={`${vb.x} ${vb.y} ${vb.w} ${vb.h}`}
         preserveAspectRatio="xMidYMid meet"
         role="img"
@@ -264,10 +378,11 @@ export function Diagram({ graph, locale }: Props) {
 
         {view.edges.map((e) => {
           const isHovered = hovered?.key === e.key;
+          const isFocus = focusEdge?.key === e.key;
           return (
             <g
               key={e.key}
-              className={`edge${e.hidden ? ' is-hidden-value' : ''}${isHovered ? ' is-hovered' : ''}`}
+              className={`edge${e.hidden ? ' is-hidden-value' : ''}${isHovered ? ' is-hovered' : ''}${isFocus ? ' is-focus' : ''}`}
               onMouseEnter={() => setHovered(e)}
               onMouseLeave={() => setHovered(null)}
             >
@@ -285,7 +400,7 @@ export function Diagram({ graph, locale }: Props) {
           return (
             <g
               key={n.id}
-              className={`node node-${n.type}`}
+              className={`node node-${n.type}${focusEdge && (focusEdge.from === n.id || focusEdge.to === n.id) ? ' is-focus-node' : ''}`}
               transform={`translate(${n.x}, ${n.y})`}
               onClick={n.type === 'hook' && extras > 0 ? () => toggleHook(n.id) : undefined}
               style={n.type === 'hook' && extras > 0 ? { cursor: 'pointer' } : undefined}
@@ -327,7 +442,7 @@ export function Diagram({ graph, locale }: Props) {
         {view.edges.map((e) => (
           <g
             key={`label-${e.key}`}
-            className={`edge-labels${e.hidden ? ' is-hidden-value' : ''}`}
+            className={`edge-labels${e.hidden ? ' is-hidden-value' : ''}${focusEdge?.key === e.key ? ' is-focus-label' : ''}`}
             transform={`translate(0, ${nudge.get(e.key) ?? 0})`}
           >
             {e.rows.map((row, ri) => (
@@ -372,6 +487,33 @@ export function Diagram({ graph, locale }: Props) {
         )}
       </svg>
 
+      <div className="follow-controls" role="group" aria-label={t(locale, 'follow.label')}>
+        <button onClick={stepPrev} disabled={focusIdx === null} aria-label={t(locale, 'follow.prev')}>
+          ‹
+        </button>
+        {focusIdx === null ? (
+          <button className="follow-start" onClick={stepNext} disabled={steps.length === 0}>
+            {t(locale, 'follow.label')}
+          </button>
+        ) : (
+          <span className="follow-count">
+            {focusIdx + 1} / {steps.length}
+          </span>
+        )}
+        <button
+          onClick={stepNext}
+          disabled={steps.length === 0 || (focusIdx !== null && focusIdx >= steps.length - 1)}
+          aria-label={t(locale, 'follow.next')}
+        >
+          ›
+        </button>
+        {focusIdx !== null && (
+          <button className="follow-exit" onClick={() => stepTo(null)} aria-label={t(locale, 'follow.exit')}>
+            ✕
+          </button>
+        )}
+      </div>
+
       <div className="zoom-controls" role="group" aria-label="Zoom">
         <button onClick={() => zoomBy(1.25)} aria-label={t(locale, 'zoom.out')}>
           −
@@ -384,7 +526,7 @@ export function Diagram({ graph, locale }: Props) {
         </button>
       </div>
 
-      {hovered && <EdgeDetail edge={hovered} graph={graph} locale={locale} />}
+      {(hovered ?? focusEdge) && <EdgeDetail edge={(hovered ?? focusEdge)!} graph={graph} locale={locale} />}
     </div>
   );
 }

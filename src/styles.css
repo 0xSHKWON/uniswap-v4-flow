@@ -572,6 +572,94 @@ body {
   stroke-dasharray: 4 4;
 }
 
+/* --- 흐름 따라가기 --- */
+
+.edge,
+.node,
+.edge-labels,
+.reach,
+.intervene,
+.reach-label,
+.intervene-label {
+  transition: opacity 180ms ease;
+}
+
+.is-following .edge:not(.is-focus),
+.is-following .edge-labels:not(.is-focus-label),
+.is-following .reach,
+.is-following .intervene,
+.is-following .reach-label,
+.is-following .intervene-label {
+  opacity: 0.15;
+}
+
+.is-following .node:not(.is-focus-node) {
+  opacity: 0.3;
+}
+
+.is-following .edge.is-focus .edge-line {
+  stroke-width: 3;
+}
+
+.follow-controls {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-1);
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+}
+
+.follow-controls button {
+  padding: 4px 11px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.follow-controls button:hover:not(:disabled) {
+  color: var(--text-primary);
+  background: var(--surface-2);
+}
+
+.follow-controls button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.follow-controls .follow-start {
+  font-size: 11.5px;
+  font-weight: 550;
+  border-left: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+}
+
+.follow-controls .follow-count {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 62px;
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+  border-left: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+}
+
+.follow-controls .follow-exit {
+  font-size: 11px;
+  border-left: 1px solid var(--line);
+}
+
 /* --- 줌 컨트롤 --- */
 
 .zoom-controls {
