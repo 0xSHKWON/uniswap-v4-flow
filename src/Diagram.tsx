@@ -520,11 +520,18 @@ export function Diagram({ graph, locale, mode }: Props) {
         >
           ›
         </button>
-        {focusIdx !== null && (
-          <button className="follow-exit" onClick={() => stepTo(null)} aria-label={t(locale, 'follow.exit')}>
-            ✕
-          </button>
-        )}
+        {/* 이 자리를 항상 차지해 둔다 — 활성화될 때만 나타나면 가운데 정렬 바 전체가
+            움직여서 ›를 다시 누르려던 클릭이 방금 생긴 ✕ 위로 떨어진다. */}
+        <button
+          className="follow-exit"
+          onClick={() => stepTo(null)}
+          aria-label={t(locale, 'follow.exit')}
+          aria-hidden={focusIdx === null}
+          tabIndex={focusIdx === null ? -1 : 0}
+          disabled={focusIdx === null}
+        >
+          ✕
+        </button>
       </div>
 
       <div className="zoom-controls" role="group" aria-label="Zoom">
