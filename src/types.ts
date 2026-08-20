@@ -85,6 +85,8 @@ export interface FlowEntry {
 /** v4 위에 올라온 앱(훅 프로토콜) 하나. spike/build-fixtures.mjs 가 생성. */
 export interface AppEntry {
   id: string;
+  /** 이 앱이 관측된 체인. 카탈로그는 체인별로 필터된다 (M5). */
+  chain: string;
   name: LocalizedText;
   tagline: LocalizedText;
   description: LocalizedText;

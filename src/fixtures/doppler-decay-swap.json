@@ -1,0 +1,105 @@
+{
+  "txHash": "0x9dfe6c17e42b557ebbc1da5f18963b20480018091445acd3df1bc3bb933724c2",
+  "chain": "base",
+  "origin": "0xbb6f9fd666c6675b37e8d7314ccb29bbb8ecc86f",
+  "nodes": [
+    {
+      "id": "pm",
+      "type": "core",
+      "label": "PoolManager",
+      "address": "0x498581ff718922c3f8e6a244956af099b2652b2b"
+    },
+    {
+      "id": "hook:0xbb7784a4d481184283ed89619a3e3ed143e1adc0",
+      "type": "hook",
+      "label": "0xbb77…adc0",
+      "address": "0xbb7784a4d481184283ed89619a3e3ed143e1adc0",
+      "known": "Doppler Decay Hook",
+      "permissions": [
+        "BEFORE_INITIALIZE",
+        "BEFORE_ADD_LIQUIDITY",
+        "AFTER_ADD_LIQUIDITY",
+        "AFTER_REMOVE_LIQUIDITY",
+        "BEFORE_SWAP",
+        "AFTER_SWAP"
+      ],
+      "callbacks": [
+        "beforeSwap",
+        "afterSwap"
+      ]
+    },
+    {
+      "id": "actor:0xd8ba9d1a99fc21f0eca24e9b85737c28a194a4e2",
+      "type": "router",
+      "label": "0xd8ba…a4e2",
+      "address": "0xd8ba9d1a99fc21f0eca24e9b85737c28a194a4e2",
+      "known": null
+    }
+  ],
+  "edges": [
+    {
+      "layer": "settlement",
+      "from": "actor:0xd8ba9d1a99fc21f0eca24e9b85737c28a194a4e2",
+      "to": "pm",
+      "token": "0x980e9f2061487376ab1438e965ad276a1d36fba3",
+      "amount": "2481119404580236413539655",
+      "engineer": {
+        "call": "settle",
+        "native": false
+      },
+      "via": null
+    },
+    {
+      "layer": "accounting",
+      "from": "actor:0xd8ba9d1a99fc21f0eca24e9b85737c28a194a4e2",
+      "to": "pm",
+      "token": "0x980e9f2061487376ab1438e965ad276a1d36fba3",
+      "amount": "2481119404580236413539655",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": false,
+        "side": "in",
+        "delta": "-2481119404580236413539655"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "actor:0xd8ba9d1a99fc21f0eca24e9b85737c28a194a4e2",
+      "token": "0x4200000000000000000000000000000000000006",
+      "amount": "343433580979955",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": false,
+        "side": "out",
+        "delta": "343433580979955"
+      }
+    },
+    {
+      "layer": "settlement",
+      "from": "pm",
+      "to": "actor:0xd8ba9d1a99fc21f0eca24e9b85737c28a194a4e2",
+      "token": "0x4200000000000000000000000000000000000006",
+      "amount": "343433580979955",
+      "engineer": {
+        "call": "take"
+      },
+      "via": null
+    }
+  ],
+  "balanced": true,
+  "tokens": {
+    "0x980e9f2061487376ab1438e965ad276a1d36fba3": {
+      "address": "0x980e9f2061487376ab1438e965ad276a1d36fba3",
+      "symbol": "Starchild",
+      "decimals": 18,
+      "name": "Starchild"
+    },
+    "0x4200000000000000000000000000000000000006": {
+      "address": "0x4200000000000000000000000000000000000006",
+      "symbol": "WETH",
+      "decimals": 18,
+      "name": "Wrapped Ether"
+    }
+  }
+}

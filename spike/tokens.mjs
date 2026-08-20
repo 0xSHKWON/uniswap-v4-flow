@@ -24,19 +24,23 @@ function decodeString(hex) {
   return Buffer.from(raw.slice(128, 128 + len * 2), 'hex').toString('utf8') || null;
 }
 
-async function call(to, data) {
+async function call(to, data, chain) {
   try {
-    return await rpc('eth_call', [{ to, data }, 'latest']);
+    return await rpc('eth_call', [{ to, data }, 'latest'], { chain });
   } catch {
     return null;
   }
 }
 
-export async function tokenMeta(address) {
+export async function tokenMeta(address, chain) {
   if (address === 'native' || address?.toLowerCase() === NATIVE) {
     return { address: 'native', symbol: 'ETH', decimals: 18, name: 'Ether' };
   }
-  const [sym, dec, nm] = await Promise.all([call(address, SYMBOL), call(address, DECIMALS), call(address, NAME)]);
+  const [sym, dec, nm] = await Promise.all([
+    call(address, SYMBOL, chain),
+    call(address, DECIMALS, chain),
+    call(address, NAME, chain),
+  ]);
   return {
     address,
     symbol: decodeString(sym) ?? `${address.slice(0, 6)}…`,
@@ -45,9 +49,9 @@ export async function tokenMeta(address) {
   };
 }
 
-/** Resolve every token referenced by a graph's edges into a lookup map. */
+/** Resolve every token referenced by a graph's edges into a lookup map. 체인은 그래프가 안다. */
 export async function resolveTokens(graph) {
   const addrs = [...new Set(graph.edges.map((e) => e.token).filter(Boolean))];
-  const metas = await Promise.all(addrs.map(tokenMeta));
+  const metas = await Promise.all(addrs.map((a) => tokenMeta(a, graph.chain)));
   return Object.fromEntries(metas.map((m) => [m.address, m]));
 }

@@ -1,0 +1,221 @@
+{
+  "txHash": "0x08123d92446d7aba86e09fff07e9e1dc4b4965d14b28125b1fd951af052fd5ce",
+  "chain": "base",
+  "origin": "0xada5bb90d0de0bd1b6f3938708f49295a8d1f7cb",
+  "nodes": [
+    {
+      "id": "pm",
+      "type": "core",
+      "label": "PoolManager",
+      "address": "0x498581ff718922c3f8e6a244956af099b2652b2b"
+    },
+    {
+      "id": "hook:0x985c14baa2a18316ffda0aefb3a632fadfca2acc",
+      "type": "hook",
+      "label": "0x985c…2acc",
+      "address": "0x985c14baa2a18316ffda0aefb3a632fadfca2acc",
+      "known": "LaunchHook",
+      "permissions": [
+        "BEFORE_INITIALIZE",
+        "BEFORE_ADD_LIQUIDITY",
+        "BEFORE_REMOVE_LIQUIDITY",
+        "BEFORE_SWAP",
+        "AFTER_SWAP",
+        "BEFORE_SWAP_RETURNS_DELTA",
+        "AFTER_SWAP_RETURNS_DELTA"
+      ],
+      "callbacks": [
+        "beforeSwap",
+        "afterSwap"
+      ]
+    },
+    {
+      "id": "ext:0xa2cbd9065cec93c443cafb0837a62800ee7c4a84",
+      "type": "external",
+      "label": "0xa2cb…4a84",
+      "address": "0xa2cbd9065cec93c443cafb0837a62800ee7c4a84",
+      "known": null
+    },
+    {
+      "id": "actor:0xfd78ba0f717223bebe555a777b70b86667837ff6",
+      "type": "router",
+      "label": "0xfd78…7ff6",
+      "address": "0xfd78ba0f717223bebe555a777b70b86667837ff6",
+      "known": null
+    },
+    {
+      "id": "actor:0xa2cbd9065cec93c443cafb0837a62800ee7c4a84",
+      "type": "router",
+      "label": "0xa2cb…4a84",
+      "address": "0xa2cbd9065cec93c443cafb0837a62800ee7c4a84",
+      "known": null
+    },
+    {
+      "id": "actor:0xc8f6b8ba0dc0f175b568b99440b0867f69a29265",
+      "type": "router",
+      "label": "0xc8f6…9265",
+      "address": "0xc8f6b8ba0dc0f175b568b99440b0867f69a29265",
+      "known": null
+    }
+  ],
+  "edges": [
+    {
+      "layer": "settlement",
+      "from": "actor:0xfd78ba0f717223bebe555a777b70b86667837ff6",
+      "to": "pm",
+      "token": "0x0b3e328455c4059eeb9e3f84b5543f74e24e7e1b",
+      "amount": "36428264384241611",
+      "engineer": {
+        "call": "settle",
+        "native": false
+      },
+      "via": null
+    },
+    {
+      "layer": "accounting",
+      "from": "actor:0xfd78ba0f717223bebe555a777b70b86667837ff6",
+      "to": "pm",
+      "token": "0x0b3e328455c4059eeb9e3f84b5543f74e24e7e1b",
+      "amount": "36428264384241611",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": false,
+        "side": "in",
+        "delta": "-36428264384241611"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "actor:0xfd78ba0f717223bebe555a777b70b86667837ff6",
+      "token": "native",
+      "amount": "10229174773427",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": false,
+        "side": "out",
+        "delta": "10229174773427"
+      }
+    },
+    {
+      "layer": "settlement",
+      "from": "pm",
+      "to": "actor:0xfd78ba0f717223bebe555a777b70b86667837ff6",
+      "token": "native",
+      "amount": "10229174773427",
+      "engineer": {
+        "call": "take"
+      },
+      "via": null
+    },
+    {
+      "layer": "settlement",
+      "from": "actor:0xfd78ba0f717223bebe555a777b70b86667837ff6",
+      "to": "pm",
+      "token": "native",
+      "amount": "10229174773427",
+      "engineer": {
+        "call": "settle",
+        "native": true
+      },
+      "via": null
+    },
+    {
+      "layer": "accounting",
+      "from": "actor:0xfd78ba0f717223bebe555a777b70b86667837ff6",
+      "to": "pm",
+      "token": "native",
+      "amount": "10229174773427",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": true,
+        "side": "in",
+        "delta": "-10229174773427"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "actor:0xfd78ba0f717223bebe555a777b70b86667837ff6",
+      "token": "0xb2000000000000000000009d4aabbe883a194501",
+      "amount": "2008689467579165323901",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": true,
+        "side": "out",
+        "delta": "2008689467579165323901"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "hook:0x985c14baa2a18316ffda0aefb3a632fadfca2acc",
+      "token": "native",
+      "amount": "102291747734",
+      "engineer": {
+        "call": "beforeSwap/afterSwap returnDelta",
+        "note": "훅이 가져간 몫",
+        "delta": "102291747734"
+      },
+      "hookCut": true
+    },
+    {
+      "layer": "settlement",
+      "from": "pm",
+      "to": "actor:0xa2cbd9065cec93c443cafb0837a62800ee7c4a84",
+      "token": "native",
+      "amount": "102291747734",
+      "engineer": {
+        "call": "mint",
+        "note": "ERC-6909 청구권 — Transfer 이벤트 없음"
+      },
+      "claim": true,
+      "hidden": true,
+      "via": "hook:0x985c14baa2a18316ffda0aefb3a632fadfca2acc"
+    },
+    {
+      "layer": "settlement",
+      "from": "pm",
+      "to": "actor:0xc8f6b8ba0dc0f175b568b99440b0867f69a29265",
+      "token": "0xb2000000000000000000009d4aabbe883a194501",
+      "amount": "2008689467579165323901",
+      "engineer": {
+        "call": "take"
+      },
+      "via": "actor:0xfd78ba0f717223bebe555a777b70b86667837ff6"
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0x985c14baa2a18316ffda0aefb3a632fadfca2acc",
+      "to": "ext:0xa2cbd9065cec93c443cafb0837a62800ee7c4a84",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 2
+      }
+    }
+  ],
+  "balanced": true,
+  "tokens": {
+    "0x0b3e328455c4059eeb9e3f84b5543f74e24e7e1b": {
+      "address": "0x0b3e328455c4059eeb9e3f84b5543f74e24e7e1b",
+      "symbol": "VIRTUAL",
+      "decimals": 18,
+      "name": "Virtual Protocol"
+    },
+    "native": {
+      "address": "native",
+      "symbol": "ETH",
+      "decimals": 18,
+      "name": "Ether"
+    },
+    "0xb2000000000000000000009d4aabbe883a194501": {
+      "address": "0xb2000000000000000000009d4aabbe883a194501",
+      "symbol": "CobieCraft",
+      "decimals": 18,
+      "name": "CobieCraft"
+    }
+  }
+}

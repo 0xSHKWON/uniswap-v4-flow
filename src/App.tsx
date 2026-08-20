@@ -19,21 +19,29 @@ const GRAPHS: Record<string, Graph> = Object.fromEntries(
 );
 
 const APPS = appsJson as AppEntry[];
-const DEFAULT_APP = 'aegis';
+const DEFAULT_CHAIN = 'unichain';
+/** 체인별 기본 앱 — 그 체인에서 가장 이야기가 좋은 것. */
+const DEFAULT_APP: Record<string, string> = { unichain: 'aegis', base: 'zora' };
 
-// 앱/흐름 선택은 URL(?app=aegis&flow=limit-fill)에 담는다 — 공유 링크가 보던 화면
+const appsOn = (chain: string) => APPS.filter((a) => a.chain === chain);
+const defaultAppOn = (chain: string) =>
+  APPS.find((a) => a.chain === chain && a.id === DEFAULT_APP[chain]) ?? appsOn(chain)[0];
+
+// 앱/흐름 선택은 URL(?chain=base&app=zora&flow=…)에 담는다 — 공유 링크가 보던 화면
 // 그대로 열려야 한다는 기획서 §4 규칙. 언어(?lang)와 같은 방식: 기본값이면 파라미터를 지운다.
-function selectionFromURL(): { appId: string; slug: string } {
+function selectionFromURL(): { chain: string; appId: string; slug: string } {
   const p = new URLSearchParams(window.location.search);
+  // flow가 있으면 앱과 체인까지 유도된다 — 슬러그는 전 체인에서 고유하다.
   const flow = p.get('flow');
   if (flow) {
     const app = APPS.find((a) => a.flows.some((f) => f.slug === flow));
-    if (app) return { appId: app.id, slug: flow };
+    if (app) return { chain: app.chain, appId: app.id, slug: flow };
   }
-  const app = APPS.find((a) => a.id === p.get('app'));
-  if (app) return { appId: app.id, slug: app.flows[0].slug };
-  const def = APPS.find((a) => a.id === DEFAULT_APP) ?? APPS[0];
-  return { appId: def.id, slug: def.flows[0].slug };
+  const chain = appsOn(p.get('chain') ?? '').length ? (p.get('chain') as string) : DEFAULT_CHAIN;
+  const app = APPS.find((a) => a.chain === chain && a.id === p.get('app'));
+  if (app) return { chain, appId: app.id, slug: app.flows[0].slug };
+  const def = defaultAppOn(chain);
+  return { chain, appId: def.id, slug: def.flows[0].slug };
 }
 
 // 보기 모드(M3 엔지니어 모드)도 같은 규칙: URL에 담고, 기본값(trader)이면 지운다.
@@ -48,11 +56,13 @@ function modeToURL(mode: Mode) {
   history.replaceState(null, '', url);
 }
 
-function selectionToURL(appId: string, slug: string) {
+function selectionToURL(chain: string, appId: string, slug: string) {
   const url = new URL(window.location.href);
-  const app = APPS.find((a) => a.id === appId);
+  const app = APPS.find((a) => a.chain === chain && a.id === appId);
   const isFirstFlow = slug === app?.flows[0]?.slug;
-  if (appId === DEFAULT_APP && isFirstFlow) {
+  if (chain === DEFAULT_CHAIN) url.searchParams.delete('chain');
+  else url.searchParams.set('chain', chain);
+  if (appId === defaultAppOn(chain).id && isFirstFlow) {
     url.searchParams.delete('app');
     url.searchParams.delete('flow');
   } else {
@@ -64,12 +74,11 @@ function selectionToURL(appId: string, slug: string) {
   history.replaceState(null, '', url);
 }
 
-// 체인 선택. 복원 엔진은 이미 체인 무관(M0에서 Base 98/98 검증)이지만,
-// 픽스처와 예시가 Unichain뿐이라 나머지는 로드맵 표시로만 잠가둔다 (기획서 §8 M5).
+// 체인 선택. 복원 엔진은 체인 무관(M0에서 Base 98/98 검증) — 카탈로그가 있는 체인만 활성화한다.
 const CHAINS = [
   { id: 'unichain', label: 'Unichain', color: '#f50db4', live: true },
+  { id: 'base', label: 'Base', color: '#0052ff', live: true },
   { id: 'ethereum', label: 'Ethereum', color: '#627eea', live: false },
-  { id: 'base', label: 'Base', color: '#0052ff', live: false },
   { id: 'arbitrum', label: 'Arbitrum', color: '#12aaff', live: false },
 ] as const;
 
@@ -84,15 +93,22 @@ export default function App() {
   };
   const [chainOpen, setChainOpen] = useState(false);
   const chainRef = useRef<HTMLDivElement>(null);
-  const app = APPS.find((a) => a.id === sel.appId) ?? APPS[0];
+  const chainApps = appsOn(sel.chain);
+  const app = chainApps.find((a) => a.id === sel.appId) ?? chainApps[0];
   const meta = app.flows.find((f) => f.slug === sel.slug) ?? app.flows[0];
   const graph = GRAPHS[meta.slug];
+  const currentChain = CHAINS.find((c) => c.id === sel.chain) ?? CHAINS[0];
 
-  const select = (appId: string, slug: string) => {
-    setSel({ appId, slug });
-    selectionToURL(appId, slug);
+  const select = (chain: string, appId: string, slug: string) => {
+    setSel({ chain, appId, slug });
+    selectionToURL(chain, appId, slug);
   };
-  const selectApp = (a: AppEntry) => select(a.id, a.flows[0].slug);
+  const selectApp = (a: AppEntry) => select(sel.chain, a.id, a.flows[0].slug);
+  const selectChain = (chain: string) => {
+    const def = defaultAppOn(chain);
+    select(chain, def.id, def.flows[0].slug);
+    setChainOpen(false);
+  };
 
   const copyHash = () => {
     navigator.clipboard?.writeText(graph.txHash).then(() => {
@@ -160,8 +176,8 @@ export default function App() {
               aria-label={t(locale, 'chain.select')}
               onClick={() => setChainOpen((v) => !v)}
             >
-              <span className="chain-dot" style={{ background: CHAINS[0].color }} />
-              {CHAINS[0].label}
+              <span className="chain-dot" style={{ background: currentChain.color }} />
+              {currentChain.label}
               <span className="chain-caret" aria-hidden="true">
                 ▾
               </span>
@@ -172,18 +188,18 @@ export default function App() {
                   <button
                     key={c.id}
                     role="menuitemradio"
-                    aria-checked={c.live}
+                    aria-checked={c.id === sel.chain}
                     disabled={!c.live}
-                    className={c.live ? 'is-current' : ''}
-                    onClick={() => c.live && setChainOpen(false)}
+                    className={c.id === sel.chain ? 'is-current' : ''}
+                    onClick={() => c.live && selectChain(c.id)}
                   >
                     <span className="chain-dot" style={{ background: c.color }} />
                     <span className="chain-name">{c.label}</span>
-                    {c.live ? (
+                    {c.id === sel.chain ? (
                       <span className="chain-check" aria-hidden="true">
                         ✓
                       </span>
-                    ) : (
+                    ) : c.live ? null : (
                       <span className="chain-soon">{t(locale, 'chain.soon')}</span>
                     )}
                   </button>
@@ -262,7 +278,7 @@ export default function App() {
           <section className="side-section side-apps">
             <h2>{t(locale, 'apps.label')}</h2>
             <div className="app-list">
-              {APPS.map((a) => {
+              {chainApps.map((a) => {
                 const active = a.id === app.id;
                 return (
                   <div key={a.id} className={`app-entry${active ? ' is-active' : ''}`}>
@@ -281,7 +297,7 @@ export default function App() {
                             <button
                               key={f.slug}
                               className={f.slug === meta.slug ? 'is-active' : ''}
-                              onClick={() => select(a.id, f.slug)}
+                              onClick={() => select(sel.chain, a.id, f.slug)}
                             >
                               <span className="flow-title">{f.title[locale]}</span>
                               <span className="flow-meta">{t(locale, 'flow.meta', { nodes: f.nodes, hooks: f.hooks })}</span>

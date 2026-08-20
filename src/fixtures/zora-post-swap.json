@@ -1,0 +1,269 @@
+{
+  "txHash": "0xf3b2a84a83ad1d18b6e265ba1a8a8d8b91d3229c827c0e4f8ef52bee0be71c84",
+  "chain": "base",
+  "origin": "0xbdbebd58cc8153ce74530bb342427579315915b2",
+  "nodes": [
+    {
+      "id": "pm",
+      "type": "core",
+      "label": "PoolManager",
+      "address": "0x498581ff718922c3f8e6a244956af099b2652b2b"
+    },
+    {
+      "id": "hook:0xc8d077444625eb300a427a6dfb2b1dbf9b159040",
+      "type": "hook",
+      "label": "0xc8d0…9040",
+      "address": "0xc8d077444625eb300a427a6dfb2b1dbf9b159040",
+      "known": "Zora Post Hook",
+      "permissions": [
+        "AFTER_INITIALIZE",
+        "AFTER_SWAP"
+      ],
+      "callbacks": [
+        "afterSwap"
+      ]
+    },
+    {
+      "id": "ext:0xb2e388f1de3553dd6b3f7a995f90a09b533aa647",
+      "type": "external",
+      "label": "0xb2e3…a647",
+      "address": "0xb2e388f1de3553dd6b3f7a995f90a09b533aa647",
+      "known": null
+    },
+    {
+      "id": "ext:0x36853f9f48faee51bd3db15db21eb4b9038bb795",
+      "type": "external",
+      "label": "0x3685…b795",
+      "address": "0x36853f9f48faee51bd3db15db21eb4b9038bb795",
+      "known": null
+    },
+    {
+      "id": "ext:0x777777751622c0d3258f214f9df38e35bf45baf3",
+      "type": "external",
+      "label": "0x7777…baf3",
+      "address": "0x777777751622c0d3258f214f9df38e35bf45baf3",
+      "known": null
+    },
+    {
+      "id": "ext:0xbbae128a65239c3328faa0c70b8d5f9c961a8038",
+      "type": "external",
+      "label": "0xbbae…8038",
+      "address": "0xbbae128a65239c3328faa0c70b8d5f9c961a8038",
+      "known": null
+    },
+    {
+      "id": "ext:0x660eaaedebc968f8f3694354fa8ec0b4c5ba8d12",
+      "type": "external",
+      "label": "0x660e…8d12",
+      "address": "0x660eaaedebc968f8f3694354fa8ec0b4c5ba8d12",
+      "known": null
+    },
+    {
+      "id": "ext:0x7747f8d2a76bd6345cc29622a946a929647f2359",
+      "type": "external",
+      "label": "0x7747…2359",
+      "address": "0x7747f8d2a76bd6345cc29622a946a929647f2359",
+      "known": null
+    },
+    {
+      "id": "actor:0x7747f8d2a76bd6345cc29622a946a929647f2359",
+      "type": "router",
+      "label": "0x7747…2359",
+      "address": "0x7747f8d2a76bd6345cc29622a946a929647f2359",
+      "known": null
+    }
+  ],
+  "edges": [
+    {
+      "layer": "accounting",
+      "from": "actor:0x7747f8d2a76bd6345cc29622a946a929647f2359",
+      "to": "pm",
+      "token": "0xb2e388f1de3553dd6b3f7a995f90a09b533aa647",
+      "amount": "38508202547316286161",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": false,
+        "side": "in",
+        "delta": "-38508202547316286161"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "actor:0x7747f8d2a76bd6345cc29622a946a929647f2359",
+      "token": "0x1111111111166b7fe7bd91427724b487980afc69",
+      "amount": "7627090712096856",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": false,
+        "side": "out",
+        "delta": "7627090712096856"
+      }
+    },
+    {
+      "layer": "settlement",
+      "from": "pm",
+      "to": "actor:0x7747f8d2a76bd6345cc29622a946a929647f2359",
+      "token": "0x1111111111166b7fe7bd91427724b487980afc69",
+      "amount": "7627090712096856",
+      "engineer": {
+        "call": "take"
+      },
+      "via": null
+    },
+    {
+      "layer": "settlement",
+      "from": "actor:0x7747f8d2a76bd6345cc29622a946a929647f2359",
+      "to": "pm",
+      "token": "0xb2e388f1de3553dd6b3f7a995f90a09b533aa647",
+      "amount": "38508202547316286161",
+      "engineer": {
+        "call": "settle",
+        "native": false
+      },
+      "via": null
+    },
+    {
+      "layer": "accounting",
+      "from": "actor:0x7747f8d2a76bd6345cc29622a946a929647f2359",
+      "to": "pm",
+      "token": "0x1111111111166b7fe7bd91427724b487980afc69",
+      "amount": "7627090712096856",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": true,
+        "side": "in",
+        "delta": "-7627090712096856"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "actor:0x7747f8d2a76bd6345cc29622a946a929647f2359",
+      "token": "0xc1addae61bc74a14971bfa48a0b7141aded4fb07",
+      "amount": "6920696376832760793",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": true,
+        "side": "out",
+        "delta": "6920696376832760793"
+      }
+    },
+    {
+      "layer": "settlement",
+      "from": "pm",
+      "to": "actor:0x7747f8d2a76bd6345cc29622a946a929647f2359",
+      "token": "0xc1addae61bc74a14971bfa48a0b7141aded4fb07",
+      "amount": "6920696376832760793",
+      "engineer": {
+        "call": "take"
+      },
+      "via": null
+    },
+    {
+      "layer": "settlement",
+      "from": "actor:0x7747f8d2a76bd6345cc29622a946a929647f2359",
+      "to": "pm",
+      "token": "0x1111111111166b7fe7bd91427724b487980afc69",
+      "amount": "7627090712096856",
+      "engineer": {
+        "call": "settle",
+        "native": false
+      },
+      "via": null
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0xc8d077444625eb300a427a6dfb2b1dbf9b159040",
+      "to": "ext:0xb2e388f1de3553dd6b3f7a995f90a09b533aa647",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 7
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0xc8d077444625eb300a427a6dfb2b1dbf9b159040",
+      "to": "ext:0x36853f9f48faee51bd3db15db21eb4b9038bb795",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 7
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0xc8d077444625eb300a427a6dfb2b1dbf9b159040",
+      "to": "ext:0x777777751622c0d3258f214f9df38e35bf45baf3",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 1
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0xc8d077444625eb300a427a6dfb2b1dbf9b159040",
+      "to": "ext:0xbbae128a65239c3328faa0c70b8d5f9c961a8038",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 1
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0xc8d077444625eb300a427a6dfb2b1dbf9b159040",
+      "to": "ext:0x660eaaedebc968f8f3694354fa8ec0b4c5ba8d12",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 1
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0xc8d077444625eb300a427a6dfb2b1dbf9b159040",
+      "to": "ext:0x7747f8d2a76bd6345cc29622a946a929647f2359",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 1
+      }
+    }
+  ],
+  "balanced": true,
+  "tokens": {
+    "0xb2e388f1de3553dd6b3f7a995f90a09b533aa647": {
+      "address": "0xb2e388f1de3553dd6b3f7a995f90a09b533aa647",
+      "symbol": "lockkit1986",
+      "decimals": 18,
+      "name": "lockkit1986"
+    },
+    "0x1111111111166b7fe7bd91427724b487980afc69": {
+      "address": "0x1111111111166b7fe7bd91427724b487980afc69",
+      "symbol": "ZORA",
+      "decimals": 18,
+      "name": "Zora"
+    },
+    "0xc1addae61bc74a14971bfa48a0b7141aded4fb07": {
+      "address": "0xc1addae61bc74a14971bfa48a0b7141aded4fb07",
+      "symbol": "RIPS",
+      "decimals": 18,
+      "name": "RIPS"
+    }
+  }
+}

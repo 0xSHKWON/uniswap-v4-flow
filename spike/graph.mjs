@@ -9,11 +9,11 @@ const KNOWN = JSON.parse(readFileSync(new URL('./known-hooks.json', import.meta.
 import { POOL_MANAGER, NATIVE, hookPermissionNames, eq } from './v4.mjs';
 
 const CHAIN = process.env.CHAIN ?? 'unichain';
-const PM = POOL_MANAGER[CHAIN];
 
 const short = (a) => `${a.slice(0, 6)}…${a.slice(-4)}`;
 
 export function toGraph(root, { chain = CHAIN, txHash } = {}) {
+  const PM = POOL_MANAGER[chain];
   const r = reconstruct(root, { poolManager: PM });
   const origin = root.from?.toLowerCase() ?? null; // the EOA that sent the tx
 

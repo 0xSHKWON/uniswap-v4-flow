@@ -11,8 +11,10 @@ import { toGraph } from './graph.mjs';
 import { resolveTokens } from './tokens.mjs';
 
 const APPS = [
+  // ---------- Unichain ----------
   {
     id: 'baseline',
+    chain: 'unichain',
     name: { ko: '훅 없는 v4', en: 'Plain v4' },
     tagline: { ko: '기준선 — 훅이 없는 스왑', en: 'The baseline — a swap with no hook' },
     description: {
@@ -34,6 +36,7 @@ const APPS = [
   },
   {
     id: 'aegis',
+    chain: 'unichain',
     name: { ko: 'Aegis', en: 'Aegis' },
     tagline: { ko: '수수료를 청구권으로 쌓는 AMM 훅', en: 'AMM hook that banks fees as claims' },
     description: {
@@ -73,6 +76,7 @@ const APPS = [
   },
   {
     id: 'eulerswap',
+    chain: 'unichain',
     name: { ko: 'EulerSwap', en: 'EulerSwap' },
     tagline: { ko: 'Euler 볼트를 유동성으로 쓰는 AMM', en: 'AMM backed by Euler vaults' },
     description: {
@@ -103,6 +107,7 @@ const APPS = [
   },
   {
     id: 'backgeo',
+    chain: 'unichain',
     name: { ko: 'BackGeoOracle', en: 'BackGeoOracle' },
     tagline: { ko: '스왑 가격을 기록하는 오라클 훅', en: 'Oracle hook that records swap prices' },
     description: {
@@ -133,6 +138,7 @@ const APPS = [
   },
   {
     id: 'volatility-fee',
+    chain: 'unichain',
     name: { ko: 'Volatility Fee Hook', en: 'Volatility Fee Hook' },
     tagline: { ko: '변동성에 따라 수수료를 바꾸는 훅', en: 'Fees that move with volatility' },
     description: {
@@ -154,6 +160,7 @@ const APPS = [
   },
   {
     id: 'limit-order',
+    chain: 'unichain',
     name: { ko: 'Limit Order Hook', en: 'Limit Order Hook' },
     tagline: { ko: '풀 가격에 지정가 주문을 얹는 훅', en: 'Limit orders on top of pool price' },
     description: {
@@ -184,6 +191,7 @@ const APPS = [
   },
   {
     id: 'unidentified',
+    chain: 'unichain',
     name: { ko: '미확인 훅', en: 'Unidentified hooks' },
     tagline: { ko: '신원을 확인하지 못한 훅들', en: 'Hooks we could not identify' },
     description: {
@@ -218,6 +226,126 @@ const APPS = [
       },
     ],
   },
+  // ---------- Base ----------
+  {
+    id: 'zora',
+    chain: 'base',
+    name: { ko: 'Zora', en: 'Zora' },
+    tagline: { ko: '크리에이터 코인의 수수료 순환 훅', en: 'Fee recycling for creator coins' },
+    description: {
+      ko: 'Zora Coins의 훅 세트. 스왑마다 LP 수수료를 걷어 보상 통화로 바꾸고 크리에이터와 프로토콜에 분배한다. 다이어그램에서 훅이 벌이는 부수 스왑들이 그 변환 과정이다.',
+      en: "The hook set behind Zora Coins. Collects LP fees on every swap, converts them to a reward currency, and routes them to creators and the protocol. The hook's side-swaps in the diagram are that conversion.",
+    },
+    hooks: [
+      '0x0469a4bd3724dc86c9542f4694c976da13c450c0',
+      '0xc8d077444625eb300a427a6dfb2b1dbf9b159040',
+      '0xd61a675f8a0c67a73dc3b54fb7318b4d91409040',
+    ],
+    flows: [
+      {
+        slug: 'zora-coin-swap',
+        hash: '0x68df9d241c9c82a870d8825dcdecb02ca2e8f6154d842376516be4fef272bdad',
+        title: { ko: '코인 스왑 + 수수료 변환', en: 'Coin swap + fee conversion' },
+        blurb: {
+          ko: '스왑 하나에 훅이 수수료를 걷어 변환하는 기계장치가 딸려 온다.',
+          en: 'One swap arrives with the whole fee-collect-and-convert machine attached.',
+        },
+      },
+      {
+        slug: 'zora-creator-route',
+        hash: '0x3798d619f0335898f171229743f4390f3a653b10a7fc0e6080bf59996cbaabe0',
+        title: { ko: '크리에이터 코인 라우트', en: 'Creator coin route' },
+        blurb: {
+          ko: '크리에이터 훅과 Zora 훅 두 개를 연달아 지나는 라우트.',
+          en: 'A route crossing the Creator hook and the Zora hook back to back.',
+        },
+      },
+      {
+        slug: 'zora-post-swap',
+        hash: '0xf3b2a84a83ad1d18b6e265ba1a8a8d8b91d3229c827c0e4f8ef52bee0be71c84',
+        title: { ko: '포스트 코인 스왑', en: 'Post coin swap' },
+        blurb: {
+          ko: '포스트 코인 풀의 스왑. 걷은 수수료가 담보 통화로 바뀐다.',
+          en: 'A swap in a post-coin pool; collected fees convert into the backing currency.',
+        },
+      },
+    ],
+  },
+  {
+    id: 'doppler',
+    chain: 'base',
+    name: { ko: 'Doppler', en: 'Doppler' },
+    tagline: { ko: '본딩 커브 토큰 런치 인프라', en: 'Bonding-curve token launch infra' },
+    description: {
+      ko: 'Whetstone Research의 토큰 런치 인프라. 훅이 본딩 커브 모양의 초기 유동성을 구성하고, 시간이 지나면 LP 수수료가 선형으로 감소한다.',
+      en: "Whetstone Research's token launch infrastructure. The hook shapes initial liquidity as a bonding curve, and LP fees decay linearly over time.",
+    },
+    hooks: ['0xbdf938149ac6a781f94faa0ed45e6a0e984c6544', '0xbb7784a4d481184283ed89619a3e3ed143e1adc0'],
+    flows: [
+      {
+        slug: 'doppler-curve-swap',
+        hash: '0x2e56befd2bc0e5d2cdb2683f3e2389049d0df34e0bcb184195fe2f580e0bd5c1',
+        title: { ko: '커브 풀 스왑', en: 'Swap in a curve pool' },
+        blurb: {
+          ko: '런치 직후 본딩 커브 풀을 지나는 스왑. 훅이 유동성 포지션을 관리한다.',
+          en: 'A swap through a freshly launched bonding-curve pool; the hook manages the liquidity positions.',
+        },
+      },
+      {
+        slug: 'doppler-decay-swap',
+        hash: '0x9dfe6c17e42b557ebbc1da5f18963b20480018091445acd3df1bc3bb933724c2',
+        title: { ko: '감쇠 수수료 스왑', en: 'Decayed-fee swap' },
+        blurb: {
+          ko: '시간이 지나 수수료가 줄어든 풀의 조용한 스왑.',
+          en: 'A quiet swap in a pool whose fee has decayed with time.',
+        },
+      },
+    ],
+  },
+  {
+    id: 'clanker',
+    chain: 'base',
+    name: { ko: 'Clanker', en: 'Clanker' },
+    tagline: { ko: '토큰 런치 수수료 훅', en: 'Token launch fee hook' },
+    description: {
+      ko: 'Base의 토큰 런치 플랫폼. 훅이 토큰 쪽과 페어 쪽에 서로 다른 고정 LP 수수료를 물리고, 걷은 몫 일부는 ERC-6909 청구권으로 남는다.',
+      en: "Base's token launch platform. The hook charges different fixed LP fees on the token side and the paired side; part of the take stays behind as ERC-6909 claims.",
+    },
+    hooks: ['0xb429d62f8f3bffb98cdb9569533ea23bf0ba28cc'],
+    flows: [
+      {
+        slug: 'clanker-swap',
+        hash: '0x62ecf8248cda1260a34857bdc6d029d7e4b53176e5bd6852ee4778c4a5310929',
+        title: { ko: '런치 토큰 스왑', en: 'Launch token swap' },
+        blurb: {
+          ko: '스왑 수수료의 일부가 청구권으로 남는다 — Transfer 이벤트 없이.',
+          en: 'Part of the swap fee stays behind as claims — with no Transfer event.',
+        },
+      },
+    ],
+  },
+  {
+    id: 'launchhook',
+    chain: 'base',
+    name: { ko: 'LaunchHook', en: 'LaunchHook' },
+    tagline: { ko: 'Base 최다 관측 훅 — 프로젝트 미상', en: 'Most-seen hook on Base — project unknown' },
+    description: {
+      ko: '우리 코퍼스에서 가장 자주 관측된 Base 훅(98건 중 25건). 수수료를 FeeEscrow 컨트랙트로 보낸다. 컨트랙트명은 검증됐지만 어느 프로젝트의 배포인지는 확인하지 못했다.',
+      en: 'The hook we observed most on Base (25 of 98 corpus txs). Sends fees to a FeeEscrow contract. The contract name is verified, but we could not confirm which project deployed it.',
+    },
+    hooks: ['0x985c14baa2a18316ffda0aefb3a632fadfca2acc'],
+    flows: [
+      {
+        slug: 'launchhook-swap',
+        hash: '0x08123d92446d7aba86e09fff07e9e1dc4b4965d14b28125b1fd951af052fd5ce',
+        title: { ko: '수수료가 에스크로로 가는 스왑', en: 'Swap with fees to escrow' },
+        blurb: {
+          ko: '훅이 걷은 몫이 FeeEscrow로 흘러간다. 일부는 청구권으로 남는다.',
+          en: "The hook's take flows to a FeeEscrow; part stays behind as claims.",
+        },
+      },
+    ],
+  },
 ];
 
 // 앱이 읽는 사본과 스파이크의 사본을 동시에 쓴다. 한쪽만 갱신되면 조용히 어긋난다.
@@ -235,7 +363,7 @@ for (const app of APPS) {
   for (const flow of app.flows) {
     let graph;
     try {
-      graph = toGraph(await trace(flow.hash), { txHash: flow.hash, chain: 'unichain' });
+      graph = toGraph(await trace(flow.hash, app.chain), { txHash: flow.hash, chain: app.chain });
     } catch (e) {
       console.error(`SKIP ${flow.slug}: ${e.message}`);
       continue;

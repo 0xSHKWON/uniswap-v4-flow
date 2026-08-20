@@ -1,0 +1,465 @@
+{
+  "txHash": "0x68df9d241c9c82a870d8825dcdecb02ca2e8f6154d842376516be4fef272bdad",
+  "chain": "base",
+  "origin": "0xe082e4d54789016e285255c67446bc82f3f190c4",
+  "nodes": [
+    {
+      "id": "pm",
+      "type": "core",
+      "label": "PoolManager",
+      "address": "0x498581ff718922c3f8e6a244956af099b2652b2b"
+    },
+    {
+      "id": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "type": "hook",
+      "label": "0x0469…50c0",
+      "address": "0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "known": "Zora Hook",
+      "permissions": [
+        "AFTER_INITIALIZE",
+        "BEFORE_SWAP",
+        "AFTER_SWAP"
+      ],
+      "callbacks": [
+        "beforeSwap",
+        "afterSwap"
+      ]
+    },
+    {
+      "id": "ext:0x777777c4c14b133858c3982d41dbf02509fc18d7",
+      "type": "external",
+      "label": "0x7777…18d7",
+      "address": "0x777777c4c14b133858c3982d41dbf02509fc18d7",
+      "known": null
+    },
+    {
+      "id": "ext:0x2c10931e2fcb90f34f138c9a23b7d24c7e348ecc",
+      "type": "external",
+      "label": "0x2c10…8ecc",
+      "address": "0x2c10931e2fcb90f34f138c9a23b7d24c7e348ecc",
+      "known": null
+    },
+    {
+      "id": "ext:0x5dbd43785954d43c1643a0caf2ecef9e0056ff13",
+      "type": "external",
+      "label": "0x5dbd…ff13",
+      "address": "0x5dbd43785954d43c1643a0caf2ecef9e0056ff13",
+      "known": null
+    },
+    {
+      "id": "ext:0x777777751622c0d3258f214f9df38e35bf45baf3",
+      "type": "external",
+      "label": "0x7777…baf3",
+      "address": "0x777777751622c0d3258f214f9df38e35bf45baf3",
+      "known": null
+    },
+    {
+      "id": "ext:0xbbae128a65239c3328faa0c70b8d5f9c961a8038",
+      "type": "external",
+      "label": "0xbbae…8038",
+      "address": "0xbbae128a65239c3328faa0c70b8d5f9c961a8038",
+      "known": null
+    },
+    {
+      "id": "ext:0x4200000000000000000000000000000000000006",
+      "type": "external",
+      "label": "0x4200…0006",
+      "address": "0x4200000000000000000000000000000000000006",
+      "known": null
+    },
+    {
+      "id": "ext:0x660eaaedebc968f8f3694354fa8ec0b4c5ba8d12",
+      "type": "external",
+      "label": "0x660e…8d12",
+      "address": "0x660eaaedebc968f8f3694354fa8ec0b4c5ba8d12",
+      "known": null
+    },
+    {
+      "id": "ext:0x2183ecf857ade81c7face1dbaa98c381520619c4",
+      "type": "external",
+      "label": "0x2183…19c4",
+      "address": "0x2183ecf857ade81c7face1dbaa98c381520619c4",
+      "known": null
+    },
+    {
+      "id": "ext:0x7747f8d2a76bd6345cc29622a946a929647f2359",
+      "type": "external",
+      "label": "0x7747…2359",
+      "address": "0x7747f8d2a76bd6345cc29622a946a929647f2359",
+      "known": null
+    },
+    {
+      "id": "ext:0x7777777c783bad88dacaf9a19e04238341e4497b",
+      "type": "external",
+      "label": "0x7777…497b",
+      "address": "0x7777777c783bad88dacaf9a19e04238341e4497b",
+      "known": null
+    },
+    {
+      "id": "ext:0xd2ca3cda89c835a3555e0c3a3606a17bf16c6702",
+      "type": "external",
+      "label": "0xd2ca…6702",
+      "address": "0xd2ca3cda89c835a3555e0c3a3606a17bf16c6702",
+      "known": null
+    },
+    {
+      "id": "actor:0x7747f8d2a76bd6345cc29622a946a929647f2359",
+      "type": "router",
+      "label": "0x7747…2359",
+      "address": "0x7747f8d2a76bd6345cc29622a946a929647f2359",
+      "known": null
+    }
+  ],
+  "edges": [
+    {
+      "layer": "accounting",
+      "from": "actor:0x7747f8d2a76bd6345cc29622a946a929647f2359",
+      "to": "pm",
+      "token": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "amount": "49500",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": false,
+        "side": "in",
+        "delta": "-49500"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "actor:0x7747f8d2a76bd6345cc29622a946a929647f2359",
+      "token": "0x2c10931e2fcb90f34f138c9a23b7d24c7e348ecc",
+      "amount": "19697803562561510386",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": false,
+        "side": "out",
+        "delta": "19697803562561510386"
+      }
+    },
+    {
+      "layer": "settlement",
+      "from": "pm",
+      "to": "actor:0x7747f8d2a76bd6345cc29622a946a929647f2359",
+      "token": "0x2c10931e2fcb90f34f138c9a23b7d24c7e348ecc",
+      "amount": "19697803562561510386",
+      "engineer": {
+        "call": "take"
+      },
+      "via": null
+    },
+    {
+      "layer": "settlement",
+      "from": "actor:0x7747f8d2a76bd6345cc29622a946a929647f2359",
+      "to": "pm",
+      "token": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "amount": "49500",
+      "engineer": {
+        "call": "settle",
+        "native": false
+      },
+      "via": null
+    },
+    {
+      "layer": "accounting",
+      "from": "actor:0x7747f8d2a76bd6345cc29622a946a929647f2359",
+      "to": "pm",
+      "token": "0x4200000000000000000000000000000000000006",
+      "amount": "450375805748082",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": false,
+        "side": "in",
+        "delta": "-450375805748082"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "actor:0x7747f8d2a76bd6345cc29622a946a929647f2359",
+      "token": "0x2c10931e2fcb90f34f138c9a23b7d24c7e348ecc",
+      "amount": "344005984442240687853",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": false,
+        "side": "out",
+        "delta": "344005984442240687853"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "token": "0x4200000000000000000000000000000000000006",
+      "amount": "661347533349",
+      "engineer": {
+        "call": "modifyLiquidity",
+        "delta": "661347533349"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "token": "0x4200000000000000000000000000000000000006",
+      "amount": "270617314465",
+      "engineer": {
+        "call": "modifyLiquidity",
+        "delta": "270617314465"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "token": "0x4200000000000000000000000000000000000006",
+      "amount": "356531470976",
+      "engineer": {
+        "call": "modifyLiquidity",
+        "delta": "356531470976"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "token": "0x4200000000000000000000000000000000000006",
+      "amount": "473640288401",
+      "engineer": {
+        "call": "modifyLiquidity",
+        "delta": "473640288401"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "token": "0x4200000000000000000000000000000000000006",
+      "amount": "636453786284",
+      "engineer": {
+        "call": "modifyLiquidity",
+        "delta": "636453786284"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "token": "0x4200000000000000000000000000000000000006",
+      "amount": "869134631625",
+      "engineer": {
+        "call": "modifyLiquidity",
+        "delta": "869134631625"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "token": "0x4200000000000000000000000000000000000006",
+      "amount": "1215105523755",
+      "engineer": {
+        "call": "modifyLiquidity",
+        "delta": "1215105523755"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "to": "pm",
+      "token": "0x4200000000000000000000000000000000000006",
+      "amount": "896566109771",
+      "engineer": {
+        "call": "modifyLiquidity",
+        "delta": "-896566109771"
+      }
+    },
+    {
+      "layer": "settlement",
+      "from": "pm",
+      "to": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "token": "0x4200000000000000000000000000000000000006",
+      "amount": "3586264439084",
+      "engineer": {
+        "call": "take"
+      },
+      "via": null
+    },
+    {
+      "layer": "settlement",
+      "from": "pm",
+      "to": "actor:0x7747f8d2a76bd6345cc29622a946a929647f2359",
+      "token": "0x2c10931e2fcb90f34f138c9a23b7d24c7e348ecc",
+      "amount": "344005984442240687853",
+      "engineer": {
+        "call": "take"
+      },
+      "via": null
+    },
+    {
+      "layer": "settlement",
+      "from": "actor:0x7747f8d2a76bd6345cc29622a946a929647f2359",
+      "to": "pm",
+      "token": "0x4200000000000000000000000000000000000006",
+      "amount": "450375805748082",
+      "engineer": {
+        "call": "settle",
+        "native": false
+      },
+      "via": null
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "to": "ext:0x777777c4c14b133858c3982d41dbf02509fc18d7",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 3
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "to": "ext:0x2c10931e2fcb90f34f138c9a23b7d24c7e348ecc",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 10
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "to": "ext:0x5dbd43785954d43c1643a0caf2ecef9e0056ff13",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 10
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "to": "ext:0x777777751622c0d3258f214f9df38e35bf45baf3",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 1
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "to": "ext:0xbbae128a65239c3328faa0c70b8d5f9c961a8038",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 1
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "to": "ext:0x4200000000000000000000000000000000000006",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 6
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "to": "ext:0x660eaaedebc968f8f3694354fa8ec0b4c5ba8d12",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 1
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "to": "ext:0x2183ecf857ade81c7face1dbaa98c381520619c4",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 1
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "to": "ext:0x7747f8d2a76bd6345cc29622a946a929647f2359",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 1
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "to": "ext:0x7777777c783bad88dacaf9a19e04238341e4497b",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 1
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "to": "ext:0xd2ca3cda89c835a3555e0c3a3606a17bf16c6702",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 1
+      }
+    }
+  ],
+  "balanced": true,
+  "tokens": {
+    "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913": {
+      "address": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "symbol": "USDC",
+      "decimals": 6,
+      "name": "USD Coin"
+    },
+    "0x2c10931e2fcb90f34f138c9a23b7d24c7e348ecc": {
+      "address": "0x2c10931e2fcb90f34f138c9a23b7d24c7e348ecc",
+      "symbol": "XST",
+      "decimals": 18,
+      "name": "XSOLUT"
+    },
+    "0x4200000000000000000000000000000000000006": {
+      "address": "0x4200000000000000000000000000000000000006",
+      "symbol": "WETH",
+      "decimals": 18,
+      "name": "Wrapped Ether"
+    }
+  }
+}

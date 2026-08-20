@@ -1,0 +1,202 @@
+{
+  "txHash": "0x2e56befd2bc0e5d2cdb2683f3e2389049d0df34e0bcb184195fe2f580e0bd5c1",
+  "chain": "base",
+  "origin": "0x5cfa3060c4ad09d401aad70e31adb3d352dbe0f4",
+  "nodes": [
+    {
+      "id": "pm",
+      "type": "core",
+      "label": "PoolManager",
+      "address": "0x498581ff718922c3f8e6a244956af099b2652b2b"
+    },
+    {
+      "id": "hook:0xbdf938149ac6a781f94faa0ed45e6a0e984c6544",
+      "type": "hook",
+      "label": "0xbdf9…6544",
+      "address": "0xbdf938149ac6a781f94faa0ed45e6a0e984c6544",
+      "known": "Doppler Initializer",
+      "permissions": [
+        "BEFORE_INITIALIZE",
+        "AFTER_ADD_LIQUIDITY",
+        "AFTER_REMOVE_LIQUIDITY",
+        "AFTER_SWAP",
+        "AFTER_SWAP_RETURNS_DELTA"
+      ],
+      "callbacks": [
+        "afterSwap"
+      ]
+    },
+    {
+      "id": "ext:0xbf4195ab0b03e1eb3345dd1e83bed7650b1ed123",
+      "type": "external",
+      "label": "0xbf41…d123",
+      "address": "0xbf4195ab0b03e1eb3345dd1e83bed7650b1ed123",
+      "known": null
+    },
+    {
+      "id": "ext:0x4200000000000000000000000000000000000006",
+      "type": "external",
+      "label": "0x4200…0006",
+      "address": "0x4200000000000000000000000000000000000006",
+      "known": null
+    },
+    {
+      "id": "actor:0x6ff5693b99212da76ad316178a184ab56d299b43",
+      "type": "router",
+      "label": "0x6ff5…9b43",
+      "address": "0x6ff5693b99212da76ad316178a184ab56d299b43",
+      "known": null
+    },
+    {
+      "id": "actor:0xbf4195ab0b03e1eb3345dd1e83bed7650b1ed123",
+      "type": "router",
+      "label": "0xbf41…d123",
+      "address": "0xbf4195ab0b03e1eb3345dd1e83bed7650b1ed123",
+      "known": null
+    },
+    {
+      "id": "actor:0xd0a40c6526acdebd4f6d87931098ff37a9f8e4bf",
+      "type": "router",
+      "label": "0xd0a4…e4bf",
+      "address": "0xd0a40c6526acdebd4f6d87931098ff37a9f8e4bf",
+      "known": null
+    }
+  ],
+  "edges": [
+    {
+      "layer": "accounting",
+      "from": "actor:0x6ff5693b99212da76ad316178a184ab56d299b43",
+      "to": "pm",
+      "token": "0x3722264ab15a1dfce5a5af89e6547f7949a8aba3",
+      "amount": "187976072266128042233545",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": true,
+        "side": "in",
+        "delta": "-187976072266128042233545"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "actor:0x6ff5693b99212da76ad316178a184ab56d299b43",
+      "token": "0x4200000000000000000000000000000000000006",
+      "amount": "12458707813858789",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": true,
+        "side": "out",
+        "delta": "12458707813858789"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "hook:0xbdf938149ac6a781f94faa0ed45e6a0e984c6544",
+      "token": "0x4200000000000000000000000000000000000006",
+      "amount": "28095307021981",
+      "engineer": {
+        "call": "beforeSwap/afterSwap returnDelta",
+        "note": "훅이 가져간 몫",
+        "delta": "28095307021981"
+      },
+      "hookCut": true
+    },
+    {
+      "layer": "settlement",
+      "from": "pm",
+      "to": "actor:0xbf4195ab0b03e1eb3345dd1e83bed7650b1ed123",
+      "token": "0x4200000000000000000000000000000000000006",
+      "amount": "28095307021981",
+      "engineer": {
+        "call": "take"
+      },
+      "via": null
+    },
+    {
+      "layer": "settlement",
+      "from": "pm",
+      "to": "hook:0xbdf938149ac6a781f94faa0ed45e6a0e984c6544",
+      "token": "0x4200000000000000000000000000000000000006",
+      "amount": "28095307021981",
+      "engineer": {
+        "call": "take"
+      },
+      "via": null
+    },
+    {
+      "layer": "settlement",
+      "from": "actor:0xbf4195ab0b03e1eb3345dd1e83bed7650b1ed123",
+      "to": "pm",
+      "token": "0x4200000000000000000000000000000000000006",
+      "amount": "28095307021981",
+      "engineer": {
+        "call": "settleFor",
+        "native": false
+      },
+      "via": "hook:0xbdf938149ac6a781f94faa0ed45e6a0e984c6544"
+    },
+    {
+      "layer": "settlement",
+      "from": "actor:0x6ff5693b99212da76ad316178a184ab56d299b43",
+      "to": "pm",
+      "token": "0x3722264ab15a1dfce5a5af89e6547f7949a8aba3",
+      "amount": "187976072266128042233545",
+      "engineer": {
+        "call": "settle",
+        "native": false
+      },
+      "via": null
+    },
+    {
+      "layer": "settlement",
+      "from": "pm",
+      "to": "actor:0xd0a40c6526acdebd4f6d87931098ff37a9f8e4bf",
+      "token": "0x4200000000000000000000000000000000000006",
+      "amount": "12458707813858789",
+      "engineer": {
+        "call": "take"
+      },
+      "via": "actor:0x6ff5693b99212da76ad316178a184ab56d299b43"
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0xbdf938149ac6a781f94faa0ed45e6a0e984c6544",
+      "to": "ext:0xbf4195ab0b03e1eb3345dd1e83bed7650b1ed123",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 1
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0xbdf938149ac6a781f94faa0ed45e6a0e984c6544",
+      "to": "ext:0x4200000000000000000000000000000000000006",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 7
+      }
+    }
+  ],
+  "balanced": true,
+  "tokens": {
+    "0x3722264ab15a1dfce5a5af89e6547f7949a8aba3": {
+      "address": "0x3722264ab15a1dfce5a5af89e6547f7949a8aba3",
+      "symbol": "LFI",
+      "decimals": 18,
+      "name": "LienFi"
+    },
+    "0x4200000000000000000000000000000000000006": {
+      "address": "0x4200000000000000000000000000000000000006",
+      "symbol": "WETH",
+      "decimals": 18,
+      "name": "Wrapped Ether"
+    }
+  }
+}

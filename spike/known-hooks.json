@@ -1,38 +1,93 @@
 {
-  "_comment": "훅 주소 → 앱 매핑 (구 M4). 근거: Uniswap/hooklist 공식 레지스트리, Unichain Blockscout 검증 컨트랙트명, 외부 호출 지문(EulerSwap=EVC/EVault). 수동 관리 — 새 훅은 여기 추가.",
+  "_comment": "훅 주소 → 앱 매핑 (구 M4). 근거: Uniswap/hooklist 공식 레지스트리, Blockscout 검증 컨트랙트명, 외부 호출 지문(EulerSwap=EVC/EVault). 수동 관리 — 새 훅은 여기 추가. 주소는 체인 간 충돌이 없어 평면 맵으로 둔다 (unichain + base).",
   "0xa0b0d2d00fd544d8e0887f1a3cedd6e24baf10cc": {
     "name": "Aegis v2",
     "project": "Aegis",
+    "chain": "unichain",
     "source": "Uniswap/hooklist · Blockscout(Spot)"
   },
   "0x88c9ff9fc0b22cca42265d3f1d1c2c39e41cdacc": {
     "name": "Aegis v3",
     "project": "Aegis",
+    "chain": "unichain",
     "source": "Uniswap/hooklist"
   },
   "0xb5c643879006742699d1cc2581c28f177963a8a8": {
     "name": "EulerSwap",
     "project": "EulerSwap",
+    "chain": "unichain",
     "source": "외부 호출 지문: EulerSwap · EthereumVaultConnector · EVault"
   },
   "0x54bd666ea7fd8d5404c0593eab3dcf9b6e2a3ac4": {
     "name": "BackGeoOracle",
     "project": "RigoBlock",
+    "chain": "unichain",
     "source": "Uniswap/hooklist (감사: 33Audits)"
   },
   "0x2016c0e4f8bb1d6fea777dc791be919e2eda40c0": {
     "name": "Limit Order Hook",
     "project": "Limit Order Hook",
+    "chain": "unichain",
     "source": "Uniswap/hooklist · Blockscout(LimitOrderHook)"
   },
   "0xcab5a0b38b36bacd781a6ab9cc931fc6560ac0c0": {
     "name": "Limit Order Hook",
     "project": "Limit Order Hook",
+    "chain": "unichain",
     "source": "Blockscout(LimitOrderHook)"
   },
   "0x3002a90b7c510d33debee13e46854711f45a50c4": {
     "name": "Volatility Fee Hook",
     "project": null,
+    "chain": "unichain",
     "source": "Blockscout(VolatilityFeeHook) — 프로젝트 미상"
+  },
+  "0x0469a4bd3724dc86c9542f4694c976da13c450c0": {
+    "name": "Zora Hook",
+    "project": "Zora",
+    "chain": "base",
+    "source": "Uniswap/hooklist (Zora Coins)"
+  },
+  "0xc8d077444625eb300a427a6dfb2b1dbf9b159040": {
+    "name": "Zora Post Hook",
+    "project": "Zora",
+    "chain": "base",
+    "source": "Uniswap/hooklist (Zora Post Hook v2.3.0)"
+  },
+  "0xd61a675f8a0c67a73dc3b54fb7318b4d91409040": {
+    "name": "Zora Creator Hook",
+    "project": "Zora",
+    "chain": "base",
+    "source": "Uniswap/hooklist (Zora Creator Hook v1.1.2)"
+  },
+  "0xbdf938149ac6a781f94faa0ed45e6a0e984c6544": {
+    "name": "Doppler Initializer",
+    "project": "Doppler (Whetstone Research)",
+    "chain": "base",
+    "source": "Uniswap/hooklist (DopplerHookInitializer)"
+  },
+  "0xbb7784a4d481184283ed89619a3e3ed143e1adc0": {
+    "name": "Doppler Decay Hook",
+    "project": "Doppler (Whetstone Research)",
+    "chain": "base",
+    "source": "Uniswap/hooklist (DecayMulticurveInitializerHook)"
+  },
+  "0xb429d62f8f3bffb98cdb9569533ea23bf0ba28cc": {
+    "name": "Clanker Fee Hook",
+    "project": "Clanker",
+    "chain": "base",
+    "source": "Uniswap/hooklist (Clanker Static Fee Hook v2)"
+  },
+  "0x985c14baa2a18316ffda0aefb3a632fadfca2acc": {
+    "name": "LaunchHook",
+    "project": null,
+    "chain": "base",
+    "source": "Blockscout(LaunchHook, FeeEscrow 호출) — 프로젝트 미상"
+  },
+  "0x4440854b2d02c57a0dc5c58b7a884562d875c0c4": {
+    "name": "KEM Hook",
+    "project": null,
+    "chain": "base",
+    "source": "Uniswap/hooklist (UniswapV4KEMHook) — 서명 견적 검증"
   }
 }

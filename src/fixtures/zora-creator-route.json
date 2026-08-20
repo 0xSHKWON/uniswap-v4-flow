@@ -1,0 +1,824 @@
+{
+  "txHash": "0x3798d619f0335898f171229743f4390f3a653b10a7fc0e6080bf59996cbaabe0",
+  "chain": "base",
+  "origin": "0x8d47ba07ff9ccccf58c7e8810ee42c0dc8b8b123",
+  "nodes": [
+    {
+      "id": "pm",
+      "type": "core",
+      "label": "PoolManager",
+      "address": "0x498581ff718922c3f8e6a244956af099b2652b2b"
+    },
+    {
+      "id": "hook:0xd61a675f8a0c67a73dc3b54fb7318b4d91409040",
+      "type": "hook",
+      "label": "0xd61a…9040",
+      "address": "0xd61a675f8a0c67a73dc3b54fb7318b4d91409040",
+      "known": "Zora Creator Hook",
+      "permissions": [
+        "AFTER_INITIALIZE",
+        "AFTER_SWAP"
+      ],
+      "callbacks": [
+        "afterSwap"
+      ]
+    },
+    {
+      "id": "ext:0x3177fa60b8a342cd044badf34bf820c536094656",
+      "type": "external",
+      "label": "0x3177…4656",
+      "address": "0x3177fa60b8a342cd044badf34bf820c536094656",
+      "known": null
+    },
+    {
+      "id": "ext:0x88cc4e08c7608723f3e44e17ac669fb43b6a8313",
+      "type": "external",
+      "label": "0x88cc…8313",
+      "address": "0x88cc4e08c7608723f3e44e17ac669fb43b6a8313",
+      "known": null
+    },
+    {
+      "id": "ext:0x777777751622c0d3258f214f9df38e35bf45baf3",
+      "type": "external",
+      "label": "0x7777…baf3",
+      "address": "0x777777751622c0d3258f214f9df38e35bf45baf3",
+      "known": null
+    },
+    {
+      "id": "ext:0xbbae128a65239c3328faa0c70b8d5f9c961a8038",
+      "type": "external",
+      "label": "0xbbae…8038",
+      "address": "0xbbae128a65239c3328faa0c70b8d5f9c961a8038",
+      "known": null
+    },
+    {
+      "id": "ext:0x1111111111166b7fe7bd91427724b487980afc69",
+      "type": "external",
+      "label": "0x1111…fc69",
+      "address": "0x1111111111166b7fe7bd91427724b487980afc69",
+      "known": null
+    },
+    {
+      "id": "ext:0x6ff5693b99212da76ad316178a184ab56d299b43",
+      "type": "external",
+      "label": "0x6ff5…9b43",
+      "address": "0x6ff5693b99212da76ad316178a184ab56d299b43",
+      "known": null
+    },
+    {
+      "id": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "type": "hook",
+      "label": "0x0469…50c0",
+      "address": "0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "known": "Zora Hook",
+      "permissions": [
+        "AFTER_INITIALIZE",
+        "BEFORE_SWAP",
+        "AFTER_SWAP"
+      ],
+      "callbacks": [
+        "beforeSwap",
+        "afterSwap"
+      ]
+    },
+    {
+      "id": "ext:0x777777c4c14b133858c3982d41dbf02509fc18d7",
+      "type": "external",
+      "label": "0x7777…18d7",
+      "address": "0x777777c4c14b133858c3982d41dbf02509fc18d7",
+      "known": null
+    },
+    {
+      "id": "ext:0x80b1a5335b6fa526520d0e060a64ed817f0843d4",
+      "type": "external",
+      "label": "0x80b1…43d4",
+      "address": "0x80b1a5335b6fa526520d0e060a64ed817f0843d4",
+      "known": null
+    },
+    {
+      "id": "ext:0x5dbd43785954d43c1643a0caf2ecef9e0056ff13",
+      "type": "external",
+      "label": "0x5dbd…ff13",
+      "address": "0x5dbd43785954d43c1643a0caf2ecef9e0056ff13",
+      "known": null
+    },
+    {
+      "id": "ext:0xd61a675f8a0c67a73dc3b54fb7318b4d91409040",
+      "type": "external",
+      "label": "0xd61a…9040",
+      "address": "0xd61a675f8a0c67a73dc3b54fb7318b4d91409040",
+      "known": null
+    },
+    {
+      "id": "ext:0x660eaaedebc968f8f3694354fa8ec0b4c5ba8d12",
+      "type": "external",
+      "label": "0x660e…8d12",
+      "address": "0x660eaaedebc968f8f3694354fa8ec0b4c5ba8d12",
+      "known": null
+    },
+    {
+      "id": "ext:0x2183ecf857ade81c7face1dbaa98c381520619c4",
+      "type": "external",
+      "label": "0x2183…19c4",
+      "address": "0x2183ecf857ade81c7face1dbaa98c381520619c4",
+      "known": null
+    },
+    {
+      "id": "ext:0x7777777c783bad88dacaf9a19e04238341e4497b",
+      "type": "external",
+      "label": "0x7777…497b",
+      "address": "0x7777777c783bad88dacaf9a19e04238341e4497b",
+      "known": null
+    },
+    {
+      "id": "ext:0xd2ca3cda89c835a3555e0c3a3606a17bf16c6702",
+      "type": "external",
+      "label": "0xd2ca…6702",
+      "address": "0xd2ca3cda89c835a3555e0c3a3606a17bf16c6702",
+      "known": null
+    },
+    {
+      "id": "actor:0x6ff5693b99212da76ad316178a184ab56d299b43",
+      "type": "router",
+      "label": "0x6ff5…9b43",
+      "address": "0x6ff5693b99212da76ad316178a184ab56d299b43",
+      "known": null
+    },
+    {
+      "id": "actor:0x3a0c7e560498927537a671c37dbe503d6895568a",
+      "type": "router",
+      "label": "0x3a0c…568a",
+      "address": "0x3a0c7e560498927537a671c37dbe503d6895568a",
+      "known": null
+    }
+  ],
+  "edges": [
+    {
+      "layer": "settlement",
+      "from": "actor:0x6ff5693b99212da76ad316178a184ab56d299b43",
+      "to": "pm",
+      "token": "0x1111111111166b7fe7bd91427724b487980afc69",
+      "amount": "399922289490183351041",
+      "engineer": {
+        "call": "settle",
+        "native": false
+      },
+      "via": null
+    },
+    {
+      "layer": "accounting",
+      "from": "actor:0x6ff5693b99212da76ad316178a184ab56d299b43",
+      "to": "pm",
+      "token": "0x1111111111166b7fe7bd91427724b487980afc69",
+      "amount": "399922289490183351041",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": true,
+        "side": "in",
+        "delta": "-399922289490183351041"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "actor:0x6ff5693b99212da76ad316178a184ab56d299b43",
+      "token": "0x3177fa60b8a342cd044badf34bf820c536094656",
+      "amount": "100676948981630888265040",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": true,
+        "side": "out",
+        "delta": "100676948981630888265040"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "hook:0xd61a675f8a0c67a73dc3b54fb7318b4d91409040",
+      "token": "0x1111111111166b7fe7bd91427724b487980afc69",
+      "amount": "9881369553837375218",
+      "engineer": {
+        "call": "modifyLiquidity",
+        "delta": "9881369553837375218"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "hook:0xd61a675f8a0c67a73dc3b54fb7318b4d91409040",
+      "token": "0x3177fa60b8a342cd044badf34bf820c536094656",
+      "amount": "10098345068083758787",
+      "engineer": {
+        "call": "modifyLiquidity",
+        "delta": "10098345068083758787"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "hook:0xd61a675f8a0c67a73dc3b54fb7318b4d91409040",
+      "to": "pm",
+      "token": "0x1111111111166b7fe7bd91427724b487980afc69",
+      "amount": "3293460472293997160",
+      "engineer": {
+        "call": "modifyLiquidity",
+        "delta": "-3293460472293997160"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "hook:0xd61a675f8a0c67a73dc3b54fb7318b4d91409040",
+      "to": "pm",
+      "token": "0x3177fa60b8a342cd044badf34bf820c536094656",
+      "amount": "3365778411192316803",
+      "engineer": {
+        "call": "modifyLiquidity",
+        "delta": "-3365778411192316803"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "hook:0xd61a675f8a0c67a73dc3b54fb7318b4d91409040",
+      "to": "pm",
+      "token": "0x3177fa60b8a342cd044badf34bf820c536094656",
+      "amount": "6732566656891441984",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": false,
+        "side": "in",
+        "delta": "-6732566656891441984"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "hook:0xd61a675f8a0c67a73dc3b54fb7318b4d91409040",
+      "token": "0x1111111111166b7fe7bd91427724b487980afc69",
+      "amount": "25174658564238071",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": false,
+        "side": "out",
+        "delta": "25174658564238071"
+      }
+    },
+    {
+      "layer": "settlement",
+      "from": "pm",
+      "to": "hook:0xd61a675f8a0c67a73dc3b54fb7318b4d91409040",
+      "token": "0x1111111111166b7fe7bd91427724b487980afc69",
+      "amount": "6613083740107616129",
+      "engineer": {
+        "call": "take"
+      },
+      "via": null
+    },
+    {
+      "layer": "accounting",
+      "from": "actor:0x6ff5693b99212da76ad316178a184ab56d299b43",
+      "to": "pm",
+      "token": "0x3177fa60b8a342cd044badf34bf820c536094656",
+      "amount": "100676948981630888265040",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": true,
+        "side": "in",
+        "delta": "-100676948981630888265040"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "actor:0x6ff5693b99212da76ad316178a184ab56d299b43",
+      "token": "0x80b1a5335b6fa526520d0e060a64ed817f0843d4",
+      "amount": "4985211924374024007439613",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": true,
+        "side": "out",
+        "delta": "4985211924374024007439613"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "token": "0x3177fa60b8a342cd044badf34bf820c536094656",
+      "amount": "24984869759363078564",
+      "engineer": {
+        "call": "modifyLiquidity",
+        "delta": "24984869759363078564"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "token": "0x3177fa60b8a342cd044badf34bf820c536094656",
+      "amount": "27750247562057017088",
+      "engineer": {
+        "call": "modifyLiquidity",
+        "delta": "27750247562057017088"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "token": "0x3177fa60b8a342cd044badf34bf820c536094656",
+      "amount": "31980279651514225372",
+      "engineer": {
+        "call": "modifyLiquidity",
+        "delta": "31980279651514225372"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "token": "0x3177fa60b8a342cd044badf34bf820c536094656",
+      "amount": "36200364381377516109",
+      "engineer": {
+        "call": "modifyLiquidity",
+        "delta": "36200364381377516109"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "token": "0x3177fa60b8a342cd044badf34bf820c536094656",
+      "amount": "42977831786584744737",
+      "engineer": {
+        "call": "modifyLiquidity",
+        "delta": "42977831786584744737"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "token": "0x3177fa60b8a342cd044badf34bf820c536094656",
+      "amount": "50159766063043327425",
+      "engineer": {
+        "call": "modifyLiquidity",
+        "delta": "50159766063043327425"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "token": "0x3177fa60b8a342cd044badf34bf820c536094656",
+      "amount": "62676307793980231938",
+      "engineer": {
+        "call": "modifyLiquidity",
+        "delta": "62676307793980231938"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "token": "0x3177fa60b8a342cd044badf34bf820c536094656",
+      "amount": "77458101040788098872",
+      "engineer": {
+        "call": "modifyLiquidity",
+        "delta": "77458101040788098872"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "token": "0x3177fa60b8a342cd044badf34bf820c536094656",
+      "amount": "107856826868254248833",
+      "engineer": {
+        "call": "modifyLiquidity",
+        "delta": "107856826868254248833"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "token": "0x3177fa60b8a342cd044badf34bf820c536094656",
+      "amount": "154111407866684352327",
+      "engineer": {
+        "call": "modifyLiquidity",
+        "delta": "154111407866684352327"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "token": "0x3177fa60b8a342cd044badf34bf820c536094656",
+      "amount": "316123871574080789361",
+      "engineer": {
+        "call": "modifyLiquidity",
+        "delta": "316123871574080789361"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "token": "0x3177fa60b8a342cd044badf34bf820c536094656",
+      "amount": "34958332471788927930",
+      "engineer": {
+        "call": "modifyLiquidity",
+        "delta": "34958332471788927930"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "token": "0x3177fa60b8a342cd044badf34bf820c536094656",
+      "amount": "39531282996792324088",
+      "engineer": {
+        "call": "modifyLiquidity",
+        "delta": "39531282996792324088"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "to": "pm",
+      "token": "0x3177fa60b8a342cd044badf34bf820c536094656",
+      "amount": "201353897963261776528",
+      "engineer": {
+        "call": "modifyLiquidity",
+        "delta": "-201353897963261776528"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "to": "pm",
+      "token": "0x3177fa60b8a342cd044badf34bf820c536094656",
+      "amount": "805415591853047106116",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": false,
+        "side": "in",
+        "delta": "-805415591853047106116"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "token": "0x1111111111166b7fe7bd91427724b487980afc69",
+      "amount": "3011628804646383632",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": false,
+        "side": "out",
+        "delta": "3011628804646383632"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "hook:0xd61a675f8a0c67a73dc3b54fb7318b4d91409040",
+      "token": "0x3177fa60b8a342cd044badf34bf820c536094656",
+      "amount": "20066738708001384075",
+      "engineer": {
+        "call": "modifyLiquidity",
+        "delta": "20066738708001384075"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "hook:0xd61a675f8a0c67a73dc3b54fb7318b4d91409040",
+      "to": "pm",
+      "token": "0x3177fa60b8a342cd044badf34bf820c536094656",
+      "amount": "6688244011376861312",
+      "engineer": {
+        "call": "modifyLiquidity",
+        "delta": "-6688244011376861312"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "hook:0xd61a675f8a0c67a73dc3b54fb7318b4d91409040",
+      "to": "pm",
+      "token": "0x3177fa60b8a342cd044badf34bf820c536094656",
+      "amount": "13378494696624522763",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": false,
+        "side": "in",
+        "delta": "-13378494696624522763"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "hook:0xd61a675f8a0c67a73dc3b54fb7318b4d91409040",
+      "token": "0x1111111111166b7fe7bd91427724b487980afc69",
+      "amount": "50025003800046747",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": false,
+        "side": "out",
+        "delta": "50025003800046747"
+      }
+    },
+    {
+      "layer": "settlement",
+      "from": "pm",
+      "to": "hook:0xd61a675f8a0c67a73dc3b54fb7318b4d91409040",
+      "token": "0x1111111111166b7fe7bd91427724b487980afc69",
+      "amount": "50025003800046747",
+      "engineer": {
+        "call": "take"
+      },
+      "via": null
+    },
+    {
+      "layer": "settlement",
+      "from": "pm",
+      "to": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "token": "0x1111111111166b7fe7bd91427724b487980afc69",
+      "amount": "3011628804646383632",
+      "engineer": {
+        "call": "take"
+      },
+      "via": null
+    },
+    {
+      "layer": "settlement",
+      "from": "pm",
+      "to": "actor:0x3a0c7e560498927537a671c37dbe503d6895568a",
+      "token": "0x80b1a5335b6fa526520d0e060a64ed817f0843d4",
+      "amount": "4985211924374024007439613",
+      "engineer": {
+        "call": "take"
+      },
+      "via": "actor:0x6ff5693b99212da76ad316178a184ab56d299b43"
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0xd61a675f8a0c67a73dc3b54fb7318b4d91409040",
+      "to": "ext:0x3177fa60b8a342cd044badf34bf820c536094656",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 6
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0xd61a675f8a0c67a73dc3b54fb7318b4d91409040",
+      "to": "ext:0x88cc4e08c7608723f3e44e17ac669fb43b6a8313",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 6
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0xd61a675f8a0c67a73dc3b54fb7318b4d91409040",
+      "to": "ext:0x777777751622c0d3258f214f9df38e35bf45baf3",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 2
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0xd61a675f8a0c67a73dc3b54fb7318b4d91409040",
+      "to": "ext:0xbbae128a65239c3328faa0c70b8d5f9c961a8038",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 2
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0xd61a675f8a0c67a73dc3b54fb7318b4d91409040",
+      "to": "ext:0x1111111111166b7fe7bd91427724b487980afc69",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 6
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0xd61a675f8a0c67a73dc3b54fb7318b4d91409040",
+      "to": "ext:0x6ff5693b99212da76ad316178a184ab56d299b43",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 1
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "to": "ext:0x777777c4c14b133858c3982d41dbf02509fc18d7",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 3
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "to": "ext:0x80b1a5335b6fa526520d0e060a64ed817f0843d4",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 10
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "to": "ext:0x5dbd43785954d43c1643a0caf2ecef9e0056ff13",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 10
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "to": "ext:0x777777751622c0d3258f214f9df38e35bf45baf3",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 3
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "to": "ext:0xbbae128a65239c3328faa0c70b8d5f9c961a8038",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 3
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "to": "ext:0x3177fa60b8a342cd044badf34bf820c536094656",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 5
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "to": "ext:0x88cc4e08c7608723f3e44e17ac669fb43b6a8313",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 5
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "to": "ext:0xd61a675f8a0c67a73dc3b54fb7318b4d91409040",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 1
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "to": "ext:0x1111111111166b7fe7bd91427724b487980afc69",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 8
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "to": "ext:0x660eaaedebc968f8f3694354fa8ec0b4c5ba8d12",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 1
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "to": "ext:0x2183ecf857ade81c7face1dbaa98c381520619c4",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 1
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "to": "ext:0x6ff5693b99212da76ad316178a184ab56d299b43",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 1
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "to": "ext:0x7777777c783bad88dacaf9a19e04238341e4497b",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 1
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0x0469a4bd3724dc86c9542f4694c976da13c450c0",
+      "to": "ext:0xd2ca3cda89c835a3555e0c3a3606a17bf16c6702",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 1
+      }
+    }
+  ],
+  "balanced": true,
+  "tokens": {
+    "0x1111111111166b7fe7bd91427724b487980afc69": {
+      "address": "0x1111111111166b7fe7bd91427724b487980afc69",
+      "symbol": "ZORA",
+      "decimals": 18,
+      "name": "Zora"
+    },
+    "0x3177fa60b8a342cd044badf34bf820c536094656": {
+      "address": "0x3177fa60b8a342cd044badf34bf820c536094656",
+      "symbol": "basecompany",
+      "decimals": 18,
+      "name": "basecompany"
+    },
+    "0x80b1a5335b6fa526520d0e060a64ed817f0843d4": {
+      "address": "0x80b1a5335b6fa526520d0e060a64ed817f0843d4",
+      "symbol": "Unicorn 🦄",
+      "decimals": 18,
+      "name": "Unicorn 🦄"
+    }
+  }
+}
