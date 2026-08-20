@@ -348,11 +348,17 @@ export function layout(graph: Graph, expandedHooks: Set<string>): Layout {
       const target = pos.get(e.to) ?? byAddress.get(declared?.address?.toLowerCase() ?? '');
       if (!target || target.id === h.id) continue;
       const seg = [right(hookNode), left(target)];
+      // 라벨은 목적지 쪽(78% 지점)에 둔다. 부채꼴로 퍼지는 선들의 중점은
+      // 시작점 근처에 모여 있어서 라벨끼리, 그리고 정산 라벨과 겹친다.
+      const lt = 0.78;
       reach.push({
         key: `${e.from}->${e.to}`,
         points: seg,
         count: e.engineer.count ?? 1,
-        label: { x: (seg[0].x + seg[1].x) / 2, y: (seg[0].y + seg[1].y) / 2 - 8 },
+        label: {
+          x: seg[0].x + (seg[1].x - seg[0].x) * lt,
+          y: seg[0].y + (seg[1].y - seg[0].y) * lt - 8,
+        },
       });
     }
   }

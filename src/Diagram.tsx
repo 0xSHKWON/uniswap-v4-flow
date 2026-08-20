@@ -81,19 +81,31 @@ export function Diagram({ graph, locale }: Props) {
   // 라벨은 배치가 끝난 뒤 실제 글자 폭으로 한 번 더 정리한다.
   // 같은 글상자를 겹침 해소와 경계 계산에 함께 쓴다 — 따로 재면 어긋나서 라벨이 잘린다.
   // 줄기 하나의 블록(금액 목록 + 배지)이 상자 하나다.
-  const labelBoxes = useMemo<LabelBox[]>(
-    () =>
-      view.edges.map((e) => {
-        const texts = e.rows.map((r) => formatEdgeAmount(graph.tokens, r.amount, r.token));
-        const w = Math.max(...texts.map((x) => x.length * 7.6), e.hidden ? 110 : 0);
-        const top = e.label.rowsY[0] - 11;
-        const bottom = (e.label.badgeY ?? e.label.rowsY[e.label.rowsY.length - 1]) + 4;
-        const cx =
-          e.label.anchor === 'start' ? e.label.x + w / 2 : e.label.anchor === 'end' ? e.label.x - w / 2 : e.label.x;
-        return { key: e.key, x: cx, y: (top + bottom) / 2, w, h: bottom - top };
-      }),
-    [view, graph.tokens],
-  );
+  const labelBoxes = useMemo<LabelBox[]>(() => {
+    const boxes: LabelBox[] = view.edges.map((e) => {
+      const texts = e.rows.map((r) => formatEdgeAmount(graph.tokens, r.amount, r.token));
+      const w = Math.max(...texts.map((x) => x.length * 7.6), e.hidden ? 110 : 0);
+      const top = e.label.rowsY[0] - 11;
+      const bottom = (e.label.badgeY ?? e.label.rowsY[e.label.rowsY.length - 1]) + 4;
+      const cx =
+        e.label.anchor === 'start' ? e.label.x + w / 2 : e.label.anchor === 'end' ? e.label.x - w / 2 : e.label.x;
+      return { key: e.key, x: cx, y: (top + bottom) / 2, w, h: bottom - top };
+    });
+    // "호출 N회" / "개입 · 값 이동 없음" 라벨도 같은 패스에 넣는다 —
+    // 빼놓으면 정산 라벨의 배지와 겹친다 (실제로 겹쳤다).
+    for (const r of view.reach) {
+      if (r.count <= 1) continue;
+      const text = t(locale, 'edge.calls', { n: r.count });
+      boxes.push({ key: `reach:${r.key}`, x: r.label.x, y: r.label.y - 4, w: text.length * 6.4, h: 12 });
+    }
+    for (const i of view.intervene) {
+      const text = t(locale, 'edge.intervened');
+      const w = text.length * 6.4;
+      // anchor: end — 오른쪽 끝이 label.x에 붙는다.
+      boxes.push({ key: `intervene:${i.key}`, x: i.label.x - w / 2, y: i.label.y - 4, w, h: 12 });
+    }
+    return boxes;
+  }, [view, graph.tokens, locale]);
 
   const nudge = useMemo(() => declutter(labelBoxes, nodeObstacles(view.nodes)), [labelBoxes, view.nodes]);
 
@@ -337,13 +349,23 @@ export function Diagram({ graph, locale }: Props) {
           </g>
         ))}
         {view.intervene.map((i) => (
-          <text key={`ilabel-${i.key}`} className="intervene-label" x={i.label.x} y={i.label.y}>
+          <text
+            key={`ilabel-${i.key}`}
+            className="intervene-label"
+            x={i.label.x}
+            y={i.label.y + (nudge.get(`intervene:${i.key}`) ?? 0)}
+          >
             {t(locale, 'edge.intervened')}
           </text>
         ))}
         {view.reach.map((r) =>
           r.count > 1 ? (
-            <text key={`rlabel-${r.key}`} className="reach-label" x={r.label.x} y={r.label.y}>
+            <text
+              key={`rlabel-${r.key}`}
+              className="reach-label"
+              x={r.label.x}
+              y={r.label.y + (nudge.get(`reach:${r.key}`) ?? 0)}
+            >
               {t(locale, 'edge.calls', { n: r.count })}
             </text>
           ) : null,
