@@ -55,8 +55,7 @@ const en = {
 
   'hash.copied': 'Copied',
 
-  'hooks.count': '{n} hooks',
-
+  'side.app': 'App',
   'side.tx': 'Transaction',
   'sum.moves': '{n} value movements',
   'sum.move1': '1 value movement',
@@ -139,8 +138,7 @@ const ko: Record<StringKey, string> = {
 
   'hash.copied': '복사됨',
 
-  'hooks.count': '훅 {n}개',
-
+  'side.app': '앱',
   'side.tx': '트랜잭션',
   'sum.moves': '값 이동 {n}건',
   'sum.move1': '값 이동 1건',

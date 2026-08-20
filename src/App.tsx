@@ -5,7 +5,7 @@
 // 오른쪽 풀블리드 캔버스. 입력창(M4')은 사이드바의 트랜잭션 섹션 자리에 들어온다.
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Diagram, type Mode } from './Diagram';
-import { tokenOf } from './format';
+import { describeHookKeys, shortAddress, tokenOf } from './format';
 import { t, useLocale } from './i18n';
 import type { AppEntry, Graph } from './types';
 
@@ -82,6 +82,27 @@ const CHAINS = [
   { id: 'arbitrum', label: 'Arbitrum', color: '#12aaff', live: false },
 ] as const;
 
+// 드롭다운을 바깥 클릭/Esc로 닫는다. 앱·체인 두 곳에서 쓰므로 훅으로 뺐다.
+function useDismiss<T extends HTMLElement>(open: boolean, setOpen: (v: boolean) => void) {
+  const ref = useRef<T>(null);
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: PointerEvent) => {
+      if (!ref.current?.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('pointerdown', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('pointerdown', onDown);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open, setOpen]);
+  return ref;
+}
+
 export default function App() {
   const [locale, setLocale] = useLocale();
   const [sel, setSel] = useState(selectionFromURL);
@@ -92,7 +113,9 @@ export default function App() {
     modeToURL(m);
   };
   const [chainOpen, setChainOpen] = useState(false);
-  const chainRef = useRef<HTMLDivElement>(null);
+  const [appOpen, setAppOpen] = useState(false);
+  const chainRef = useDismiss<HTMLDivElement>(chainOpen, setChainOpen);
+  const appRef = useDismiss<HTMLDivElement>(appOpen, setAppOpen);
   const chainApps = appsOn(sel.chain);
   const app = chainApps.find((a) => a.id === sel.appId) ?? chainApps[0];
   const meta = app.flows.find((f) => f.slug === sel.slug) ?? app.flows[0];
@@ -103,7 +126,10 @@ export default function App() {
     setSel({ chain, appId, slug });
     selectionToURL(chain, appId, slug);
   };
-  const selectApp = (a: AppEntry) => select(sel.chain, a.id, a.flows[0].slug);
+  const selectApp = (a: AppEntry) => {
+    select(sel.chain, a.id, a.flows[0].slug);
+    setAppOpen(false);
+  };
   const selectChain = (chain: string) => {
     const def = defaultAppOn(chain);
     select(chain, def.id, def.flows[0].slug);
@@ -117,40 +143,67 @@ export default function App() {
     });
   };
 
-  // 드롭다운은 바깥 클릭/Esc로 닫힌다.
-  useEffect(() => {
-    if (!chainOpen) return;
-    const onDown = (e: PointerEvent) => {
-      if (!chainRef.current?.contains(e.target as Node)) setChainOpen(false);
-    };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setChainOpen(false);
-    };
-    document.addEventListener('pointerdown', onDown);
-    document.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('pointerdown', onDown);
-      document.removeEventListener('keydown', onKey);
-    };
-  }, [chainOpen]);
-
   // 요약 통계 — 전부 그래프 JSON에서 유도한다. RPC 없음.
-  // 훅 목록은 여기 없다 — 캔버스 우측 상단의 떠 있는 패널로 옮겼다 (Diagram 참조).
-  // 앱을 옮겨다닐 때마다 훅 개수가 바뀌어 사이드바가 늘었다 줄었다 하던 문제.
   const summary = useMemo(() => {
     const settlements = graph.edges.filter((e) => e.layer === 'settlement' && e.amount);
     const hiddenCount = settlements.filter((e) => e.hidden).length;
     const symbols = [
       ...new Set(settlements.map((e) => tokenOf(graph.tokens, e.token).symbol).filter(Boolean)),
     ];
-    return { movements: settlements.length, hiddenCount, symbols };
-  }, [graph]);
+    const hooks = graph.nodes
+      .filter((n) => n.type === 'hook')
+      .map((n) => ({
+        address: n.address ?? '',
+        known: n.known ?? null,
+        traits: describeHookKeys(n.permissions).map((k) => t(locale, k)),
+      }));
+    return { movements: settlements.length, hiddenCount, symbols, hooks };
+  }, [graph, locale]);
 
   return (
     <div className="viz-root">
       <header className="topbar">
-        <div className="brand">
-          <h1>{t(locale, 'title')}</h1>
+        <div className="topbar-left">
+          <div className="brand">
+            <h1>{t(locale, 'title')}</h1>
+          </div>
+
+          {/* 앱 선택은 상단으로 — 예전엔 사이드바 목록이었는데 카드가 펼쳐지고 접히며
+              사이드바 전체 폭이 흔들렸다. 드롭다운은 그 흔들림을 없애고, 사이드바는
+              현재 흐름의 인스펙터(설명·트랜잭션·훅)로 안정된다. */}
+          <div className="app-select" ref={appRef}>
+            <button
+              className="app-trigger"
+              aria-haspopup="menu"
+              aria-expanded={appOpen}
+              aria-label={t(locale, 'apps.label')}
+              onClick={() => setAppOpen((v) => !v)}
+            >
+              <span className="app-trigger-name">{app.name[locale]}</span>
+              <span className="app-caret" aria-hidden="true">
+                ▾
+              </span>
+            </button>
+            {appOpen && (
+              <div className="app-menu" role="menu">
+                {chainApps.map((a) => (
+                  <button
+                    key={a.id}
+                    role="menuitemradio"
+                    aria-checked={a.id === app.id}
+                    className={a.id === app.id ? 'is-current' : ''}
+                    onClick={() => selectApp(a)}
+                  >
+                    <span className="app-menu-name">{a.name[locale]}</span>
+                    <span className="app-menu-tagline">{a.tagline[locale]}</span>
+                    {a.flows.length > 1 && (
+                      <span className="app-menu-flows">{t(locale, 'apps.flows', { n: a.flows.length })}</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
         <div className="topbar-right">
           <div className="mode-toggle" role="group" aria-label={t(locale, 'mode.label')}>
@@ -215,19 +268,34 @@ export default function App() {
 
       <div className="workspace">
         <aside className="sidebar">
-          {/* 트랜잭션과 요약을 한 섹션으로 — 헤딩 두 개와 큰 stat 박스가 자리만 먹었다. */}
+          {/* 현재 앱: 설명 + 대표 흐름 목록. 앱 선택 자체는 상단 드롭다운으로 옮겼다. */}
+          <section className="side-section">
+            <h2>{t(locale, 'side.app')}</h2>
+            <p className="app-desc">{app.description[locale]}</p>
+            {app.flows.length > 1 && (
+              <div className="flow-list">
+                {app.flows.map((f) => (
+                  <button
+                    key={f.slug}
+                    className={f.slug === meta.slug ? 'is-active' : ''}
+                    onClick={() => select(sel.chain, app.id, f.slug)}
+                  >
+                    <span className="flow-title">{f.title[locale]}</span>
+                    <span className="flow-meta">{t(locale, 'flow.meta', { nodes: f.nodes, hooks: f.hooks })}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </section>
+
           <section className="side-section">
             <h2>{t(locale, 'side.tx')}</h2>
             <button className="tx-chip" onClick={copyHash} title={graph.txHash}>
               <span className="chain">{graph.chain}</span>
               <code>{copied ? t(locale, 'hash.copied') : `${graph.txHash.slice(0, 10)}…${graph.txHash.slice(-8)}`}</code>
             </button>
-            {meta && (
-              <>
-                <h3 className="side-title">{meta.title[locale]}</h3>
-                <p className="side-blurb">{meta.blurb[locale]}</p>
-              </>
-            )}
+            <h3 className="side-title">{meta.title[locale]}</h3>
+            <p className="side-blurb">{meta.blurb[locale]}</p>
             <p className="sum-line">
               {t(locale, summary.movements === 1 ? 'sum.move1' : 'sum.moves', { n: summary.movements })}
               {summary.hiddenCount > 0 && (
@@ -251,46 +319,20 @@ export default function App() {
             )}
           </section>
 
-          <section className="side-section side-apps">
-            <h2>{t(locale, 'apps.label')}</h2>
-            <div className="app-list">
-              {chainApps.map((a) => {
-                const active = a.id === app.id;
-                return (
-                  <div key={a.id} className={`app-entry${active ? ' is-active' : ''}`}>
-                    {/* 활성 카드에는 설명이 있으니 태그라인·흐름 수를 접는다. 흐름이
-                        하나뿐이면 선택지가 없으므로 목록도 그리지 않는다. */}
-                    <button className="app-head" onClick={() => selectApp(a)} aria-expanded={active}>
-                      <span className="app-name">{a.name[locale]}</span>
-                      {!active && <span className="app-tagline">{a.tagline[locale]}</span>}
-                      {!active && a.flows.length > 1 && (
-                        <span className="app-flow-count">{t(locale, 'apps.flows', { n: a.flows.length })}</span>
-                      )}
-                    </button>
-                    {active && (
-                      <div className="app-body">
-                        <p className="app-desc">{a.description[locale]}</p>
-                        {a.flows.length > 1 && (
-                          <div className="flow-list">
-                            {a.flows.map((f) => (
-                              <button
-                                key={f.slug}
-                                className={f.slug === meta.slug ? 'is-active' : ''}
-                                onClick={() => select(sel.chain, a.id, f.slug)}
-                              >
-                                <span className="flow-title">{f.title[locale]}</span>
-                                <span className="flow-meta">{t(locale, 'flow.meta', { nodes: f.nodes, hooks: f.hooks })}</span>
-                              </button>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </section>
+          {summary.hooks.length > 0 && (
+            <section className="side-section">
+              <h2>{t(locale, 'sum.hooks')}</h2>
+              <ul className="hook-list">
+                {summary.hooks.map((h) => (
+                  <li key={h.address} className={h.known ? 'has-name' : ''}>
+                    {h.known && <strong>{h.known}</strong>}
+                    <code>{shortAddress(h.address)}</code>
+                    <span>{h.traits.join(' · ')}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
         </aside>
 
         <section className="canvas">

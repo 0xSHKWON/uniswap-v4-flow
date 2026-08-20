@@ -80,8 +80,6 @@ function clientToSvg(svg: SVGSVGElement, vb: Box, clientX: number, clientY: numb
 export function Diagram({ graph, locale, mode }: Props) {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [hovered, setHovered] = useState<RoutedEdge | null>(null);
-  const [hooksOpen, setHooksOpen] = useState(false);
-  const hooksRef = useRef<HTMLDivElement>(null);
 
   const view = useMemo(() => layout(graph, expanded, mode === 'engineer'), [graph, expanded, mode]);
 
@@ -140,39 +138,6 @@ export function Diagram({ graph, locale, mode }: Props) {
 
   const reachCount = (hookId: string) =>
     graph.edges.filter((e) => e.layer === 'reach' && e.from === hookId).length;
-
-  // 캔버스 우측 상단에 떠 있는 훅 요약 — 예전엔 사이드바에 있었는데, 앱을 옮겨다닐 때마다
-  // 훅 개수가 바뀌면서 사이드바 전체가 늘었다 줄었다 했다. 엔지니어 모드는 TracePanel이
-  // 이미 훅 권한 비트까지 더 자세히 보여주므로 트레이더 모드에서만 띄운다.
-  const hookSummary = useMemo(
-    () =>
-      graph.nodes
-        .filter((n) => n.type === 'hook')
-        .map((n) => ({
-          id: n.id,
-          address: n.address ?? '',
-          known: n.known ?? null,
-          traits: describeHookKeys(n.permissions).map((k) => t(locale, k)),
-        })),
-    [graph.nodes, locale],
-  );
-
-  // 훅 패널은 바깥 클릭/Esc로 닫힌다 (체인 드롭다운과 같은 규칙).
-  useEffect(() => {
-    if (!hooksOpen) return;
-    const onDown = (e: PointerEvent) => {
-      if (!hooksRef.current?.contains(e.target as Node)) setHooksOpen(false);
-    };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setHooksOpen(false);
-    };
-    document.addEventListener('pointerdown', onDown);
-    document.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('pointerdown', onDown);
-      document.removeEventListener('keydown', onKey);
-    };
-  }, [hooksOpen]);
 
   // --- 줌/팬 ---
   // box(전체가 들어오는 뷰)가 기본값. 사용자가 휠/드래그로 만지면 userBox가 우선한다.
@@ -604,41 +569,6 @@ export function Diagram({ graph, locale, mode }: Props) {
         </div>
 
         {(hovered ?? focusEdge) && <EdgeDetail edge={(hovered ?? focusEdge)!} graph={graph} locale={locale} />}
-
-        {/* 접힌 배지가 기본값이다 — 항상 펼쳐두면 세로로 긴 다이어그램(훅 여러 개)이
-            화면에 맞춰 축소될 때 상단 여백이 줄어들어 PoolManager 등과 겹쳤다. */}
-        {mode !== 'engineer' && hookSummary.length > 0 && (
-          <div className="hooks-select" ref={hooksRef}>
-            <button
-              className="hooks-trigger"
-              aria-haspopup="menu"
-              aria-expanded={hooksOpen}
-              onClick={() => setHooksOpen((v) => !v)}
-            >
-              <span className="hooks-dot" aria-hidden="true" />
-              {hookSummary.length === 1
-                ? (hookSummary[0].known ?? t(locale, 'role.hook'))
-                : t(locale, 'hooks.count', { n: hookSummary.length })}
-              <span className="hooks-caret" aria-hidden="true">
-                ▾
-              </span>
-            </button>
-            {hooksOpen && (
-              <div className="hooks-menu" role="menu">
-                <span className="hooks-menu-label">{t(locale, 'sum.hooks')}</span>
-                <ul className="hooks-menu-list">
-                  {hookSummary.map((h) => (
-                    <li key={h.id}>
-                      {h.known && <strong>{h.known}</strong>}
-                      <code>{shortAddress(h.address)}</code>
-                      <span>{h.traits.join(' · ')}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        )}
       </div>
 
       {mode === 'engineer' && (

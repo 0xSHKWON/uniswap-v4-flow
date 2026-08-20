@@ -103,6 +103,13 @@ body {
   border-bottom: 1px solid var(--line);
 }
 
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
 .brand {
   display: flex;
   align-items: center;
@@ -125,6 +132,103 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+/* --- 앱 선택 (상단, 주 내비게이션) --- */
+
+.app-select {
+  position: relative;
+  flex: none;
+}
+
+.app-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 260px;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-2);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.app-trigger:hover {
+  border-color: color-mix(in srgb, var(--hook) 45%, var(--line));
+}
+
+.app-trigger-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-caret {
+  flex: none;
+  font-size: 9px;
+  color: var(--text-muted);
+}
+
+.app-menu {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 6px);
+  z-index: 30;
+  width: 300px;
+  max-height: min(460px, calc(100vh - 90px));
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 5px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-1);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 14%);
+}
+
+.app-menu button {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  padding: 8px 11px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+.app-menu button:hover {
+  background: var(--surface-2);
+}
+
+.app-menu button.is-current {
+  border-color: var(--hook);
+  background: color-mix(in srgb, var(--hook) 7%, var(--surface-1));
+}
+
+.app-menu-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.app-menu-tagline {
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+
+.app-menu-flows {
+  font-size: 10px;
+  color: var(--text-muted);
 }
 
 /* --- 체인 선택 --- */
@@ -394,71 +498,12 @@ body {
 }
 
 
-/* --- 앱 목록 (M2' 카탈로그) --- */
-
-.side-apps {
-  margin-top: auto;
-}
-
-.app-list {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.app-entry {
-  border: 1px solid transparent;
-  border-radius: 10px;
-}
-
-.app-entry.is-active {
-  border-color: var(--hook);
-  background: color-mix(in srgb, var(--hook) 6%, var(--surface-1));
-}
-
-.app-head {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  width: 100%;
-  padding: 8px 11px;
-  border: 0;
-  border-radius: 10px;
-  background: transparent;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-  color: var(--text-secondary);
-}
-
-.app-entry:not(.is-active) .app-head:hover {
-  background: var(--surface-2);
-}
-
-.app-name {
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.app-tagline {
-  font-size: 10.5px;
-  color: var(--text-muted);
-}
-
-.app-flow-count {
-  font-size: 10px;
-  color: var(--text-muted);
-}
-
-.app-body {
-  padding: 0 8px 8px;
-}
+/* --- 앱 섹션 (M2' 카탈로그, 사이드바) — 선택은 상단 드롭다운, 여기는 설명 + 흐름 목록 --- */
 
 .app-desc {
-  margin: 0 3px 7px;
-  font-size: 11px;
-  line-height: 1.5;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.55;
   color: var(--text-secondary);
 }
 
@@ -1233,111 +1278,49 @@ body {
   padding-top: 9px;
 }
 
-/* --- 훅 패널 (캔버스 우측 상단, 접힌 배지 → 드롭다운) --- */
-/* 예전엔 사이드바에 있었다. 앱마다 훅 개수가 달라 사이드바가 늘었다 줄었다 하던 문제라
-   다이어그램 자체에 얹었다 — 다만 항상 펼쳐두면 훅이 여러 개라 세로로 긴 다이어그램이
-   화면에 맞춰 축소될 때 상단 여백이 줄어 PoolManager 등과 겹쳤다. 그래서 접은 배지가
-   기본값이고, 펼치는 목록은 체인 선택과 같은 드롭다운 패턴을 쓴다. */
-.hooks-select {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  z-index: 5;
-}
+/* --- 훅 목록 (사이드바) --- */
 
-.hooks-trigger {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 5px 11px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--surface-1);
-  color: var(--text-primary);
-  font: inherit;
-  font-size: 12px;
-  font-weight: 550;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
-  max-width: 220px;
-}
-
-.hooks-trigger:hover {
-  background: var(--surface-2);
-}
-
-.hooks-dot {
-  flex: none;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--hook);
-}
-
-.hooks-caret {
-  font-size: 9px;
-  color: var(--text-muted);
-}
-
-.hooks-menu {
-  position: absolute;
-  right: 0;
-  top: calc(100% + 6px);
-  z-index: 30;
-  width: 240px;
-  max-height: min(360px, calc(100vh - 220px));
-  overflow-y: auto;
-  padding: 10px 12px;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: var(--surface-1);
-  box-shadow: 0 8px 24px rgb(0 0 0 / 14%);
-}
-
-.hooks-menu-label {
-  display: block;
-  margin-bottom: 7px;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-
-.hooks-menu-list {
+.hook-list {
   margin: 0;
   padding: 0;
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 6px;
 }
 
-.hooks-menu-list li {
+.hook-list li {
   display: flex;
   flex-direction: column;
   gap: 1px;
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--surface-2);
 }
 
-.hooks-menu-list li + li {
-  padding-top: 7px;
-  border-top: 1px solid var(--line);
+.hook-list strong {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
-.hooks-menu-list strong {
+.hook-list code {
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
   font-size: 12px;
   font-weight: 600;
   color: var(--text-primary);
 }
 
-.hooks-menu-list code {
-  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+/* 이름이 식별된 훅은 주소를 보조 정보로 강등 */
+.hook-list li.has-name code {
   font-size: 10.5px;
+  font-weight: 400;
   color: var(--text-muted);
 }
 
-.hooks-menu-list span {
-  font-size: 10px;
+.hook-list span {
+  font-size: 10.5px;
   color: var(--text-secondary);
 }
 
