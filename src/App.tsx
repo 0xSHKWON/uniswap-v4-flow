@@ -155,7 +155,6 @@ export default function App() {
     <div className="viz-root">
       <header className="topbar">
         <div className="brand">
-          <span className="brand-mark" aria-hidden="true" />
           <h1>{t(locale, 'title')}</h1>
         </div>
         <div className="topbar-right">
@@ -221,6 +220,7 @@ export default function App() {
 
       <div className="workspace">
         <aside className="sidebar">
+          {/* 트랜잭션과 요약을 한 섹션으로 — 헤딩 두 개와 큰 stat 박스가 자리만 먹었다. */}
           <section className="side-section">
             <h2>{t(locale, 'side.tx')}</h2>
             <button className="tx-chip" onClick={copyHash} title={graph.txHash}>
@@ -233,20 +233,15 @@ export default function App() {
                 <p className="side-blurb">{meta.blurb[locale]}</p>
               </>
             )}
-          </section>
-
-          <section className="side-section">
-            <h2>{t(locale, 'side.summary')}</h2>
-            <dl className="stats">
-              <div>
-                <dt>{t(locale, 'sum.movements')}</dt>
-                <dd>{summary.movements}</dd>
-              </div>
-              <div className={summary.hiddenCount ? 'is-hidden-stat' : ''}>
-                <dt>{t(locale, 'sum.hidden')}</dt>
-                <dd>{summary.hiddenCount}</dd>
-              </div>
-            </dl>
+            <p className="sum-line">
+              {t(locale, summary.movements === 1 ? 'sum.move1' : 'sum.moves', { n: summary.movements })}
+              {summary.hiddenCount > 0 && (
+                <>
+                  {' · '}
+                  <em>{t(locale, 'sum.hiddenShort', { n: summary.hiddenCount })}</em>
+                </>
+              )}
+            </p>
             {summary.symbols.length > 0 && (
               <div className="side-row">
                 <span className="side-row-label">{t(locale, 'sum.tokens')}</span>
@@ -282,28 +277,32 @@ export default function App() {
                 const active = a.id === app.id;
                 return (
                   <div key={a.id} className={`app-entry${active ? ' is-active' : ''}`}>
+                    {/* 활성 카드에는 설명이 있으니 태그라인·흐름 수를 접는다. 흐름이
+                        하나뿐이면 선택지가 없으므로 목록도 그리지 않는다. */}
                     <button className="app-head" onClick={() => selectApp(a)} aria-expanded={active}>
                       <span className="app-name">{a.name[locale]}</span>
-                      <span className="app-tagline">{a.tagline[locale]}</span>
-                      {a.flows.length > 1 && (
+                      {!active && <span className="app-tagline">{a.tagline[locale]}</span>}
+                      {!active && a.flows.length > 1 && (
                         <span className="app-flow-count">{t(locale, 'apps.flows', { n: a.flows.length })}</span>
                       )}
                     </button>
                     {active && (
                       <div className="app-body">
                         <p className="app-desc">{a.description[locale]}</p>
-                        <div className="flow-list">
-                          {a.flows.map((f) => (
-                            <button
-                              key={f.slug}
-                              className={f.slug === meta.slug ? 'is-active' : ''}
-                              onClick={() => select(sel.chain, a.id, f.slug)}
-                            >
-                              <span className="flow-title">{f.title[locale]}</span>
-                              <span className="flow-meta">{t(locale, 'flow.meta', { nodes: f.nodes, hooks: f.hooks })}</span>
-                            </button>
-                          ))}
-                        </div>
+                        {a.flows.length > 1 && (
+                          <div className="flow-list">
+                            {a.flows.map((f) => (
+                              <button
+                                key={f.slug}
+                                className={f.slug === meta.slug ? 'is-active' : ''}
+                                onClick={() => select(sel.chain, a.id, f.slug)}
+                              >
+                                <span className="flow-title">{f.title[locale]}</span>
+                                <span className="flow-meta">{t(locale, 'flow.meta', { nodes: f.nodes, hooks: f.hooks })}</span>
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>

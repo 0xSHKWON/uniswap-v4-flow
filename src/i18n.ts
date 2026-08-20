@@ -56,9 +56,9 @@ const en = {
   'hash.copied': 'Copied',
 
   'side.tx': 'Transaction',
-  'side.summary': 'Summary',
-  'sum.movements': 'Value movements',
-  'sum.hidden': 'No Transfer event',
+  'sum.moves': '{n} value movements',
+  'sum.move1': '1 value movement',
+  'sum.hiddenShort': '{n} with no Transfer event',
   'sum.tokens': 'Tokens',
   'sum.hooks': 'Hooks',
 
@@ -126,9 +126,9 @@ const ko: Record<StringKey, string> = {
   'hash.copied': '복사됨',
 
   'side.tx': '트랜잭션',
-  'side.summary': '요약',
-  'sum.movements': '값 이동',
-  'sum.hidden': 'Transfer 이벤트 없음',
+  'sum.moves': '값 이동 {n}건',
+  'sum.move1': '값 이동 1건',
+  'sum.hiddenShort': 'Transfer 이벤트 없는 이동 {n}건',
   'sum.tokens': '토큰',
   'sum.hooks': '훅',
 

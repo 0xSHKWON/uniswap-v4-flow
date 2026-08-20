@@ -110,14 +110,6 @@ body {
   min-width: 0;
 }
 
-.brand-mark {
-  flex: none;
-  width: 14px;
-  height: 14px;
-  border-radius: 4px;
-  background: var(--hook);
-}
-
 .brand h1 {
   margin: 0;
   font-size: 15px;
@@ -360,35 +352,17 @@ body {
 
 /* --- 요약 --- */
 
-.stats {
+/* stat 박스 대신 한 줄 요약 — 숫자 두 개에 카드 두 장은 과했다. */
+.sum-line {
   margin: 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-
-.stats > div {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 9px 11px;
-  border: 1px solid var(--line);
-  border-radius: 9px;
-}
-
-.stats dt {
-  font-size: 10.5px;
-  color: var(--text-muted);
-}
-
-.stats dd {
-  margin: 0;
-  font-size: 17px;
-  font-weight: 650;
+  font-size: 12px;
   font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
 }
 
-.stats .is-hidden-stat dd {
+.sum-line em {
+  font-style: normal;
+  font-weight: 600;
   color: var(--hidden);
 }
 
@@ -428,14 +402,15 @@ body {
   gap: 6px;
 }
 
+/* 파란 강조는 앱 목록의 활성 카드 한 곳에만 — 여기까지 파랗게 하면 시선이 갈라진다. */
 .hook-list li {
   display: flex;
   flex-direction: column;
   gap: 1px;
   padding: 7px 10px;
-  border: 1px solid color-mix(in srgb, var(--hook) 45%, var(--line));
+  border: 1px solid var(--line);
   border-radius: 9px;
-  background: color-mix(in srgb, var(--hook) 6%, var(--surface-1));
+  background: var(--surface-2);
 }
 
 .hook-list strong {
