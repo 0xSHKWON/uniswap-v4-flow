@@ -81,6 +81,7 @@ export default function App() {
       .filter((n) => n.type === 'hook')
       .map((n) => ({
         address: n.address ?? '',
+        known: n.known ?? null,
         traits: describeHookKeys(n.permissions).map((k) => t(locale, k)),
       }));
     return { movements: settlements.length, hiddenCount, symbols, hooks };
@@ -190,7 +191,8 @@ export default function App() {
                 <span className="side-row-label">{t(locale, 'sum.hooks')}</span>
                 <ul className="hook-list">
                   {summary.hooks.map((h) => (
-                    <li key={h.address}>
+                    <li key={h.address} className={h.known ? 'has-name' : ''}>
+                      {h.known && <strong>{h.known}</strong>}
                       <code>{shortAddress(h.address)}</code>
                       <span>{h.traits.join(' · ')}</span>
                     </li>

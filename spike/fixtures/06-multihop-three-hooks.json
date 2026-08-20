@@ -14,7 +14,7 @@
       "type": "hook",
       "label": "0xb5c6…a8a8",
       "address": "0xb5c643879006742699d1cc2581c28f177963a8a8",
-      "known": null,
+      "known": "EulerSwap",
       "permissions": [
         "BEFORE_INITIALIZE",
         "BEFORE_ADD_LIQUIDITY",
@@ -136,7 +136,7 @@
       "type": "hook",
       "label": "0x2016…40c0",
       "address": "0x2016c0e4f8bb1d6fea777dc791be919e2eda40c0",
-      "known": null,
+      "known": "Limit Order Hook",
       "permissions": [
         "BEFORE_SWAP",
         "AFTER_SWAP"

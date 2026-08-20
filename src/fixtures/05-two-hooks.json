@@ -14,7 +14,7 @@
       "type": "hook",
       "label": "0xa0b0…10cc",
       "address": "0xa0b0d2d00fd544d8e0887f1a3cedd6e24baf10cc",
-      "known": null,
+      "known": "Aegis v2",
       "permissions": [
         "AFTER_INITIALIZE",
         "BEFORE_SWAP",
@@ -60,7 +60,7 @@
       "type": "hook",
       "label": "0x88c9…dacc",
       "address": "0x88c9ff9fc0b22cca42265d3f1d1c2c39e41cdacc",
-      "known": null,
+      "known": "Aegis v3",
       "permissions": [
         "AFTER_INITIALIZE",
         "BEFORE_ADD_LIQUIDITY",

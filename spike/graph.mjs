@@ -1,7 +1,11 @@
 // Emit the 기획서 §7 data model from a reconstructed trace.
 // Proves M0's output plugs straight into M1's renderer without another decode pass.
+import { readFileSync } from 'node:fs';
 import { trace } from './rpc.mjs';
 import { reconstruct } from './reconstruct.mjs';
+
+// 훅 주소 → 앱 이름 (구 M4). known-hooks.json 은 수동 관리.
+const KNOWN = JSON.parse(readFileSync(new URL('./known-hooks.json', import.meta.url), 'utf8'));
 import { POOL_MANAGER, NATIVE, hookPermissionNames, eq } from './v4.mjs';
 
 const CHAIN = process.env.CHAIN ?? 'unichain';
@@ -26,7 +30,7 @@ export function toGraph(root, { chain = CHAIN, txHash } = {}) {
     hookIds.set(h.address, id);
     addNode(id, 'hook', short(h.address), {
       address: h.address,
-      known: null, // filled by the M4 address→protocol table
+      known: KNOWN[h.address]?.name ?? null,
       permissions: hookPermissionNames(h.address),
       callbacks: h.callbacks,
     });

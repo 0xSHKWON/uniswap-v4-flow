@@ -14,7 +14,7 @@
       "type": "hook",
       "label": "0x3002…50c4",
       "address": "0x3002a90b7c510d33debee13e46854711f45a50c4",
-      "known": null,
+      "known": "Volatility Fee Hook",
       "permissions": [
         "AFTER_INITIALIZE",
         "BEFORE_SWAP",
