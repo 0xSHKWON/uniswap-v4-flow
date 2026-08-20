@@ -4,7 +4,7 @@
 // 레이아웃은 인스펙터 구조다: 왼쪽 사이드바(트랜잭션 정보 · 요약 · 앱 목록),
 // 오른쪽 풀블리드 캔버스. 입력창(M4')은 사이드바의 트랜잭션 섹션 자리에 들어온다.
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Diagram } from './Diagram';
+import { Diagram, type Mode } from './Diagram';
 import { describeHookKeys, shortAddress, tokenOf } from './format';
 import { t, useLocale } from './i18n';
 import type { AppEntry, Graph } from './types';
@@ -36,6 +36,18 @@ function selectionFromURL(): { appId: string; slug: string } {
   return { appId: def.id, slug: def.flows[0].slug };
 }
 
+// 보기 모드(M3 엔지니어 모드)도 같은 규칙: URL에 담고, 기본값(trader)이면 지운다.
+function modeFromURL(): Mode {
+  return new URLSearchParams(window.location.search).get('mode') === 'engineer' ? 'engineer' : 'trader';
+}
+
+function modeToURL(mode: Mode) {
+  const url = new URL(window.location.href);
+  if (mode === 'trader') url.searchParams.delete('mode');
+  else url.searchParams.set('mode', mode);
+  history.replaceState(null, '', url);
+}
+
 function selectionToURL(appId: string, slug: string) {
   const url = new URL(window.location.href);
   const app = APPS.find((a) => a.id === appId);
@@ -64,7 +76,12 @@ const CHAINS = [
 export default function App() {
   const [locale, setLocale] = useLocale();
   const [sel, setSel] = useState(selectionFromURL);
+  const [mode, setModeState] = useState<Mode>(modeFromURL);
   const [copied, setCopied] = useState(false);
+  const setMode = (m: Mode) => {
+    setModeState(m);
+    modeToURL(m);
+  };
   const [chainOpen, setChainOpen] = useState(false);
   const chainRef = useRef<HTMLDivElement>(null);
   const app = APPS.find((a) => a.id === sel.appId) ?? APPS[0];
@@ -126,6 +143,15 @@ export default function App() {
           <h1>{t(locale, 'title')}</h1>
         </div>
         <div className="topbar-right">
+          <div className="mode-toggle" role="group" aria-label={t(locale, 'mode.label')}>
+            <button className={mode === 'trader' ? 'is-active' : ''} onClick={() => setMode('trader')}>
+              {t(locale, 'mode.trader')}
+            </button>
+            <button className={mode === 'engineer' ? 'is-active' : ''} onClick={() => setMode('engineer')}>
+              {t(locale, 'mode.engineer')}
+            </button>
+          </div>
+
           <div className="chain-select" ref={chainRef}>
             <button
               className="chain-trigger"
@@ -272,11 +298,16 @@ export default function App() {
         </aside>
 
         <section className="canvas">
-          <Diagram key={meta.slug} graph={graph} locale={locale} />
+          <Diagram key={meta.slug} graph={graph} locale={locale} mode={mode} />
           <div className="canvas-foot">
             <p className="legend">
               <span className="swatch swatch-flow" /> {t(locale, 'legend.settled')}
               <span className="swatch swatch-hidden" /> {t(locale, 'legend.hidden')}
+              {mode === 'engineer' && (
+                <>
+                  <span className="swatch swatch-acct" /> {t(locale, 'legend.acct')}
+                </>
+              )}
               <span className="swatch swatch-hook" /> {t(locale, 'legend.hook')}
             </p>
             <p className="note">{t(locale, 'note')}</p>

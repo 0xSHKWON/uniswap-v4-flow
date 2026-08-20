@@ -47,9 +47,13 @@ function pathOf(points: Array<{ x: number; y: number }>): string {
   return `M${a.x},${a.y} C${a.x},${a.y + dy} ${b.x},${b.y - dy} ${b.x},${b.y}`;
 }
 
+export type Mode = 'trader' | 'engineer';
+
 interface Props {
   graph: Graph;
   locale: Locale;
+  /** trader = 정산만. engineer = 그 정산을 설명하는 회계 델타(채무)를 오버레이 (기획서 §4). */
+  mode: Mode;
 }
 
 interface Box {
@@ -72,11 +76,11 @@ function clientToSvg(svg: SVGSVGElement, vb: Box, clientX: number, clientY: numb
   };
 }
 
-export function Diagram({ graph, locale }: Props) {
+export function Diagram({ graph, locale, mode }: Props) {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [hovered, setHovered] = useState<RoutedEdge | null>(null);
 
-  const view = useMemo(() => layout(graph, expanded), [graph, expanded]);
+  const view = useMemo(() => layout(graph, expanded, mode === 'engineer'), [graph, expanded, mode]);
 
   // 라벨은 배치가 끝난 뒤 실제 글자 폭으로 한 번 더 정리한다.
   // 같은 글상자를 겹침 해소와 경계 계산에 함께 쓴다 — 따로 재면 어긋나서 라벨이 잘린다.
@@ -188,7 +192,8 @@ export function Diagram({ graph, locale }: Props) {
   // --- 흐름 따라가기 (기획서 §6 "단계별 보기") ---
   // 정산 줄기는 layout에서 시간순(첫 movement 기준)으로 나온다. 그 순서대로
   // 하나씩 포커스하며 카메라를 맞추고 나머지는 흐리게 한다.
-  const steps = view.edges;
+  // 엔지니어 모드의 회계 오버레이는 따라가기에서 뺀다 — 이야기는 정산 순서다.
+  const steps = useMemo(() => view.edges.filter((e) => e.kind === 'settlement'), [view.edges]);
   const [focusIdx, setFocusIdx] = useState<number | null>(null);
   const focusEdge = focusIdx === null ? null : (steps[Math.min(focusIdx, steps.length - 1)] ?? null);
 
@@ -360,6 +365,9 @@ export function Diagram({ graph, locale }: Props) {
           <marker id="arrow-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
             <path d="M0,1 L9,5 L0,9 z" className="arrow-head muted" />
           </marker>
+          <marker id="arrow-acct" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0,1 L9,5 L0,9 z" className="arrow-head acct" />
+          </marker>
         </defs>
 
         {/* 값은 안 움직였지만 호출된 훅 — 떠 있지 않도록 중립선으로 잇는다. */}
@@ -379,15 +387,20 @@ export function Diagram({ graph, locale }: Props) {
         {view.edges.map((e) => {
           const isHovered = hovered?.key === e.key;
           const isFocus = focusEdge?.key === e.key;
+          const acct = e.kind === 'accounting';
           return (
             <g
               key={e.key}
-              className={`edge${e.hidden ? ' is-hidden-value' : ''}${isHovered ? ' is-hovered' : ''}${isFocus ? ' is-focus' : ''}`}
+              className={`edge${acct ? ' is-accounting' : ''}${e.hidden ? ' is-hidden-value' : ''}${isHovered ? ' is-hovered' : ''}${isFocus ? ' is-focus' : ''}`}
               onMouseEnter={() => setHovered(e)}
               onMouseLeave={() => setHovered(null)}
             >
               <path className="edge-hit" d={pathOf(e.points)} />
-              <path className="edge-line" d={pathOf(e.points)} markerEnd={e.hidden ? 'url(#arrow-hidden)' : 'url(#arrow)'} />
+              <path
+                className="edge-line"
+                d={pathOf(e.points)}
+                markerEnd={acct ? 'url(#arrow-acct)' : e.hidden ? 'url(#arrow-hidden)' : 'url(#arrow)'}
+              />
             </g>
           );
         })}
@@ -442,7 +455,7 @@ export function Diagram({ graph, locale }: Props) {
         {view.edges.map((e) => (
           <g
             key={`label-${e.key}`}
-            className={`edge-labels${e.hidden ? ' is-hidden-value' : ''}${focusEdge?.key === e.key ? ' is-focus-label' : ''}`}
+            className={`edge-labels${e.kind === 'accounting' ? ' is-accounting' : ''}${e.hidden ? ' is-hidden-value' : ''}${focusEdge?.key === e.key ? ' is-focus-label' : ''}`}
             transform={`translate(0, ${nudge.get(e.key) ?? 0})`}
           >
             {e.rows.map((row, ri) => (

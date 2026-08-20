@@ -17,6 +17,7 @@
   --dot: #e2e1dc;
   --hook: #2a78d6;
   --hidden: #eb6834;
+  --acct: #6d4fc3;
   --flow: #52514e;
 }
 
@@ -33,6 +34,7 @@
     --dot: #292927;
     --hook: #3987e5;
     --hidden: #d95926;
+    --acct: #a488e8;
     --flow: #c3c2b7;
   }
 }
@@ -49,6 +51,7 @@
   --dot: #292927;
   --hook: #3987e5;
   --hidden: #d95926;
+  --acct: #a488e8;
   --flow: #c3c2b7;
 }
 
@@ -232,7 +235,8 @@ body {
   color: var(--text-muted);
 }
 
-.lang-toggle {
+.lang-toggle,
+.mode-toggle {
   flex: none;
   display: flex;
   border: 1px solid var(--line);
@@ -240,7 +244,8 @@ body {
   overflow: hidden;
 }
 
-.lang-toggle button {
+.lang-toggle button,
+.mode-toggle button {
   padding: 5px 12px;
   border: none;
   background: transparent;
@@ -252,11 +257,13 @@ body {
   cursor: pointer;
 }
 
-.lang-toggle button + button {
+.lang-toggle button + button,
+.mode-toggle button + button {
   border-left: 1px solid var(--line);
 }
 
-.lang-toggle button.is-active {
+.lang-toggle button.is-active,
+.mode-toggle button.is-active {
   background: var(--surface-2);
   color: var(--text-primary);
 }
@@ -691,6 +698,22 @@ body {
   fill: var(--text-muted);
 }
 
+.arrow-head.acct {
+  fill: var(--acct);
+}
+
+/* 회계 오버레이 (엔지니어 모드) — 정산과 같은 통로를 쓰되 점선·보라로 층을 구분한다. */
+.edge.is-accounting .edge-line {
+  stroke: var(--acct);
+  stroke-width: 1.6;
+  stroke-dasharray: 6 5;
+}
+
+.edge-labels.is-accounting .edge-label {
+  fill: var(--acct);
+  font-size: 11.5px;
+}
+
 .intervene path {
   fill: none;
   stroke: var(--text-muted);
@@ -966,6 +989,10 @@ body {
 
 .swatch-hidden {
   background: var(--hidden);
+}
+
+.swatch-acct {
+  background: var(--acct);
 }
 
 .swatch-hook {

@@ -34,7 +34,12 @@ const en = {
 
   'legend.settled': 'Settled flow',
   'legend.hidden': 'Flow with no Transfer event',
+  'legend.acct': 'Accounting delta (obligation)',
   'legend.hook': 'Hook',
+
+  'mode.label': 'View mode',
+  'mode.trader': 'Trader',
+  'mode.engineer': 'Engineer',
   note: 'A factual account of what happened in this transaction — it does not rate pools or hooks.',
 
   'detail.call': 'Call',
@@ -99,7 +104,12 @@ const ko: Record<StringKey, string> = {
 
   'legend.settled': '정산된 이동',
   'legend.hidden': 'Transfer 이벤트가 없는 이동',
+  'legend.acct': '회계 델타 (채무)',
   'legend.hook': '훅',
+
+  'mode.label': '보기 모드',
+  'mode.trader': '트레이더',
+  'mode.engineer': '엔지니어',
   note: '이 화면은 이 트랜잭션에서 일어난 일을 그대로 서술한다. 풀이나 훅에 대한 평가는 하지 않는다.',
 
   'detail.call': '호출',

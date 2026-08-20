@@ -39,6 +39,8 @@ export interface RoutedEdge {
   key: string;
   from: string;
   to: string;
+  /** settlement = 실제 이동, accounting = 그 이동을 설명하는 채무 (엔지니어 모드 오버레이). */
+  kind: 'settlement' | 'accounting';
   hidden: boolean;
   rows: EdgeRow[];
   points: Array<{ x: number; y: number }>;
@@ -90,15 +92,16 @@ interface FineEdge {
   from: string;
   to: string;
   via: string | null;
+  layer: 'settlement' | 'accounting';
   row: EdgeRow;
 }
 
-/** 같은 (from, to, token, via, 숨김)끼리 금액을 합쳐 토큰 단위 흐름으로 만든다. */
+/** 같은 (층, from, to, token, via, 숨김)끼리 금액을 합쳐 토큰 단위 흐름으로 만든다. */
 function aggregate(edges: GraphEdge[]): FineEdge[] {
   const groups = new Map<string, FineEdge>();
   for (const e of edges) {
     if (!e.amount) continue;
-    const key = [e.from, e.to, e.token, e.via ?? '', e.hidden ? 'h' : ''].join('|');
+    const key = [e.layer, e.from, e.to, e.token, e.via ?? '', e.hidden ? 'h' : ''].join('|');
     const found = groups.get(key);
     if (found) {
       found.row.amount = (BigInt(found.row.amount) + BigInt(e.amount)).toString();
@@ -109,6 +112,7 @@ function aggregate(edges: GraphEdge[]): FineEdge[] {
         from: e.from,
         to: e.to,
         via: e.via ?? null,
+        layer: e.layer as FineEdge['layer'],
         row: {
           token: e.token,
           amount: e.amount,
@@ -122,8 +126,12 @@ function aggregate(edges: GraphEdge[]): FineEdge[] {
   return [...groups.values()];
 }
 
-export function layout(graph: Graph, expandedHooks: Set<string>): Layout {
-  const aggregated = aggregate(graph.edges.filter((e) => e.layer === 'settlement'));
+export function layout(graph: Graph, expandedHooks: Set<string>, engineer = false): Layout {
+  // 엔지니어 모드는 accounting 층(스왑 델타, 훅 몫)을 같은 줄기 시스템에 얹는다.
+  // 정산과 채무가 같은 통로를 나눠 쓰므로 corridors가 알아서 벌려준다.
+  const aggregated = aggregate(
+    graph.edges.filter((e) => e.layer === 'settlement' || (engineer && e.layer === 'accounting')),
+  );
   const byId = new Map(graph.nodes.map((n) => [n.id, n]));
   const hooks = graph.nodes.filter((n) => n.type === 'hook');
   const hookIds = new Set(hooks.map((h) => h.id));
@@ -218,6 +226,7 @@ export function layout(graph: Graph, expandedHooks: Set<string>): Layout {
   interface Segment {
     from: string;
     to: string;
+    layer: FineEdge['layer'];
     row: EdgeRow;
   }
   const segments: Segment[] = [];
@@ -225,20 +234,23 @@ export function layout(graph: Graph, expandedHooks: Set<string>): Layout {
     if (!pos.has(e.from) || !pos.has(e.to)) continue;
     const viaNode = e.via ? pos.get(e.via) : null;
     if (viaNode && viaNode.role === 'hook' && e.from !== viaNode.id && e.to !== viaNode.id) {
-      segments.push({ from: e.from, to: viaNode.id, row: e.row });
-      segments.push({ from: viaNode.id, to: e.to, row: e.row });
+      segments.push({ from: e.from, to: viaNode.id, layer: e.layer, row: e.row });
+      segments.push({ from: viaNode.id, to: e.to, layer: e.layer, row: e.row });
     } else {
-      segments.push({ from: e.from, to: e.to, row: e.row });
+      segments.push({ from: e.from, to: e.to, layer: e.layer, row: e.row });
     }
   }
 
-  // 2) 같은 (from, to, 숨김) 구간을 줄기 하나로 묶는다. 화살표 하나, 금액은 목록.
-  const trunkMap = new Map<string, { from: string; to: string; hidden: boolean; rows: EdgeRow[] }>();
+  // 2) 같은 (층, from, to, 숨김) 구간을 줄기 하나로 묶는다. 화살표 하나, 금액은 목록.
+  const trunkMap = new Map<
+    string,
+    { from: string; to: string; kind: FineEdge['layer']; hidden: boolean; rows: EdgeRow[] }
+  >();
   for (const s of segments) {
-    const key = `${s.from}|${s.to}|${s.row.hidden ? 'h' : ''}`;
+    const key = `${s.layer}|${s.from}|${s.to}|${s.row.hidden ? 'h' : ''}`;
     const found = trunkMap.get(key);
     if (found) found.rows.push(s.row);
-    else trunkMap.set(key, { from: s.from, to: s.to, hidden: s.row.hidden, rows: [s.row] });
+    else trunkMap.set(key, { from: s.from, to: s.to, kind: s.layer, hidden: s.row.hidden, rows: [s.row] });
   }
 
   // 3) 같은 통로(방향 무관)를 지나는 줄기들을 대칭으로 벌리고 라벨 블록을 단다.
@@ -313,7 +325,7 @@ export function layout(graph: Graph, expandedHooks: Set<string>): Layout {
       };
     }
 
-    routed.push({ key, from: t.from, to: t.to, hidden: t.hidden, rows: t.rows, points, label });
+    routed.push({ key, from: t.from, to: t.to, kind: t.kind, hidden: t.hidden, rows: t.rows, points, label });
   }
 
   const reach: ReachEdge[] = [];
