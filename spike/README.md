@@ -9,23 +9,35 @@ Uniswap v4 플래시 어카운팅 흐름을 복원할 수 있는지 확인하는
 
 187건(Unichain 89 / Base 98) 전부 복원 성공. 커스텀 트레이서 불필요.
 
-**첫 지원 체인은 Unichain으로 결정됐다.** Unichain은 훅 트랜잭션 비율이 낮아(25.8%)
-아무 해시나 넣으면 밋밋한 그림이 나오므로, `fixtures/`에 훅이 잘 드러나는 예시를 큐레이션해뒀다.
+M0 이후 데이터 파이프라인은 **앱 카탈로그**(M2′)로 확장됐다. 아무 해시나 넣으면 밋밋한
+그림이 나오므로, 두 체인의 코퍼스에서 관측된 훅을 식별해 앱별 대표 트랜잭션을 골라
+`fixtures/apps.json`으로 굽는다. 훅 신원은 `known-hooks.json`에 근거와 함께 수동 관리한다.
 
 ## 파일
+
+**복원 엔진 (M0)**
 
 | 파일 | 역할 |
 |---|---|
 | `v4.mjs` | v4 상수, 셀렉터, ABI 디코딩, 훅 권한 비트, 트레이스 순회 |
 | `reconstruct.mjs` | **핵심.** 트레이스 → (주소, 통화) 델타 장부 복원 |
-| `graph.mjs` | 복원 결과 → 기획서 §7 데이터 모델 JSON |
+| `rpc.mjs` | JSON-RPC + 디스크 캐시. 체인별 엔드포인트(`{chain}` 옵션) |
+| `graph.mjs` | 복원 결과 → §7 데이터 모델 JSON (훅에 `known` 이름 스탬프) |
+| `tokens.mjs` | ERC20 심볼/소수점 해석 (빌드 시 JSON에 구움) |
 | `verify.mjs` | 델타 제로 불변식 + 실제 Transfer 대조 이중 검증 |
 | `stats.mjs` | 코퍼스 통계 (§5.1 전제 검증용 수치) |
-| `collect-pools.mjs` | 풀당 1건씩 표본 수집 |
-| `find-hook-txs.mjs` | 훅이 붙은 트랜잭션 탐색 |
-| `curate.mjs` | 예시 해시 후보 랭킹 (훅 가시성 기준) |
-| `build-fixtures.mjs` | 큐레이션된 예시를 정적 그래프 JSON으로 생성 |
-| `fixtures/` | 예시 6건 + `index.json` — M1에서 RPC 없이 렌더링 작업 가능 |
+
+**앱 카탈로그 파이프라인 (M2′ / M5)**
+
+| 파일 | 역할 |
+|---|---|
+| `build-hook-registry.mjs` | 코퍼스 스캔 → 관측된 훅 레지스트리(`hook-registry-{chain}.json`) |
+| `known-hooks.json` | 훅 주소 → 앱 이름 매핑 (근거 기록, 수동 관리) |
+| `hooklist-upstream.json` | Uniswap/hooklist 공식 레지스트리 사본 (식별 근거) |
+| `hunt-euler.mjs` | 특정 풀만 지나는 대표 tx 발굴 (예: EulerSwap 단독 스왑) |
+| `build-fixtures.mjs` | 앱별 대표 흐름을 정적 그래프 JSON + `apps.json`으로 생성 |
+| `collect-pools.mjs` · `find-hook-txs.mjs` · `curate.mjs` | 코퍼스 수집·탐색·랭킹 도구 |
+| `fixtures/` | 흐름 20건 + `apps.json` — 앱이 RPC 없이 읽는 사본 |
 | `cache/` | 트레이스 디스크 캐시 (gitignore) |
 
 ## 사용법
@@ -37,12 +49,12 @@ node verify.mjs -v <txHash>                   # 단건 상세 — 단계별 금�
 node verify.mjs --file corpus-unichain.txt    # 코퍼스 일괄 검증
 node stats.mjs corpus-unichain.txt            # 통계
 node graph.mjs <txHash> > out.json            # §7 JSON 출력
-node collect-pools.mjs unichain 8 450 swap    # 표본 수집 (체인, 윈도수, 윈도크기, 이벤트)
-node curate.mjs corpus-unichain.txt           # 예시 해시 후보 랭킹
-node build-fixtures.mjs                       # fixtures/ 재생성
+node build-hook-registry.mjs --file corpus-unichain.txt   # 훅 레지스트리 생성
+node build-fixtures.mjs                       # fixtures/ + apps.json 재생성 (두 체인)
 ```
 
-체인 전환:
+체인 전환 — 복원 엔진과 도구는 `CHAIN` env(또는 호출별 옵션)로 체인을 받는다.
+`build-fixtures.mjs`는 `apps.json`의 `chain` 필드를 보고 알아서 두 체인을 함께 굽는다.
 
 ```bash
 CHAIN=base RPC_URL=https://base.drpc.org node verify.mjs --file corpus-base.txt
