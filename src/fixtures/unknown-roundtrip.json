@@ -1,0 +1,172 @@
+{
+  "txHash": "0xc703ae1449168b3f7585d2986b4123b9adebabdb3d77c1a21dd7e108828701c1",
+  "chain": "unichain",
+  "origin": "0x168ce39ed88c4f328252d5d9ba013956f4bc92ba",
+  "nodes": [
+    {
+      "id": "pm",
+      "type": "core",
+      "label": "PoolManager",
+      "address": "0x1f98400000000000000000000000000000000004"
+    },
+    {
+      "id": "hook:0x8987d61840155c2256c8cbeb5dbaafd5e6f4d3c0",
+      "type": "hook",
+      "label": "0x8987…d3c0",
+      "address": "0x8987d61840155c2256c8cbeb5dbaafd5e6f4d3c0",
+      "known": null,
+      "permissions": [
+        "AFTER_INITIALIZE",
+        "BEFORE_REMOVE_LIQUIDITY",
+        "AFTER_REMOVE_LIQUIDITY",
+        "BEFORE_SWAP",
+        "AFTER_SWAP"
+      ],
+      "callbacks": [
+        "beforeSwap",
+        "afterSwap"
+      ]
+    },
+    {
+      "id": "ext:0x8987d61840155c2256c8cbeb5dbaafd5e6f4d3c0",
+      "type": "external",
+      "label": "0x8987…d3c0",
+      "address": "0x8987d61840155c2256c8cbeb5dbaafd5e6f4d3c0",
+      "known": null
+    },
+    {
+      "id": "actor:0xd15163e04ea1c92448b3b78cc4909e52d196aae5",
+      "type": "router",
+      "label": "0xd151…aae5",
+      "address": "0xd15163e04ea1c92448b3b78cc4909e52d196aae5",
+      "known": null
+    }
+  ],
+  "edges": [
+    {
+      "layer": "accounting",
+      "from": "actor:0xd15163e04ea1c92448b3b78cc4909e52d196aae5",
+      "to": "pm",
+      "token": "0x078d782b760474a361dda0af3839290b0ef57ad6",
+      "amount": "500083",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": false,
+        "side": "in",
+        "delta": "-500083"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "actor:0xd15163e04ea1c92448b3b78cc4909e52d196aae5",
+      "token": "native",
+      "amount": "262758414591688",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": false,
+        "side": "out",
+        "delta": "262758414591688"
+      }
+    },
+    {
+      "layer": "settlement",
+      "from": "pm",
+      "to": "actor:0xd15163e04ea1c92448b3b78cc4909e52d196aae5",
+      "token": "native",
+      "amount": "262758414591688",
+      "engineer": {
+        "call": "take"
+      },
+      "via": null
+    },
+    {
+      "layer": "accounting",
+      "from": "actor:0xd15163e04ea1c92448b3b78cc4909e52d196aae5",
+      "to": "pm",
+      "token": "native",
+      "amount": "262758414591688",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": true,
+        "side": "in",
+        "delta": "-262758414591688"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "actor:0xd15163e04ea1c92448b3b78cc4909e52d196aae5",
+      "token": "0x078d782b760474a361dda0af3839290b0ef57ad6",
+      "amount": "500706",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": true,
+        "side": "out",
+        "delta": "500706"
+      }
+    },
+    {
+      "layer": "settlement",
+      "from": "pm",
+      "to": "actor:0xd15163e04ea1c92448b3b78cc4909e52d196aae5",
+      "token": "0x078d782b760474a361dda0af3839290b0ef57ad6",
+      "amount": "500706",
+      "engineer": {
+        "call": "take"
+      },
+      "via": null
+    },
+    {
+      "layer": "settlement",
+      "from": "actor:0xd15163e04ea1c92448b3b78cc4909e52d196aae5",
+      "to": "pm",
+      "token": "native",
+      "amount": "262758414591688",
+      "engineer": {
+        "call": "settle",
+        "native": true
+      },
+      "via": null
+    },
+    {
+      "layer": "settlement",
+      "from": "actor:0xd15163e04ea1c92448b3b78cc4909e52d196aae5",
+      "to": "pm",
+      "token": "0x078d782b760474a361dda0af3839290b0ef57ad6",
+      "amount": "500083",
+      "engineer": {
+        "call": "settle",
+        "native": false
+      },
+      "via": null
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0x8987d61840155c2256c8cbeb5dbaafd5e6f4d3c0",
+      "to": "ext:0x8987d61840155c2256c8cbeb5dbaafd5e6f4d3c0",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 1
+      }
+    }
+  ],
+  "balanced": true,
+  "tokens": {
+    "0x078d782b760474a361dda0af3839290b0ef57ad6": {
+      "address": "0x078d782b760474a361dda0af3839290b0ef57ad6",
+      "symbol": "USDC",
+      "decimals": 6,
+      "name": "USDC"
+    },
+    "native": {
+      "address": "native",
+      "symbol": "ETH",
+      "decimals": 18,
+      "name": "Ether"
+    }
+  }
+}

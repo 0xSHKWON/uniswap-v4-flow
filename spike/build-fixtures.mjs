@@ -82,6 +82,15 @@ const APPS = [
     hooks: ['0xb5c643879006742699d1cc2581c28f177963a8a8'],
     flows: [
       {
+        slug: 'euler-swap',
+        hash: '0x9ad78d6abf0ac007bd1d28a649d97508901413c51985c4cc2eb4c26901f10e6e',
+        title: { ko: '훅이 상대방이 되는 스왑', en: 'The hook is the counterparty' },
+        blurb: {
+          ko: '풀에 쌓인 유동성이 없다. 훅이 입력 토큰을 직접 받아가고 출력 토큰을 정산하며, 그 뒤에서 볼트 호출 수십 건이 오간다.',
+          en: 'No liquidity sits in the pool. The hook takes the input tokens itself and settles the output, with dozens of vault calls behind it.',
+        },
+      },
+      {
         slug: 'euler-multihop',
         hash: '0x74803911a975a65f424bf2bce3bfa8ec46892c794629fa401ecfc5ea3f8ab088',
         title: { ko: 'EulerSwap을 지나는 멀티홉', en: 'Multihop through EulerSwap' },
@@ -123,6 +132,27 @@ const APPS = [
     ],
   },
   {
+    id: 'volatility-fee',
+    name: { ko: 'Volatility Fee Hook', en: 'Volatility Fee Hook' },
+    tagline: { ko: '변동성에 따라 수수료를 바꾸는 훅', en: 'Fees that move with volatility' },
+    description: {
+      ko: '변동성에 따라 스왑 수수료를 조정하고, 자기 몫을 ERC-6909 청구권으로 챙긴다. 컨트랙트명은 검증됐지만 어느 프로젝트의 배포인지는 확인하지 못했다.',
+      en: 'Adjusts the swap fee with volatility and keeps its cut as an ERC-6909 claim. The contract name is verified, but we could not confirm which project deployed it.',
+    },
+    hooks: ['0x3002a90b7c510d33debee13e46854711f45a50c4'],
+    flows: [
+      {
+        slug: 'volfee-swap',
+        hash: '0x7d92432dd0b63a002f295f5be79218988589071acd5a88d71c20aecc99059b23',
+        title: { ko: '훅이 수수료를 가져가는 스왑', en: 'Hook takes a fee' },
+        blurb: {
+          ko: '가장 단순한 훅 수수료. 훅이 가져간 몫이 Transfer 이벤트에는 없다.',
+          en: 'The simplest hook fee. The cut it takes never appears in a Transfer event.',
+        },
+      },
+    ],
+  },
+  {
     id: 'limit-order',
     name: { ko: 'Limit Order Hook', en: 'Limit Order Hook' },
     tagline: { ko: '풀 가격에 지정가 주문을 얹는 훅', en: 'Limit orders on top of pool price' },
@@ -148,6 +178,42 @@ const APPS = [
         blurb: {
           ko: 'ETH → USDC → 토큰으로 이어지는 라우트가 지정가 풀을 지나고, 결과물은 다른 수신자에게 간다.',
           en: 'An ETH → USDC → token route passes the limit-order pool, with the output taken by a different recipient.',
+        },
+      },
+    ],
+  },
+  {
+    id: 'unidentified',
+    name: { ko: '미확인 훅', en: 'Unidentified hooks' },
+    tagline: { ko: '신원을 확인하지 못한 훅들', en: 'Hooks we could not identify' },
+    description: {
+      ko: '코퍼스에서 관측됐지만 배포자·프로젝트를 확인하지 못한 훅. 추측하는 대신 주소와 관측된 동작만 그대로 보여준다.',
+      en: 'Hooks observed in the corpus whose deployer or project we could not confirm. Rather than guess, we show the address and the observed behavior as-is.',
+    },
+    hooks: [
+      '0x8987d61840155c2256c8cbeb5dbaafd5e6f4d3c0',
+      '0x5753ced012155da10431564b9cfde7ca238250c8',
+      '0x5f35c46ac75cb102ff092dbbd9934cd02b4050c8',
+      '0xcfd781e4c0e75c4137faa8299839cc765ca710c8',
+      '0xad78e0a3b5a552813feb5eb8ecbe842f7b5e9088',
+    ],
+    flows: [
+      {
+        slug: 'unknown-pair',
+        hash: '0x20c58196c4365808d53d15662da700ecaa3c0644acdf9b6982693c6e8046d74e',
+        title: { ko: '미확인 훅 두 개를 지나는 라우트', en: 'Route through two unidentified hooks' },
+        blurb: {
+          ko: '한 트랜잭션이 신원 미상의 훅 풀 두 개를 연달아 지난다. 이동 8건 전부 복원·검증됨.',
+          en: 'One transaction crosses two pools with unidentified hooks. All eight movements reconstructed and verified.',
+        },
+      },
+      {
+        slug: 'unknown-roundtrip',
+        hash: '0xc703ae1449168b3f7585d2986b4123b9adebabdb3d77c1a21dd7e108828701c1',
+        title: { ko: '미확인 훅 풀의 왕복 스왑', en: 'Round trip through an unidentified hook pool' },
+        blurb: {
+          ko: '같은 풀을 두 번 지나는 스왑. 훅은 자기 자신을 호출할 뿐 밖으로 나가지 않는다.',
+          en: 'A swap crossing the same pool twice. The hook only calls itself — it never reaches outside.',
         },
       },
     ],

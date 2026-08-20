@@ -21,6 +21,37 @@ const GRAPHS: Record<string, Graph> = Object.fromEntries(
 const APPS = appsJson as AppEntry[];
 const DEFAULT_APP = 'aegis';
 
+// 앱/흐름 선택은 URL(?app=aegis&flow=limit-fill)에 담는다 — 공유 링크가 보던 화면
+// 그대로 열려야 한다는 기획서 §4 규칙. 언어(?lang)와 같은 방식: 기본값이면 파라미터를 지운다.
+function selectionFromURL(): { appId: string; slug: string } {
+  const p = new URLSearchParams(window.location.search);
+  const flow = p.get('flow');
+  if (flow) {
+    const app = APPS.find((a) => a.flows.some((f) => f.slug === flow));
+    if (app) return { appId: app.id, slug: flow };
+  }
+  const app = APPS.find((a) => a.id === p.get('app'));
+  if (app) return { appId: app.id, slug: app.flows[0].slug };
+  const def = APPS.find((a) => a.id === DEFAULT_APP) ?? APPS[0];
+  return { appId: def.id, slug: def.flows[0].slug };
+}
+
+function selectionToURL(appId: string, slug: string) {
+  const url = new URL(window.location.href);
+  const app = APPS.find((a) => a.id === appId);
+  const isFirstFlow = slug === app?.flows[0]?.slug;
+  if (appId === DEFAULT_APP && isFirstFlow) {
+    url.searchParams.delete('app');
+    url.searchParams.delete('flow');
+  } else {
+    url.searchParams.set('app', appId);
+    // 흐름이 그 앱의 첫 번째면 굳이 적지 않는다
+    if (isFirstFlow) url.searchParams.delete('flow');
+    else url.searchParams.set('flow', slug);
+  }
+  history.replaceState(null, '', url);
+}
+
 // 체인 선택. 복원 엔진은 이미 체인 무관(M0에서 Base 98/98 검증)이지만,
 // 픽스처와 예시가 Unichain뿐이라 나머지는 로드맵 표시로만 잠가둔다 (기획서 §8 M5).
 const CHAINS = [
@@ -32,19 +63,19 @@ const CHAINS = [
 
 export default function App() {
   const [locale, setLocale] = useLocale();
-  const [appId, setAppId] = useState(DEFAULT_APP);
-  const [slug, setSlug] = useState(() => APPS.find((a) => a.id === DEFAULT_APP)?.flows[0]?.slug ?? APPS[0].flows[0].slug);
+  const [sel, setSel] = useState(selectionFromURL);
   const [copied, setCopied] = useState(false);
   const [chainOpen, setChainOpen] = useState(false);
   const chainRef = useRef<HTMLDivElement>(null);
-  const app = APPS.find((a) => a.id === appId) ?? APPS[0];
-  const meta = app.flows.find((f) => f.slug === slug) ?? app.flows[0];
+  const app = APPS.find((a) => a.id === sel.appId) ?? APPS[0];
+  const meta = app.flows.find((f) => f.slug === sel.slug) ?? app.flows[0];
   const graph = GRAPHS[meta.slug];
 
-  const selectApp = (a: AppEntry) => {
-    setAppId(a.id);
-    setSlug(a.flows[0].slug);
+  const select = (appId: string, slug: string) => {
+    setSel({ appId, slug });
+    selectionToURL(appId, slug);
   };
+  const selectApp = (a: AppEntry) => select(a.id, a.flows[0].slug);
 
   const copyHash = () => {
     navigator.clipboard?.writeText(graph.txHash).then(() => {
@@ -224,7 +255,7 @@ export default function App() {
                             <button
                               key={f.slug}
                               className={f.slug === meta.slug ? 'is-active' : ''}
-                              onClick={() => setSlug(f.slug)}
+                              onClick={() => select(a.id, f.slug)}
                             >
                               <span className="flow-title">{f.title[locale]}</span>
                               <span className="flow-meta">{t(locale, 'flow.meta', { nodes: f.nodes, hooks: f.hooks })}</span>

@@ -1,0 +1,418 @@
+{
+  "txHash": "0x9ad78d6abf0ac007bd1d28a649d97508901413c51985c4cc2eb4c26901f10e6e",
+  "chain": "unichain",
+  "origin": "0x1c5b7ac37618d9e6542b03712a5c3827a2f61c24",
+  "nodes": [
+    {
+      "id": "pm",
+      "type": "core",
+      "label": "PoolManager",
+      "address": "0x1f98400000000000000000000000000000000004"
+    },
+    {
+      "id": "hook:0xb5c643879006742699d1cc2581c28f177963a8a8",
+      "type": "hook",
+      "label": "0xb5c6…a8a8",
+      "address": "0xb5c643879006742699d1cc2581c28f177963a8a8",
+      "known": "EulerSwap",
+      "permissions": [
+        "BEFORE_INITIALIZE",
+        "BEFORE_ADD_LIQUIDITY",
+        "BEFORE_SWAP",
+        "BEFORE_DONATE",
+        "BEFORE_SWAP_RETURNS_DELTA"
+      ],
+      "callbacks": [
+        "beforeSwap"
+      ]
+    },
+    {
+      "id": "ext:0xd91b0bfaca4691e6aca7e0e83d9b7f8917989a03",
+      "type": "external",
+      "label": "0xd91b…9a03",
+      "address": "0xd91b0bfaca4691e6aca7e0e83d9b7f8917989a03",
+      "known": null
+    },
+    {
+      "id": "ext:0x2a1176964f5d7cae5406b627bf6166664fe83c60",
+      "type": "external",
+      "label": "0x2a11…3c60",
+      "address": "0x2a1176964f5d7cae5406b627bf6166664fe83c60",
+      "known": null
+    },
+    {
+      "id": "ext:0x6eae95ee783e4d862867c4e0e4c3f4b95aa682ba",
+      "type": "external",
+      "label": "0x6eae…82ba",
+      "address": "0x6eae95ee783e4d862867c4e0e4c3f4b95aa682ba",
+      "known": null
+    },
+    {
+      "id": "ext:0xbad8b5bdfb2bcbcd78cc9f1573d3aad6e865e752",
+      "type": "external",
+      "label": "0xbad8…e752",
+      "address": "0xbad8b5bdfb2bcbcd78cc9f1573d3aad6e865e752",
+      "known": null
+    },
+    {
+      "id": "ext:0x71d7250732591c41d1bdeb1ea0ee730e138e0c8b",
+      "type": "external",
+      "label": "0x71d7…0c8b",
+      "address": "0x71d7250732591c41d1bdeb1ea0ee730e138e0c8b",
+      "known": null
+    },
+    {
+      "id": "ext:0xf00cce0a6fb4fd94d3b0f5d7a309422fb55e9910",
+      "type": "external",
+      "label": "0xf00c…9910",
+      "address": "0xf00cce0a6fb4fd94d3b0f5d7a309422fb55e9910",
+      "known": null
+    },
+    {
+      "id": "ext:0xd49181c522ecdb265f0d9c175cf26fface64ead3",
+      "type": "external",
+      "label": "0xd491…ead3",
+      "address": "0xd49181c522ecdb265f0d9c175cf26fface64ead3",
+      "known": null
+    },
+    {
+      "id": "ext:0xf6269d9f38e3b4f93f7e68f41d8ea06abe3ef7b5",
+      "type": "external",
+      "label": "0xf626…f7b5",
+      "address": "0xf6269d9f38e3b4f93f7e68f41d8ea06abe3ef7b5",
+      "known": null
+    },
+    {
+      "id": "ext:0xec475c94f6d0cee5210a31bf59794886e88c1654",
+      "type": "external",
+      "label": "0xec47…1654",
+      "address": "0xec475c94f6d0cee5210a31bf59794886e88c1654",
+      "known": null
+    },
+    {
+      "id": "ext:0x078d782b760474a361dda0af3839290b0ef57ad6",
+      "type": "external",
+      "label": "0x078d…7ad6",
+      "address": "0x078d782b760474a361dda0af3839290b0ef57ad6",
+      "known": null
+    },
+    {
+      "id": "ext:0xbe959c573dc03a18a57e31c9ace210ccf66f0f6e",
+      "type": "external",
+      "label": "0xbe95…0f6e",
+      "address": "0xbe959c573dc03a18a57e31c9ace210ccf66f0f6e",
+      "known": null
+    },
+    {
+      "id": "ext:0x000000000022d473030f116ddee9f6b43ac78ba3",
+      "type": "external",
+      "label": "0x0000…8ba3",
+      "address": "0x000000000022d473030f116ddee9f6b43ac78ba3",
+      "known": null
+    },
+    {
+      "id": "ext:0x9151434b16b9763660705744891fa906f660ecc5",
+      "type": "external",
+      "label": "0x9151…ecc5",
+      "address": "0x9151434b16b9763660705744891fa906f660ecc5",
+      "known": null
+    },
+    {
+      "id": "ext:0xaf37e8b6c9ed7f6318979f56fc287d76c30847ff",
+      "type": "external",
+      "label": "0xaf37…47ff",
+      "address": "0xaf37e8b6c9ed7f6318979f56fc287d76c30847ff",
+      "known": null
+    },
+    {
+      "id": "actor:0x972655facb8df3cdf40395e4262f874f81674d46",
+      "type": "router",
+      "label": "0x9726…4d46",
+      "address": "0x972655facb8df3cdf40395e4262f874f81674d46",
+      "known": null
+    }
+  ],
+  "edges": [
+    {
+      "layer": "accounting",
+      "from": "actor:0x972655facb8df3cdf40395e4262f874f81674d46",
+      "to": "pm",
+      "token": "0x078d782b760474a361dda0af3839290b0ef57ad6",
+      "amount": "72369398",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": true,
+        "side": "in",
+        "delta": "-72369398"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "actor:0x972655facb8df3cdf40395e4262f874f81674d46",
+      "token": "0x9151434b16b9763660705744891fa906f660ecc5",
+      "amount": "72395168",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": true,
+        "side": "out",
+        "delta": "72395168"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "hook:0xb5c643879006742699d1cc2581c28f177963a8a8",
+      "token": "0x078d782b760474a361dda0af3839290b0ef57ad6",
+      "amount": "72369398",
+      "engineer": {
+        "call": "beforeSwap/afterSwap returnDelta",
+        "note": "훅이 가져간 몫",
+        "delta": "72369398"
+      },
+      "hookCut": true
+    },
+    {
+      "layer": "accounting",
+      "from": "hook:0xb5c643879006742699d1cc2581c28f177963a8a8",
+      "to": "pm",
+      "token": "0x9151434b16b9763660705744891fa906f660ecc5",
+      "amount": "72395168",
+      "engineer": {
+        "call": "beforeSwap/afterSwap returnDelta",
+        "note": "훅이 가져간 몫",
+        "delta": "-72395168"
+      },
+      "hookCut": true
+    },
+    {
+      "layer": "settlement",
+      "from": "pm",
+      "to": "hook:0xb5c643879006742699d1cc2581c28f177963a8a8",
+      "token": "0x078d782b760474a361dda0af3839290b0ef57ad6",
+      "amount": "72369398",
+      "engineer": {
+        "call": "take"
+      },
+      "via": null
+    },
+    {
+      "layer": "settlement",
+      "from": "hook:0xb5c643879006742699d1cc2581c28f177963a8a8",
+      "to": "pm",
+      "token": "0x9151434b16b9763660705744891fa906f660ecc5",
+      "amount": "72395168",
+      "engineer": {
+        "call": "settle",
+        "native": false
+      },
+      "via": null
+    },
+    {
+      "layer": "settlement",
+      "from": "pm",
+      "to": "actor:0x972655facb8df3cdf40395e4262f874f81674d46",
+      "token": "0x9151434b16b9763660705744891fa906f660ecc5",
+      "amount": "72395168",
+      "engineer": {
+        "call": "take"
+      },
+      "via": null
+    },
+    {
+      "layer": "settlement",
+      "from": "actor:0x972655facb8df3cdf40395e4262f874f81674d46",
+      "to": "pm",
+      "token": "0x078d782b760474a361dda0af3839290b0ef57ad6",
+      "amount": "72369398",
+      "engineer": {
+        "call": "settle",
+        "native": false
+      },
+      "via": null
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0xb5c643879006742699d1cc2581c28f177963a8a8",
+      "to": "ext:0xd91b0bfaca4691e6aca7e0e83d9b7f8917989a03",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 1
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0xb5c643879006742699d1cc2581c28f177963a8a8",
+      "to": "ext:0x2a1176964f5d7cae5406b627bf6166664fe83c60",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 9
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0xb5c643879006742699d1cc2581c28f177963a8a8",
+      "to": "ext:0x6eae95ee783e4d862867c4e0e4c3f4b95aa682ba",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 6
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0xb5c643879006742699d1cc2581c28f177963a8a8",
+      "to": "ext:0xbad8b5bdfb2bcbcd78cc9f1573d3aad6e865e752",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 17
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0xb5c643879006742699d1cc2581c28f177963a8a8",
+      "to": "ext:0x71d7250732591c41d1bdeb1ea0ee730e138e0c8b",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 17
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0xb5c643879006742699d1cc2581c28f177963a8a8",
+      "to": "ext:0xf00cce0a6fb4fd94d3b0f5d7a309422fb55e9910",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 3
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0xb5c643879006742699d1cc2581c28f177963a8a8",
+      "to": "ext:0xd49181c522ecdb265f0d9c175cf26fface64ead3",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 11
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0xb5c643879006742699d1cc2581c28f177963a8a8",
+      "to": "ext:0xf6269d9f38e3b4f93f7e68f41d8ea06abe3ef7b5",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 3
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0xb5c643879006742699d1cc2581c28f177963a8a8",
+      "to": "ext:0xec475c94f6d0cee5210a31bf59794886e88c1654",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 1
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0xb5c643879006742699d1cc2581c28f177963a8a8",
+      "to": "ext:0x078d782b760474a361dda0af3839290b0ef57ad6",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 3
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0xb5c643879006742699d1cc2581c28f177963a8a8",
+      "to": "ext:0xbe959c573dc03a18a57e31c9ace210ccf66f0f6e",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 3
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0xb5c643879006742699d1cc2581c28f177963a8a8",
+      "to": "ext:0x000000000022d473030f116ddee9f6b43ac78ba3",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 1
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0xb5c643879006742699d1cc2581c28f177963a8a8",
+      "to": "ext:0x9151434b16b9763660705744891fa906f660ecc5",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 3
+      }
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0xb5c643879006742699d1cc2581c28f177963a8a8",
+      "to": "ext:0xaf37e8b6c9ed7f6318979f56fc287d76c30847ff",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 3
+      }
+    }
+  ],
+  "balanced": true,
+  "tokens": {
+    "0x078d782b760474a361dda0af3839290b0ef57ad6": {
+      "address": "0x078d782b760474a361dda0af3839290b0ef57ad6",
+      "symbol": "USDC",
+      "decimals": 6,
+      "name": "USDC"
+    },
+    "0x9151434b16b9763660705744891fa906f660ecc5": {
+      "address": "0x9151434b16b9763660705744891fa906f660ecc5",
+      "symbol": "USD₮0",
+      "decimals": 6,
+      "name": "USD₮0"
+    }
+  }
+}
