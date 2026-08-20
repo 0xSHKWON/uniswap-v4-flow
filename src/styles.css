@@ -393,50 +393,6 @@ body {
   color: var(--text-secondary);
 }
 
-.hook-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-/* 파란 강조는 앱 목록의 활성 카드 한 곳에만 — 여기까지 파랗게 하면 시선이 갈라진다. */
-.hook-list li {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  padding: 7px 10px;
-  border: 1px solid var(--line);
-  border-radius: 9px;
-  background: var(--surface-2);
-}
-
-.hook-list strong {
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.hook-list code {
-  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-/* 이름이 식별된 훅은 주소를 보조 정보로 강등 */
-.hook-list li.has-name code {
-  font-size: 10.5px;
-  font-weight: 400;
-  color: var(--text-muted);
-}
-
-.hook-list span {
-  font-size: 10.5px;
-  color: var(--text-secondary);
-}
 
 /* --- 앱 목록 (M2' 카탈로그) --- */
 
@@ -558,10 +514,19 @@ body {
   background: var(--surface-1);
 }
 
+/* 엔지니어 모드에서는 오른쪽에 트레이스 패널이 도킹된다. 줌/팬 이벤트는
+   스테이지에만 걸려 있어 패널 스크롤과 충돌하지 않는다 (Diagram.tsx 참조). */
 .diagram-wrap {
-  position: relative;
   flex: 1;
   min-height: 0;
+  display: flex;
+  align-items: stretch;
+}
+
+.diagram-stage {
+  position: relative;
+  flex: 1;
+  min-width: 0;
   background-image: radial-gradient(var(--dot) 1px, transparent 1.4px);
   background-size: 22px 22px;
   cursor: grab;
@@ -569,7 +534,7 @@ body {
   user-select: none;
 }
 
-.diagram-wrap.is-dragging {
+.diagram-wrap.is-dragging .diagram-stage {
   cursor: grabbing;
 }
 
@@ -843,6 +808,335 @@ body {
   border-left: 1px solid var(--line);
 }
 
+/* --- 호출 트레이스 패널 (엔지니어 모드, M3') ---
+   다이어그램이 "그림"이라면 이 패널은 같은 데이터의 "코드" 단면이다.
+   색 매핑은 범례와 동일: 회계 = acct, 훅 몫 = hook, Transfer 없는 이동 = hidden. */
+
+.trace-panel {
+  flex: none;
+  width: clamp(300px, 30vw, 400px);
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--line);
+  background: var(--surface-1);
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+}
+
+.trace-head {
+  flex: none;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.trace-head h2 {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+}
+
+.trace-ops {
+  margin: 3px 0 0;
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+
+.trace-units {
+  display: flex;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.trace-units button {
+  padding: 3px 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.trace-units button + button {
+  border-left: 1px solid var(--line);
+}
+
+.trace-units button.is-active {
+  background: var(--surface-2);
+  color: var(--text-primary);
+}
+
+.trace-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.trace-lines {
+  list-style: none;
+  margin: 0;
+  padding: 6px 0;
+}
+
+.trace-line {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas:
+    'idx call amt'
+    '. route route';
+  column-gap: 8px;
+  row-gap: 1px;
+  align-items: baseline;
+  width: 100%;
+  padding: 5px 14px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 11.5px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.trace-line:hover,
+.trace-line.is-hl {
+  background: var(--surface-2);
+}
+
+.tl-idx {
+  grid-area: idx;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.tl-call {
+  grid-area: call;
+  font-weight: 650;
+  white-space: nowrap;
+  color: var(--text-primary);
+}
+
+.tl-args {
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.tl-amt {
+  grid-area: amt;
+  justify-self: end;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+
+/* raw 단위는 자릿수가 길다 — 줄바꿈을 허용해 패널 폭을 지킨다. */
+.trace-panel.is-raw .tl-amt {
+  white-space: normal;
+  word-break: break-all;
+  text-align: right;
+}
+
+.tl-route {
+  grid-area: route;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.tl-zero {
+  margin-left: 6px;
+  font-weight: 650;
+  color: var(--acct);
+}
+
+.trace-line.is-acct .tl-call {
+  color: var(--acct);
+}
+
+.trace-line.is-hookcut .tl-call {
+  color: var(--hook);
+}
+
+.trace-line.is-hidden .tl-call {
+  color: var(--hidden);
+}
+
+.trace-foot {
+  flex: none;
+  padding: 10px 14px 12px;
+  border-top: 1px solid var(--line);
+}
+
+.trace-foot-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.trace-foot-label {
+  font-size: 10.5px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.trace-foot-ctx {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.trace-zero {
+  margin: 8px 0 0;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.trace-zero.is-warn {
+  color: var(--hidden);
+}
+
+.trace-outstanding {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.trace-outstanding li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 11.5px;
+}
+
+.to-token {
+  color: var(--text-muted);
+}
+
+.to-amt {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+  word-break: break-all;
+  text-align: right;
+}
+
+.trace-sign-hint {
+  margin: 8px 0 0;
+  font-size: 9.5px;
+  color: var(--text-muted);
+}
+
+/* 훅 권한 비트필드 — 주소가 곧 설정값이라는 v4의 사실을 그대로 보여준다. */
+.trace-hooks {
+  padding: 12px 14px 16px;
+  border-top: 1px solid var(--line);
+}
+
+.trace-hooks h3 {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.trace-hooks-sub {
+  margin: 3px 0 10px;
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.trace-hook {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--line);
+}
+
+.trace-hook:first-of-type {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+.trace-hook strong {
+  display: block;
+  font-size: 11.5px;
+  color: var(--hook);
+}
+
+.th-addr {
+  display: block;
+  margin-top: 2px;
+  font-size: 10px;
+  color: var(--text-secondary);
+  word-break: break-all;
+}
+
+.th-bits {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.th-bits-label {
+  font-size: 9.5px;
+  color: var(--text-muted);
+}
+
+.th-bits code {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.th-bits code .is-set {
+  font-weight: 700;
+  color: var(--hook);
+}
+
+.th-flags {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 6px;
+}
+
+.th-flags li {
+  padding: 1px 5px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font-size: 9px;
+  color: var(--text-secondary);
+}
+
+.th-cb {
+  margin: 6px 0 0;
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+
+.th-cb code {
+  color: var(--hook);
+}
+
+.th-reach {
+  margin: 3px 0 0;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
 /* --- 줌 컨트롤 --- */
 
 .zoom-controls {
@@ -937,6 +1231,114 @@ body {
   color: var(--text-secondary);
   border-top: 1px solid var(--line);
   padding-top: 9px;
+}
+
+/* --- 훅 패널 (캔버스 우측 상단, 접힌 배지 → 드롭다운) --- */
+/* 예전엔 사이드바에 있었다. 앱마다 훅 개수가 달라 사이드바가 늘었다 줄었다 하던 문제라
+   다이어그램 자체에 얹었다 — 다만 항상 펼쳐두면 훅이 여러 개라 세로로 긴 다이어그램이
+   화면에 맞춰 축소될 때 상단 여백이 줄어 PoolManager 등과 겹쳤다. 그래서 접은 배지가
+   기본값이고, 펼치는 목록은 체인 선택과 같은 드롭다운 패턴을 쓴다. */
+.hooks-select {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 5;
+}
+
+.hooks-trigger {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 11px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-1);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 550;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+  max-width: 220px;
+}
+
+.hooks-trigger:hover {
+  background: var(--surface-2);
+}
+
+.hooks-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--hook);
+}
+
+.hooks-caret {
+  font-size: 9px;
+  color: var(--text-muted);
+}
+
+.hooks-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 30;
+  width: 240px;
+  max-height: min(360px, calc(100vh - 220px));
+  overflow-y: auto;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-1);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 14%);
+}
+
+.hooks-menu-label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.hooks-menu-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.hooks-menu-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.hooks-menu-list li + li {
+  padding-top: 7px;
+  border-top: 1px solid var(--line);
+}
+
+.hooks-menu-list strong {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.hooks-menu-list code {
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+
+.hooks-menu-list span {
+  font-size: 10px;
+  color: var(--text-secondary);
 }
 
 /* --- 범례 --- */

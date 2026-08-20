@@ -5,7 +5,7 @@
 // 오른쪽 풀블리드 캔버스. 입력창(M4')은 사이드바의 트랜잭션 섹션 자리에 들어온다.
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Diagram, type Mode } from './Diagram';
-import { describeHookKeys, shortAddress, tokenOf } from './format';
+import { tokenOf } from './format';
 import { t, useLocale } from './i18n';
 import type { AppEntry, Graph } from './types';
 
@@ -135,21 +135,16 @@ export default function App() {
   }, [chainOpen]);
 
   // 요약 통계 — 전부 그래프 JSON에서 유도한다. RPC 없음.
+  // 훅 목록은 여기 없다 — 캔버스 우측 상단의 떠 있는 패널로 옮겼다 (Diagram 참조).
+  // 앱을 옮겨다닐 때마다 훅 개수가 바뀌어 사이드바가 늘었다 줄었다 하던 문제.
   const summary = useMemo(() => {
     const settlements = graph.edges.filter((e) => e.layer === 'settlement' && e.amount);
     const hiddenCount = settlements.filter((e) => e.hidden).length;
     const symbols = [
       ...new Set(settlements.map((e) => tokenOf(graph.tokens, e.token).symbol).filter(Boolean)),
     ];
-    const hooks = graph.nodes
-      .filter((n) => n.type === 'hook')
-      .map((n) => ({
-        address: n.address ?? '',
-        known: n.known ?? null,
-        traits: describeHookKeys(n.permissions).map((k) => t(locale, k)),
-      }));
-    return { movements: settlements.length, hiddenCount, symbols, hooks };
-  }, [graph, locale]);
+    return { movements: settlements.length, hiddenCount, symbols };
+  }, [graph]);
 
   return (
     <div className="viz-root">
@@ -252,20 +247,6 @@ export default function App() {
                     </span>
                   ))}
                 </div>
-              </div>
-            )}
-            {summary.hooks.length > 0 && (
-              <div className="side-row">
-                <span className="side-row-label">{t(locale, 'sum.hooks')}</span>
-                <ul className="hook-list">
-                  {summary.hooks.map((h) => (
-                    <li key={h.address} className={h.known ? 'has-name' : ''}>
-                      {h.known && <strong>{h.known}</strong>}
-                      <code>{shortAddress(h.address)}</code>
-                      <span>{h.traits.join(' · ')}</span>
-                    </li>
-                  ))}
-                </ul>
               </div>
             )}
           </section>

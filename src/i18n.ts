@@ -55,6 +55,8 @@ const en = {
 
   'hash.copied': 'Copied',
 
+  'hooks.count': '{n} hooks',
+
   'side.tx': 'Transaction',
   'sum.moves': '{n} value movements',
   'sum.move1': '1 value movement',
@@ -73,6 +75,18 @@ const en = {
   'follow.prev': 'Previous step',
   'follow.next': 'Next step',
   'follow.exit': 'Exit',
+
+  'trace.title': 'Call trace',
+  'trace.ops': '{n} ledger ops inside unlock()',
+  'trace.outstanding': 'Outstanding deltas',
+  'trace.afterLine': 'after #{n}',
+  'trace.atEnd': 'at end of unlock()',
+  'trace.allZero': 'all deltas settled to 0 ✓',
+  'trace.unbalanced': 'deltas do not zero out — reconstruction incomplete',
+  'trace.signHint': '+ PoolManager owes · − owed to PoolManager',
+  'trace.hooks': 'Hook permission bits',
+  'trace.hooksSub': 'v4 encodes hook permissions in the low 14 bits of the hook address',
+  'trace.callbacks': 'callbacks in this tx',
 } as const;
 
 export type StringKey = keyof typeof en;
@@ -125,6 +139,8 @@ const ko: Record<StringKey, string> = {
 
   'hash.copied': '복사됨',
 
+  'hooks.count': '훅 {n}개',
+
   'side.tx': '트랜잭션',
   'sum.moves': '값 이동 {n}건',
   'sum.move1': '값 이동 1건',
@@ -143,6 +159,18 @@ const ko: Record<StringKey, string> = {
   'follow.prev': '이전 단계',
   'follow.next': '다음 단계',
   'follow.exit': '닫기',
+
+  'trace.title': '호출 트레이스',
+  'trace.ops': 'unlock() 안의 장부 기록 {n}건',
+  'trace.outstanding': '미정산 델타',
+  'trace.afterLine': '#{n} 이후',
+  'trace.atEnd': 'unlock() 종료 시점',
+  'trace.allZero': '모든 델타가 0으로 정산됨 ✓',
+  'trace.unbalanced': '델타가 0이 되지 않음 — 복원 불완전',
+  'trace.signHint': '+ PoolManager가 줄 것 · − PoolManager가 받을 것',
+  'trace.hooks': '훅 권한 비트',
+  'trace.hooksSub': 'v4는 훅 권한을 훅 주소의 하위 14비트에 인코딩한다',
+  'trace.callbacks': '이번 트랜잭션의 콜백',
 };
 
 const STRINGS: Record<Locale, Record<StringKey, string>> = { en, ko };

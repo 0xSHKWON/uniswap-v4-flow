@@ -80,6 +80,8 @@ function clientToSvg(svg: SVGSVGElement, vb: Box, clientX: number, clientY: numb
 export function Diagram({ graph, locale, mode }: Props) {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [hovered, setHovered] = useState<RoutedEdge | null>(null);
+  const [hooksOpen, setHooksOpen] = useState(false);
+  const hooksRef = useRef<HTMLDivElement>(null);
 
   const view = useMemo(() => layout(graph, expanded, mode === 'engineer'), [graph, expanded, mode]);
 
@@ -138,6 +140,39 @@ export function Diagram({ graph, locale, mode }: Props) {
 
   const reachCount = (hookId: string) =>
     graph.edges.filter((e) => e.layer === 'reach' && e.from === hookId).length;
+
+  // 캔버스 우측 상단에 떠 있는 훅 요약 — 예전엔 사이드바에 있었는데, 앱을 옮겨다닐 때마다
+  // 훅 개수가 바뀌면서 사이드바 전체가 늘었다 줄었다 했다. 엔지니어 모드는 TracePanel이
+  // 이미 훅 권한 비트까지 더 자세히 보여주므로 트레이더 모드에서만 띄운다.
+  const hookSummary = useMemo(
+    () =>
+      graph.nodes
+        .filter((n) => n.type === 'hook')
+        .map((n) => ({
+          id: n.id,
+          address: n.address ?? '',
+          known: n.known ?? null,
+          traits: describeHookKeys(n.permissions).map((k) => t(locale, k)),
+        })),
+    [graph.nodes, locale],
+  );
+
+  // 훅 패널은 바깥 클릭/Esc로 닫힌다 (체인 드롭다운과 같은 규칙).
+  useEffect(() => {
+    if (!hooksOpen) return;
+    const onDown = (e: PointerEvent) => {
+      if (!hooksRef.current?.contains(e.target as Node)) setHooksOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setHooksOpen(false);
+    };
+    document.addEventListener('pointerdown', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('pointerdown', onDown);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [hooksOpen]);
 
   // --- 줌/팬 ---
   // box(전체가 들어오는 뷰)가 기본값. 사용자가 휠/드래그로 만지면 userBox가 우선한다.
@@ -366,209 +401,244 @@ export function Diagram({ graph, locale, mode }: Props) {
     <div className={`diagram-wrap${dragging ? ' is-dragging' : ''}${mode === 'engineer' ? ' has-trace' : ''}`}>
       {/* 스테이지가 줌/팬의 이벤트 영역이다 — 패널까지 감싸면 패널 스크롤이 줌이 돼버린다. */}
       <div ref={wrapRef} className="diagram-stage">
-      <svg
-        ref={svgRef}
-        className={`diagram${focusEdge ? ' is-following' : ''}`}
-        viewBox={`${vb.x} ${vb.y} ${vb.w} ${vb.h}`}
-        preserveAspectRatio="xMidYMid meet"
-        role="img"
-        aria-label={t(locale, 'diagram.aria', { hash: graph.txHash })}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        onPointerCancel={onPointerUp}
-        onClickCapture={onClickCapture}
-      >
-        <defs>
-          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-            <path d="M0,1 L9,5 L0,9 z" className="arrow-head" />
-          </marker>
-          <marker id="arrow-hidden" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-            <path d="M0,1 L9,5 L0,9 z" className="arrow-head hidden" />
-          </marker>
-          <marker id="arrow-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-            <path d="M0,1 L9,5 L0,9 z" className="arrow-head muted" />
-          </marker>
-          <marker id="arrow-acct" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-            <path d="M0,1 L9,5 L0,9 z" className="arrow-head acct" />
-          </marker>
-        </defs>
+        <svg
+          ref={svgRef}
+          className={`diagram${focusEdge ? ' is-following' : ''}`}
+          viewBox={`${vb.x} ${vb.y} ${vb.w} ${vb.h}`}
+          preserveAspectRatio="xMidYMid meet"
+          role="img"
+          aria-label={t(locale, 'diagram.aria', { hash: graph.txHash })}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerCancel={onPointerUp}
+          onClickCapture={onClickCapture}
+        >
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,1 L9,5 L0,9 z" className="arrow-head" />
+            </marker>
+            <marker id="arrow-hidden" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,1 L9,5 L0,9 z" className="arrow-head hidden" />
+            </marker>
+            <marker id="arrow-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M0,1 L9,5 L0,9 z" className="arrow-head muted" />
+            </marker>
+            <marker id="arrow-acct" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M0,1 L9,5 L0,9 z" className="arrow-head acct" />
+            </marker>
+          </defs>
 
-        {/* 값은 안 움직였지만 호출된 훅 — 떠 있지 않도록 중립선으로 잇는다. */}
-        {view.intervene.map((i) => (
-          <g key={i.key} className="intervene">
-            <path d={polyPath(i.points)} markerEnd="url(#arrow-muted)" />
-          </g>
-        ))}
-
-        {/* 훅 → 외부 컨트랙트. 금액이 없는 관계선이므로 점선으로 구분한다. */}
-        {view.reach.map((r) => (
-          <g key={r.key} className="reach">
-            <path d={pathOf(r.points)} markerEnd="url(#arrow-muted)" />
-          </g>
-        ))}
-
-        {view.edges.map((e) => {
-          const isHovered = hovered?.key === e.key || traceRouted?.key === e.key;
-          const isFocus = focusEdge?.key === e.key;
-          const acct = e.kind === 'accounting';
-          return (
-            <g
-              key={e.key}
-              className={`edge${acct ? ' is-accounting' : ''}${e.hidden ? ' is-hidden-value' : ''}${isHovered ? ' is-hovered' : ''}${isFocus ? ' is-focus' : ''}`}
-              onMouseEnter={() => setHovered(e)}
-              onMouseLeave={() => setHovered(null)}
-            >
-              <path className="edge-hit" d={pathOf(e.points)} />
-              <path
-                className="edge-line"
-                d={pathOf(e.points)}
-                markerEnd={acct ? 'url(#arrow-acct)' : e.hidden ? 'url(#arrow-hidden)' : 'url(#arrow)'}
-              />
+          {/* 값은 안 움직였지만 호출된 훅 — 떠 있지 않도록 중립선으로 잇는다. */}
+          {view.intervene.map((i) => (
+            <g key={i.key} className="intervene">
+              <path d={polyPath(i.points)} markerEnd="url(#arrow-muted)" />
             </g>
-          );
-        })}
+          ))}
 
-        {view.nodes.map((n) => {
-          const allTraits = n.type === 'hook' ? describeHookKeys(n.permissions).map((k) => t(locale, k)) : [];
-          const traits = allTraits.length > 2 ? [...allTraits.slice(0, 2), '…'] : allTraits;
-          const extras = n.type === 'hook' ? reachCount(n.id) : 0;
-          const isOpen = expanded.has(n.id);
-          return (
-            <g
-              key={n.id}
-              className={`node node-${n.type}${focusEdge && (focusEdge.from === n.id || focusEdge.to === n.id) ? ' is-focus-node' : ''}`}
-              transform={`translate(${n.x}, ${n.y})`}
-              onClick={n.type === 'hook' && extras > 0 ? () => toggleHook(n.id) : undefined}
-              style={n.type === 'hook' && extras > 0 ? { cursor: 'pointer' } : undefined}
-            >
-              <rect width={n.w} height={n.h} rx="10" />
-              <text className="node-role" x="14" y="20">
-                {n.known ?? t(locale, ROLE_KEY[n.role])}
-              </text>
-              <text className="node-label" x="14" y="42">
-                {n.type === 'core' ? 'PoolManager' : n.address ? shortAddress(n.address) : n.label}
-              </text>
-              {n.type === 'core' && (
-                <text className="node-sub" x="14" y="60">
-                  {t(locale, 'node.pm.sub')}
-                </text>
-              )}
-              {n.type === 'eoa' && (n.role === 'payer' || n.role === 'recipient') && (
-                <text className="node-sub" x="14" y="60">
-                  {t(locale, 'node.wallet.sub')}
-                </text>
-              )}
-              {n.type === 'hook' && (
-                <>
-                  <text className="node-sub" x="14" y="60">
-                    {traits.join(' · ') || t(locale, 'node.hook.noInfo')}
-                  </text>
-                  {extras > 0 && (
-                    <text className="node-toggle" x="14" y="78">
-                      {isOpen ? '▾' : '▸'} {t(locale, 'node.hook.externals', { n: extras })}
-                    </text>
-                  )}
-                </>
-              )}
+          {/* 훅 → 외부 컨트랙트. 금액이 없는 관계선이므로 점선으로 구분한다. */}
+          {view.reach.map((r) => (
+            <g key={r.key} className="reach">
+              <path d={pathOf(r.points)} markerEnd="url(#arrow-muted)" />
             </g>
-          );
-        })}
+          ))}
 
-        {/* 라벨은 마지막에 — 선이나 노드 박스에 가리지 않도록. 블록 전체가 함께 밀린다. */}
-        {view.edges.map((e) => (
-          <g
-            key={`label-${e.key}`}
-            className={`edge-labels${e.kind === 'accounting' ? ' is-accounting' : ''}${e.hidden ? ' is-hidden-value' : ''}${focusEdge?.key === e.key ? ' is-focus-label' : ''}`}
-            transform={`translate(0, ${nudge.get(e.key) ?? 0})`}
-          >
-            {e.rows.map((row, ri) => (
-              <text
-                key={ri}
-                className="edge-label"
-                textAnchor={e.label.anchor}
-                x={e.label.x}
-                y={e.label.rowsY[ri]}
+          {view.edges.map((e) => {
+            const isHovered = hovered?.key === e.key || traceRouted?.key === e.key;
+            const isFocus = focusEdge?.key === e.key;
+            const acct = e.kind === 'accounting';
+            return (
+              <g
+                key={e.key}
+                className={`edge${acct ? ' is-accounting' : ''}${e.hidden ? ' is-hidden-value' : ''}${isHovered ? ' is-hovered' : ''}${isFocus ? ' is-focus' : ''}`}
+                onMouseEnter={() => setHovered(e)}
+                onMouseLeave={() => setHovered(null)}
               >
-                {formatEdgeAmount(graph.tokens, row.amount, row.token)}
-              </text>
-            ))}
-            {e.label.badgeY !== null && (
-              <text className="edge-sub" textAnchor={e.label.anchor} x={e.label.x} y={e.label.badgeY}>
-                {t(locale, 'edge.noTransfer')}
-              </text>
-            )}
-          </g>
-        ))}
-        {view.intervene.map((i) => (
-          <text
-            key={`ilabel-${i.key}`}
-            className="intervene-label"
-            x={i.label.x}
-            y={i.label.y + (nudge.get(`intervene:${i.key}`) ?? 0)}
-          >
-            {t(locale, 'edge.intervened')}
-          </text>
-        ))}
-        {view.reach.map((r) =>
-          r.count > 1 ? (
-            <text
-              key={`rlabel-${r.key}`}
-              className="reach-label"
-              x={r.label.x}
-              y={r.label.y + (nudge.get(`reach:${r.key}`) ?? 0)}
+                <path className="edge-hit" d={pathOf(e.points)} />
+                <path
+                  className="edge-line"
+                  d={pathOf(e.points)}
+                  markerEnd={acct ? 'url(#arrow-acct)' : e.hidden ? 'url(#arrow-hidden)' : 'url(#arrow)'}
+                />
+              </g>
+            );
+          })}
+
+          {view.nodes.map((n) => {
+            const allTraits = n.type === 'hook' ? describeHookKeys(n.permissions).map((k) => t(locale, k)) : [];
+            const traits = allTraits.length > 2 ? [...allTraits.slice(0, 2), '…'] : allTraits;
+            const extras = n.type === 'hook' ? reachCount(n.id) : 0;
+            const isOpen = expanded.has(n.id);
+            return (
+              <g
+                key={n.id}
+                className={`node node-${n.type}${focusEdge && (focusEdge.from === n.id || focusEdge.to === n.id) ? ' is-focus-node' : ''}`}
+                transform={`translate(${n.x}, ${n.y})`}
+                onClick={n.type === 'hook' && extras > 0 ? () => toggleHook(n.id) : undefined}
+                style={n.type === 'hook' && extras > 0 ? { cursor: 'pointer' } : undefined}
+              >
+                <rect width={n.w} height={n.h} rx="10" />
+                <text className="node-role" x="14" y="20">
+                  {n.known ?? t(locale, ROLE_KEY[n.role])}
+                </text>
+                <text className="node-label" x="14" y="42">
+                  {n.type === 'core' ? 'PoolManager' : n.address ? shortAddress(n.address) : n.label}
+                </text>
+                {n.type === 'core' && (
+                  <text className="node-sub" x="14" y="60">
+                    {t(locale, 'node.pm.sub')}
+                  </text>
+                )}
+                {n.type === 'eoa' && (n.role === 'payer' || n.role === 'recipient') && (
+                  <text className="node-sub" x="14" y="60">
+                    {t(locale, 'node.wallet.sub')}
+                  </text>
+                )}
+                {n.type === 'hook' && (
+                  <>
+                    <text className="node-sub" x="14" y="60">
+                      {traits.join(' · ') || t(locale, 'node.hook.noInfo')}
+                    </text>
+                    {extras > 0 && (
+                      <text className="node-toggle" x="14" y="78">
+                        {isOpen ? '▾' : '▸'} {t(locale, 'node.hook.externals', { n: extras })}
+                      </text>
+                    )}
+                  </>
+                )}
+              </g>
+            );
+          })}
+
+          {/* 라벨은 마지막에 — 선이나 노드 박스에 가리지 않도록. 블록 전체가 함께 밀린다. */}
+          {view.edges.map((e) => (
+            <g
+              key={`label-${e.key}`}
+              className={`edge-labels${e.kind === 'accounting' ? ' is-accounting' : ''}${e.hidden ? ' is-hidden-value' : ''}${focusEdge?.key === e.key ? ' is-focus-label' : ''}`}
+              transform={`translate(0, ${nudge.get(e.key) ?? 0})`}
             >
-              {t(locale, 'edge.calls', { n: r.count })}
+              {e.rows.map((row, ri) => (
+                <text
+                  key={ri}
+                  className="edge-label"
+                  textAnchor={e.label.anchor}
+                  x={e.label.x}
+                  y={e.label.rowsY[ri]}
+                >
+                  {formatEdgeAmount(graph.tokens, row.amount, row.token)}
+                </text>
+              ))}
+              {e.label.badgeY !== null && (
+                <text className="edge-sub" textAnchor={e.label.anchor} x={e.label.x} y={e.label.badgeY}>
+                  {t(locale, 'edge.noTransfer')}
+                </text>
+              )}
+            </g>
+          ))}
+          {view.intervene.map((i) => (
+            <text
+              key={`ilabel-${i.key}`}
+              className="intervene-label"
+              x={i.label.x}
+              y={i.label.y + (nudge.get(`intervene:${i.key}`) ?? 0)}
+            >
+              {t(locale, 'edge.intervened')}
             </text>
-          ) : null,
-        )}
-      </svg>
+          ))}
+          {view.reach.map((r) =>
+            r.count > 1 ? (
+              <text
+                key={`rlabel-${r.key}`}
+                className="reach-label"
+                x={r.label.x}
+                y={r.label.y + (nudge.get(`reach:${r.key}`) ?? 0)}
+              >
+                {t(locale, 'edge.calls', { n: r.count })}
+              </text>
+            ) : null,
+          )}
+        </svg>
 
-      <div className="follow-controls" role="group" aria-label={t(locale, 'follow.label')}>
-        <button onClick={stepPrev} disabled={focusIdx === null} aria-label={t(locale, 'follow.prev')}>
-          ‹
-        </button>
-        {focusIdx === null ? (
-          <button className="follow-start" onClick={stepNext} disabled={steps.length === 0}>
-            {t(locale, 'follow.label')}
+        <div className="follow-controls" role="group" aria-label={t(locale, 'follow.label')}>
+          <button onClick={stepPrev} disabled={focusIdx === null} aria-label={t(locale, 'follow.prev')}>
+            ‹
           </button>
-        ) : (
-          <span className="follow-count">
-            {focusIdx + 1} / {steps.length}
-          </span>
+          {focusIdx === null ? (
+            <button className="follow-start" onClick={stepNext} disabled={steps.length === 0}>
+              {t(locale, 'follow.label')}
+            </button>
+          ) : (
+            <span className="follow-count">
+              {focusIdx + 1} / {steps.length}
+            </span>
+          )}
+          <button
+            onClick={stepNext}
+            disabled={steps.length === 0 || (focusIdx !== null && focusIdx >= steps.length - 1)}
+            aria-label={t(locale, 'follow.next')}
+          >
+            ›
+          </button>
+          {/* 항상 그려둔다 — 안 보일 때만 나타나면 가운데 정렬 바 전체가 움직여서
+              ›를 다시 누르려던 클릭이 방금 생긴 ✕ 위로 떨어진다. 대신 비활성일 땐 흐리게. */}
+          <button
+            className="follow-exit"
+            onClick={() => stepTo(null)}
+            aria-label={t(locale, 'follow.exit')}
+            disabled={focusIdx === null}
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="zoom-controls" role="group" aria-label="Zoom">
+          <button onClick={() => zoomBy(1.25)} aria-label={t(locale, 'zoom.out')}>
+            −
+          </button>
+          <button className="zoom-pct" onClick={() => setUserBox(null)} title={t(locale, 'zoom.fit')}>
+            {zoomPct}%
+          </button>
+          <button onClick={() => zoomBy(0.8)} aria-label={t(locale, 'zoom.in')}>
+            +
+          </button>
+        </div>
+
+        {(hovered ?? focusEdge) && <EdgeDetail edge={(hovered ?? focusEdge)!} graph={graph} locale={locale} />}
+
+        {/* 접힌 배지가 기본값이다 — 항상 펼쳐두면 세로로 긴 다이어그램(훅 여러 개)이
+            화면에 맞춰 축소될 때 상단 여백이 줄어들어 PoolManager 등과 겹쳤다. */}
+        {mode !== 'engineer' && hookSummary.length > 0 && (
+          <div className="hooks-select" ref={hooksRef}>
+            <button
+              className="hooks-trigger"
+              aria-haspopup="menu"
+              aria-expanded={hooksOpen}
+              onClick={() => setHooksOpen((v) => !v)}
+            >
+              <span className="hooks-dot" aria-hidden="true" />
+              {hookSummary.length === 1
+                ? (hookSummary[0].known ?? t(locale, 'role.hook'))
+                : t(locale, 'hooks.count', { n: hookSummary.length })}
+              <span className="hooks-caret" aria-hidden="true">
+                ▾
+              </span>
+            </button>
+            {hooksOpen && (
+              <div className="hooks-menu" role="menu">
+                <span className="hooks-menu-label">{t(locale, 'sum.hooks')}</span>
+                <ul className="hooks-menu-list">
+                  {hookSummary.map((h) => (
+                    <li key={h.id}>
+                      {h.known && <strong>{h.known}</strong>}
+                      <code>{shortAddress(h.address)}</code>
+                      <span>{h.traits.join(' · ')}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
         )}
-        <button
-          onClick={stepNext}
-          disabled={steps.length === 0 || (focusIdx !== null && focusIdx >= steps.length - 1)}
-          aria-label={t(locale, 'follow.next')}
-        >
-          ›
-        </button>
-        {/* 항상 그려둔다 — 안 보일 때만 나타나면 가운데 정렬 바 전체가 움직여서
-            ›를 다시 누르려던 클릭이 방금 생긴 ✕ 위로 떨어진다. 대신 비활성일 땐 흐리게. */}
-        <button
-          className="follow-exit"
-          onClick={() => stepTo(null)}
-          aria-label={t(locale, 'follow.exit')}
-          disabled={focusIdx === null}
-        >
-          ✕
-        </button>
-      </div>
-
-      <div className="zoom-controls" role="group" aria-label="Zoom">
-        <button onClick={() => zoomBy(1.25)} aria-label={t(locale, 'zoom.out')}>
-          −
-        </button>
-        <button className="zoom-pct" onClick={() => setUserBox(null)} title={t(locale, 'zoom.fit')}>
-          {zoomPct}%
-        </button>
-        <button onClick={() => zoomBy(0.8)} aria-label={t(locale, 'zoom.in')}>
-          +
-        </button>
-      </div>
-
-      {(hovered ?? focusEdge) && <EdgeDetail edge={(hovered ?? focusEdge)!} graph={graph} locale={locale} />}
       </div>
 
       {mode === 'engineer' && (
