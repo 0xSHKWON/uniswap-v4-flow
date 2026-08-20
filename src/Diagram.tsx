@@ -1,9 +1,10 @@
 // SVG를 직접 쓴다 (기획서 §9). 다이어그램 라이브러리 없음.
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { Graph } from './types';
+import type { Graph, GraphEdge } from './types';
 import { declutter, layout, nodeObstacles, type LabelBox, type PlacedNode, type RoutedEdge } from './layout';
 import { describeHookKeys, formatEdgeAmount, shortAddress } from './format';
 import { t, type Locale, type StringKey } from './i18n';
+import { TracePanel } from './TracePanel';
 
 const ROLE_KEY: Record<PlacedNode['role'], StringKey> = {
   pool: 'role.pool',
@@ -197,6 +198,22 @@ export function Diagram({ graph, locale, mode }: Props) {
   const [focusIdx, setFocusIdx] = useState<number | null>(null);
   const focusEdge = focusIdx === null ? null : (steps[Math.min(focusIdx, steps.length - 1)] ?? null);
 
+  // --- 트레이스 패널 연동 (엔지니어 모드) ---
+  // 패널의 줄 하나 = 원본 엣지 하나. 다이어그램 줄기는 엣지 여러 개를 합치므로
+  // 객체 동일성으로 역방향 맵을 만들어 양쪽 강조를 잇는다.
+  const edgeToRouted = useMemo(() => {
+    const m = new Map<GraphEdge, RoutedEdge>();
+    for (const re of view.edges) for (const row of re.rows) for (const c of row.calls) m.set(c, re);
+    return m;
+  }, [view]);
+  const [traceEdge, setTraceEdge] = useState<GraphEdge | null>(null);
+  const traceRouted = traceEdge ? (edgeToRouted.get(traceEdge) ?? null) : null;
+  /** 다이어그램에서 호버/포커스된 줄기에 속한 원본 엣지들 — 패널이 줄을 강조하는 데 쓴다. */
+  const activeTraceEdges = useMemo(() => {
+    const src = hovered ?? focusEdge;
+    return src ? new Set(src.rows.flatMap((r) => r.calls)) : null;
+  }, [hovered, focusEdge]);
+
   const animRef = useRef<number | null>(null);
   const cancelAnim = () => {
     if (animRef.current !== null) {
@@ -255,6 +272,11 @@ export function Diagram({ graph, locale, mode }: Props) {
     const minX = Math.min(...xs) - PAD;
     const minY = Math.min(...ys) - PAD;
     return { x: minX, y: minY, w: Math.max(...xs) + PAD - minX, h: Math.max(...ys) + PAD - minY };
+  };
+
+  const focusTraceLine = (edge: GraphEdge) => {
+    const re = edgeToRouted.get(edge);
+    if (re) animateTo(focusBoxFor(re));
   };
 
   const stepTo = (idx: number | null) => {
@@ -341,7 +363,9 @@ export function Diagram({ graph, locale, mode }: Props) {
   };
 
   return (
-    <div ref={wrapRef} className={`diagram-wrap${dragging ? ' is-dragging' : ''}`}>
+    <div className={`diagram-wrap${dragging ? ' is-dragging' : ''}${mode === 'engineer' ? ' has-trace' : ''}`}>
+      {/* 스테이지가 줌/팬의 이벤트 영역이다 — 패널까지 감싸면 패널 스크롤이 줌이 돼버린다. */}
+      <div ref={wrapRef} className="diagram-stage">
       <svg
         ref={svgRef}
         className={`diagram${focusEdge ? ' is-following' : ''}`}
@@ -385,7 +409,7 @@ export function Diagram({ graph, locale, mode }: Props) {
         ))}
 
         {view.edges.map((e) => {
-          const isHovered = hovered?.key === e.key;
+          const isHovered = hovered?.key === e.key || traceRouted?.key === e.key;
           const isFocus = focusEdge?.key === e.key;
           const acct = e.kind === 'accounting';
           return (
@@ -520,14 +544,12 @@ export function Diagram({ graph, locale, mode }: Props) {
         >
           ›
         </button>
-        {/* 이 자리를 항상 차지해 둔다 — 활성화될 때만 나타나면 가운데 정렬 바 전체가
-            움직여서 ›를 다시 누르려던 클릭이 방금 생긴 ✕ 위로 떨어진다. */}
+        {/* 항상 그려둔다 — 안 보일 때만 나타나면 가운데 정렬 바 전체가 움직여서
+            ›를 다시 누르려던 클릭이 방금 생긴 ✕ 위로 떨어진다. 대신 비활성일 땐 흐리게. */}
         <button
           className="follow-exit"
           onClick={() => stepTo(null)}
           aria-label={t(locale, 'follow.exit')}
-          aria-hidden={focusIdx === null}
-          tabIndex={focusIdx === null ? -1 : 0}
           disabled={focusIdx === null}
         >
           ✕
@@ -547,6 +569,17 @@ export function Diagram({ graph, locale, mode }: Props) {
       </div>
 
       {(hovered ?? focusEdge) && <EdgeDetail edge={(hovered ?? focusEdge)!} graph={graph} locale={locale} />}
+      </div>
+
+      {mode === 'engineer' && (
+        <TracePanel
+          graph={graph}
+          locale={locale}
+          activeEdges={activeTraceEdges}
+          onHoverLine={setTraceEdge}
+          onClickLine={focusTraceLine}
+        />
+      )}
     </div>
   );
 }

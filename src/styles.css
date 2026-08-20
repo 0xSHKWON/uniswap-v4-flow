@@ -843,11 +843,6 @@ body {
   border-left: 1px solid var(--line);
 }
 
-/* 비활성 상태에서도 자리는 차지한다 (레이아웃 흔들림 방지) — 안 보이고 안 눌린다. */
-.follow-controls .follow-exit[aria-hidden='true'] {
-  visibility: hidden;
-}
-
 /* --- 줌 컨트롤 --- */
 
 .zoom-controls {
