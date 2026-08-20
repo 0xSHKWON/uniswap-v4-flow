@@ -1,0 +1,144 @@
+{
+  "txHash": "0xb7ba37dc7adc8100152ed48da9f8ca754626955b2763b8db7fd1f9a10895e27d",
+  "chain": "unichain",
+  "origin": "0x56995cbbcb598acfd40f053c7ddc48f4c97a294f",
+  "nodes": [
+    {
+      "id": "pm",
+      "type": "core",
+      "label": "PoolManager",
+      "address": "0x1f98400000000000000000000000000000000004"
+    },
+    {
+      "id": "hook:0x2016c0e4f8bb1d6fea777dc791be919e2eda40c0",
+      "type": "hook",
+      "label": "0x2016…40c0",
+      "address": "0x2016c0e4f8bb1d6fea777dc791be919e2eda40c0",
+      "known": "Limit Order Hook",
+      "permissions": [
+        "BEFORE_SWAP",
+        "AFTER_SWAP"
+      ],
+      "callbacks": [
+        "beforeSwap",
+        "afterSwap"
+      ]
+    },
+    {
+      "id": "ext:0x8a79be4dbde8d6496578721b48ee0feb71de29ee",
+      "type": "external",
+      "label": "0x8a79…29ee",
+      "address": "0x8a79be4dbde8d6496578721b48ee0feb71de29ee",
+      "known": null
+    },
+    {
+      "id": "actor:0x64e20394990fcf85e4361aabb4cdc0cebfa4de06",
+      "type": "router",
+      "label": "0x64e2…de06",
+      "address": "0x64e20394990fcf85e4361aabb4cdc0cebfa4de06",
+      "known": null
+    },
+    {
+      "id": "actor:0xd2be32dbf454ad8ff57851e9762cac12536ebee4",
+      "type": "router",
+      "label": "0xd2be…bee4",
+      "address": "0xd2be32dbf454ad8ff57851e9762cac12536ebee4",
+      "known": null
+    }
+  ],
+  "edges": [
+    {
+      "layer": "accounting",
+      "from": "actor:0x64e20394990fcf85e4361aabb4cdc0cebfa4de06",
+      "to": "pm",
+      "token": "0x078d782b760474a361dda0af3839290b0ef57ad6",
+      "amount": "1843200",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": false,
+        "side": "in",
+        "delta": "-1843200"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "actor:0x64e20394990fcf85e4361aabb4cdc0cebfa4de06",
+      "token": "native",
+      "amount": "883864356072383",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": false,
+        "side": "out",
+        "delta": "883864356072383"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "actor:0x64e20394990fcf85e4361aabb4cdc0cebfa4de06",
+      "to": "pm",
+      "token": "native",
+      "amount": "883864356072383",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": true,
+        "side": "in",
+        "delta": "-883864356072383"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "actor:0x64e20394990fcf85e4361aabb4cdc0cebfa4de06",
+      "token": "0x078d782b760474a361dda0af3839290b0ef57ad6",
+      "amount": "1843429",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": true,
+        "side": "out",
+        "delta": "1843429"
+      }
+    },
+    {
+      "layer": "settlement",
+      "from": "pm",
+      "to": "actor:0xd2be32dbf454ad8ff57851e9762cac12536ebee4",
+      "token": "0x078d782b760474a361dda0af3839290b0ef57ad6",
+      "amount": "229",
+      "engineer": {
+        "call": "mint",
+        "note": "ERC-6909 청구권 — Transfer 이벤트 없음"
+      },
+      "claim": true,
+      "hidden": true,
+      "via": "actor:0x64e20394990fcf85e4361aabb4cdc0cebfa4de06"
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0x2016c0e4f8bb1d6fea777dc791be919e2eda40c0",
+      "to": "ext:0x8a79be4dbde8d6496578721b48ee0feb71de29ee",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 1
+      }
+    }
+  ],
+  "balanced": true,
+  "tokens": {
+    "0x078d782b760474a361dda0af3839290b0ef57ad6": {
+      "address": "0x078d782b760474a361dda0af3839290b0ef57ad6",
+      "symbol": "USDC",
+      "decimals": 6,
+      "name": "USDC"
+    },
+    "native": {
+      "address": "native",
+      "symbol": "ETH",
+      "decimals": 18,
+      "name": "Ether"
+    }
+  }
+}

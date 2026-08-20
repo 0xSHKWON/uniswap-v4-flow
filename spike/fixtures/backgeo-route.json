@@ -1,0 +1,167 @@
+{
+  "txHash": "0x5c146270cf05fe1fbbcdb1925b9281486bf3951983143d0eeaad6ae697cbd51d",
+  "chain": "unichain",
+  "origin": "0x4cf89f51e090d6dcddbbbe5a458a01e9061823c5",
+  "nodes": [
+    {
+      "id": "pm",
+      "type": "core",
+      "label": "PoolManager",
+      "address": "0x1f98400000000000000000000000000000000004"
+    },
+    {
+      "id": "hook:0x54bd666ea7fd8d5404c0593eab3dcf9b6e2a3ac4",
+      "type": "hook",
+      "label": "0x54bd…3ac4",
+      "address": "0x54bd666ea7fd8d5404c0593eab3dcf9b6e2a3ac4",
+      "known": "BackGeoOracle",
+      "permissions": [
+        "BEFORE_INITIALIZE",
+        "AFTER_INITIALIZE",
+        "BEFORE_ADD_LIQUIDITY",
+        "BEFORE_REMOVE_LIQUIDITY",
+        "BEFORE_SWAP",
+        "AFTER_SWAP",
+        "AFTER_SWAP_RETURNS_DELTA"
+      ],
+      "callbacks": [
+        "beforeSwap",
+        "afterSwap"
+      ]
+    },
+    {
+      "id": "actor:0xf2dd47982d673eff5f075ac9494effa775e2db2c",
+      "type": "router",
+      "label": "0xf2dd…db2c",
+      "address": "0xf2dd47982d673eff5f075ac9494effa775e2db2c",
+      "known": null
+    }
+  ],
+  "edges": [
+    {
+      "layer": "accounting",
+      "from": "actor:0xf2dd47982d673eff5f075ac9494effa775e2db2c",
+      "to": "pm",
+      "token": "0x9151434b16b9763660705744891fa906f660ecc5",
+      "amount": "156250",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": false,
+        "side": "in",
+        "delta": "-156250"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "actor:0xf2dd47982d673eff5f075ac9494effa775e2db2c",
+      "token": "0x078d782b760474a361dda0af3839290b0ef57ad6",
+      "amount": "156202",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": false,
+        "side": "out",
+        "delta": "156202"
+      }
+    },
+    {
+      "layer": "settlement",
+      "from": "pm",
+      "to": "actor:0xf2dd47982d673eff5f075ac9494effa775e2db2c",
+      "token": "0x078d782b760474a361dda0af3839290b0ef57ad6",
+      "amount": "156202",
+      "engineer": {
+        "call": "take"
+      },
+      "via": null
+    },
+    {
+      "layer": "accounting",
+      "from": "actor:0xf2dd47982d673eff5f075ac9494effa775e2db2c",
+      "to": "pm",
+      "token": "0x0555e30da8f98308edb960aa94c0db47230d2b9c",
+      "amount": "229",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": false,
+        "side": "in",
+        "delta": "-229"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "actor:0xf2dd47982d673eff5f075ac9494effa775e2db2c",
+      "token": "native",
+      "amount": "75285277564541",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": false,
+        "side": "out",
+        "delta": "75285277564541"
+      }
+    },
+    {
+      "layer": "settlement",
+      "from": "pm",
+      "to": "actor:0xf2dd47982d673eff5f075ac9494effa775e2db2c",
+      "token": "native",
+      "amount": "75285277564541",
+      "engineer": {
+        "call": "take"
+      },
+      "via": null
+    },
+    {
+      "layer": "settlement",
+      "from": "actor:0xf2dd47982d673eff5f075ac9494effa775e2db2c",
+      "to": "pm",
+      "token": "0x0555e30da8f98308edb960aa94c0db47230d2b9c",
+      "amount": "229",
+      "engineer": {
+        "call": "settle",
+        "native": false
+      },
+      "via": null
+    },
+    {
+      "layer": "settlement",
+      "from": "actor:0xf2dd47982d673eff5f075ac9494effa775e2db2c",
+      "to": "pm",
+      "token": "0x9151434b16b9763660705744891fa906f660ecc5",
+      "amount": "156250",
+      "engineer": {
+        "call": "settle",
+        "native": false
+      },
+      "via": null
+    }
+  ],
+  "balanced": true,
+  "tokens": {
+    "0x9151434b16b9763660705744891fa906f660ecc5": {
+      "address": "0x9151434b16b9763660705744891fa906f660ecc5",
+      "symbol": "USD₮0",
+      "decimals": 6,
+      "name": "USD₮0"
+    },
+    "0x078d782b760474a361dda0af3839290b0ef57ad6": {
+      "address": "0x078d782b760474a361dda0af3839290b0ef57ad6",
+      "symbol": "USDC",
+      "decimals": 6,
+      "name": "USDC"
+    },
+    "0x0555e30da8f98308edb960aa94c0db47230d2b9c": {
+      "address": "0x0555e30da8f98308edb960aa94c0db47230d2b9c",
+      "symbol": "WBTC",
+      "decimals": 8,
+      "name": "Wrapped BTC"
+    },
+    "native": {
+      "address": "native",
+      "symbol": "ETH",
+      "decimals": 18,
+      "name": "Ether"
+    }
+  }
+}

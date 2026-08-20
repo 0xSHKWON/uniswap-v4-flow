@@ -1,0 +1,159 @@
+{
+  "txHash": "0x95f8e3adae13181bf353b76cc1e99101a9c5ec00e6a00e9dbee4a80fbb1d1d31",
+  "chain": "unichain",
+  "origin": "0xd97d78bb13469babfd37fc72c80eb2c5d218e93e",
+  "nodes": [
+    {
+      "id": "pm",
+      "type": "core",
+      "label": "PoolManager",
+      "address": "0x1f98400000000000000000000000000000000004"
+    },
+    {
+      "id": "hook:0x2016c0e4f8bb1d6fea777dc791be919e2eda40c0",
+      "type": "hook",
+      "label": "0x2016…40c0",
+      "address": "0x2016c0e4f8bb1d6fea777dc791be919e2eda40c0",
+      "known": "Limit Order Hook",
+      "permissions": [
+        "BEFORE_SWAP",
+        "AFTER_SWAP"
+      ],
+      "callbacks": [
+        "beforeSwap",
+        "afterSwap"
+      ]
+    },
+    {
+      "id": "ext:0x8a79be4dbde8d6496578721b48ee0feb71de29ee",
+      "type": "external",
+      "label": "0x8a79…29ee",
+      "address": "0x8a79be4dbde8d6496578721b48ee0feb71de29ee",
+      "known": null
+    },
+    {
+      "id": "actor:0xfdf682f51fe81aa4898f0ae2163d8a55c127fbc7",
+      "type": "router",
+      "label": "0xfdf6…fbc7",
+      "address": "0xfdf682f51fe81aa4898f0ae2163d8a55c127fbc7",
+      "known": null
+    },
+    {
+      "id": "actor:0xd97d78bb13469babfd37fc72c80eb2c5d218e93e",
+      "type": "eoa",
+      "label": "0xd97d…e93e",
+      "address": "0xd97d78bb13469babfd37fc72c80eb2c5d218e93e",
+      "known": null
+    }
+  ],
+  "edges": [
+    {
+      "layer": "accounting",
+      "from": "actor:0xfdf682f51fe81aa4898f0ae2163d8a55c127fbc7",
+      "to": "pm",
+      "token": "0x078d782b760474a361dda0af3839290b0ef57ad6",
+      "amount": "77937",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": true,
+        "side": "in",
+        "delta": "-77937"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "actor:0xfdf682f51fe81aa4898f0ae2163d8a55c127fbc7",
+      "token": "0x139451953ef1865c096f89c5e522c081dc3b5f11",
+      "amount": "1000000000000000000",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": true,
+        "side": "out",
+        "delta": "1000000000000000000"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "actor:0xfdf682f51fe81aa4898f0ae2163d8a55c127fbc7",
+      "to": "pm",
+      "token": "native",
+      "amount": "37344643807774",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": true,
+        "side": "in",
+        "delta": "-37344643807774"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "actor:0xfdf682f51fe81aa4898f0ae2163d8a55c127fbc7",
+      "token": "0x078d782b760474a361dda0af3839290b0ef57ad6",
+      "amount": "77937",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": true,
+        "side": "out",
+        "delta": "77937"
+      }
+    },
+    {
+      "layer": "settlement",
+      "from": "actor:0xfdf682f51fe81aa4898f0ae2163d8a55c127fbc7",
+      "to": "pm",
+      "token": "native",
+      "amount": "37344643807774",
+      "engineer": {
+        "call": "settle",
+        "native": true
+      },
+      "via": null
+    },
+    {
+      "layer": "settlement",
+      "from": "pm",
+      "to": "actor:0xd97d78bb13469babfd37fc72c80eb2c5d218e93e",
+      "token": "0x139451953ef1865c096f89c5e522c081dc3b5f11",
+      "amount": "1000000000000000000",
+      "engineer": {
+        "call": "take"
+      },
+      "via": "actor:0xfdf682f51fe81aa4898f0ae2163d8a55c127fbc7"
+    },
+    {
+      "layer": "reach",
+      "from": "hook:0x2016c0e4f8bb1d6fea777dc791be919e2eda40c0",
+      "to": "ext:0x8a79be4dbde8d6496578721b48ee0feb71de29ee",
+      "token": null,
+      "amount": null,
+      "via": null,
+      "engineer": {
+        "call": "external call",
+        "count": 1
+      }
+    }
+  ],
+  "balanced": true,
+  "tokens": {
+    "0x078d782b760474a361dda0af3839290b0ef57ad6": {
+      "address": "0x078d782b760474a361dda0af3839290b0ef57ad6",
+      "symbol": "USDC",
+      "decimals": 6,
+      "name": "USDC"
+    },
+    "0x139451953ef1865c096f89c5e522c081dc3b5f11": {
+      "address": "0x139451953ef1865c096f89c5e522c081dc3b5f11",
+      "symbol": "XPL",
+      "decimals": 18,
+      "name": "Plasma"
+    },
+    "native": {
+      "address": "native",
+      "symbol": "ETH",
+      "decimals": 18,
+      "name": "Ether"
+    }
+  }
+}

@@ -1,0 +1,106 @@
+{
+  "txHash": "0x65c8aeb0a3724cd3760308de861bab99fa2867b2de0cf186abc43e4f24acda68",
+  "chain": "unichain",
+  "origin": "0x805f61d8f489781ab12ca9d865ded8b13d4d2627",
+  "nodes": [
+    {
+      "id": "pm",
+      "type": "core",
+      "label": "PoolManager",
+      "address": "0x1f98400000000000000000000000000000000004"
+    },
+    {
+      "id": "hook:0x54bd666ea7fd8d5404c0593eab3dcf9b6e2a3ac4",
+      "type": "hook",
+      "label": "0x54bd…3ac4",
+      "address": "0x54bd666ea7fd8d5404c0593eab3dcf9b6e2a3ac4",
+      "known": "BackGeoOracle",
+      "permissions": [
+        "BEFORE_INITIALIZE",
+        "AFTER_INITIALIZE",
+        "BEFORE_ADD_LIQUIDITY",
+        "BEFORE_REMOVE_LIQUIDITY",
+        "BEFORE_SWAP",
+        "AFTER_SWAP",
+        "AFTER_SWAP_RETURNS_DELTA"
+      ],
+      "callbacks": [
+        "beforeSwap",
+        "afterSwap"
+      ]
+    },
+    {
+      "id": "actor:0xef740bf23acae26f6492b10de645d6b98dc8eaf3",
+      "type": "router",
+      "label": "0xef74…eaf3",
+      "address": "0xef740bf23acae26f6492b10de645d6b98dc8eaf3",
+      "known": null
+    }
+  ],
+  "edges": [
+    {
+      "layer": "accounting",
+      "from": "actor:0xef740bf23acae26f6492b10de645d6b98dc8eaf3",
+      "to": "pm",
+      "token": "0x03c2868c6d7fd27575426f395ee081498b1120dd",
+      "amount": "20000000000000000",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": false,
+        "side": "in",
+        "delta": "-20000000000000000"
+      }
+    },
+    {
+      "layer": "accounting",
+      "from": "pm",
+      "to": "actor:0xef740bf23acae26f6492b10de645d6b98dc8eaf3",
+      "token": "native",
+      "amount": "2700030091895",
+      "engineer": {
+        "call": "swap",
+        "zeroForOne": false,
+        "side": "out",
+        "delta": "2700030091895"
+      }
+    },
+    {
+      "layer": "settlement",
+      "from": "actor:0xef740bf23acae26f6492b10de645d6b98dc8eaf3",
+      "to": "pm",
+      "token": "0x03c2868c6d7fd27575426f395ee081498b1120dd",
+      "amount": "20000000000000000",
+      "engineer": {
+        "call": "settle",
+        "native": false
+      },
+      "via": null
+    },
+    {
+      "layer": "settlement",
+      "from": "pm",
+      "to": "actor:0xef740bf23acae26f6492b10de645d6b98dc8eaf3",
+      "token": "native",
+      "amount": "2700030091895",
+      "engineer": {
+        "call": "take"
+      },
+      "via": null
+    }
+  ],
+  "balanced": true,
+  "tokens": {
+    "0x03c2868c6d7fd27575426f395ee081498b1120dd": {
+      "address": "0x03c2868c6d7fd27575426f395ee081498b1120dd",
+      "symbol": "GRG",
+      "decimals": 18,
+      "name": "Rigo Token"
+    },
+    "native": {
+      "address": "native",
+      "symbol": "ETH",
+      "decimals": 18,
+      "name": "Ether"
+    }
+  }
+}

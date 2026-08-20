@@ -42,8 +42,9 @@ const en = {
   'detail.claimNote':
     'This is an ERC-6909 claim: the tokens never leave PoolManager, so no Transfer event is emitted and ordinary explorers do not show this movement.',
 
-  'examples.label': 'Examples',
-  'examples.meta': '{nodes} nodes · {hooks} hooks',
+  'apps.label': 'Apps on v4',
+  'apps.flows': '{n} flows',
+  'flow.meta': '{nodes} nodes · {hooks} hooks',
 
   'diagram.aria': 'Money flow diagram for transaction {hash}',
 
@@ -106,8 +107,9 @@ const ko: Record<StringKey, string> = {
   'detail.claimNote':
     'ERC-6909 청구권이라 토큰이 PoolManager 밖으로 나가지 않는다. Transfer 이벤트가 없으므로 일반 익스플로러에는 이 이동이 표시되지 않는다.',
 
-  'examples.label': '예시 트랜잭션',
-  'examples.meta': '노드 {nodes} · 훅 {hooks}',
+  'apps.label': 'v4 위의 앱들',
+  'apps.flows': '흐름 {n}개',
+  'flow.meta': '노드 {nodes} · 훅 {hooks}',
 
   'diagram.aria': '트랜잭션 {hash} 자금 흐름도',
 

@@ -68,7 +68,8 @@ export interface LocalizedText {
   en: string;
 }
 
-export interface FixtureIndexEntry {
+/** 앱의 대표 트랜잭션 하나 — 흐름 종류별로 앱당 여러 개 담는다 (M2'). */
+export interface FlowEntry {
   slug: string;
   hash: string;
   title: LocalizedText;
@@ -79,4 +80,15 @@ export interface FixtureIndexEntry {
   hiddenValueEdges: number;
   file: string;
   balanced: boolean;
+}
+
+/** v4 위에 올라온 앱(훅 프로토콜) 하나. spike/build-fixtures.mjs 가 생성. */
+export interface AppEntry {
+  id: string;
+  name: LocalizedText;
+  tagline: LocalizedText;
+  description: LocalizedText;
+  /** 이 앱의 훅 배포 주소들. baseline은 빈 배열. */
+  hooks: string[];
+  flows: FlowEntry[];
 }

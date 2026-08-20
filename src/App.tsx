@@ -1,32 +1,25 @@
-// M1 — 단일 트랜잭션 렌더링. 해시 하드코딩, 배포 안 함 (기획서 §8).
+// M2' — 앱 카탈로그. 트랜잭션 목록이 아니라 v4 위의 앱(훅 프로토콜) 목록으로 조직하고,
+// 앱마다 대표 트랜잭션(흐름)을 2~3개 보여준다. 해시 하드코딩, 배포 안 함 (기획서 §8).
 //
-// 레이아웃은 인스펙터 구조다: 왼쪽 사이드바(트랜잭션 정보 · 요약 · 예시 목록),
-// 오른쪽 풀블리드 캔버스. 입력창(M2)은 사이드바의 트랜잭션 섹션 자리에 들어온다.
+// 레이아웃은 인스펙터 구조다: 왼쪽 사이드바(트랜잭션 정보 · 요약 · 앱 목록),
+// 오른쪽 풀블리드 캔버스. 입력창(M4')은 사이드바의 트랜잭션 섹션 자리에 들어온다.
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Diagram } from './Diagram';
 import { describeHookKeys, shortAddress, tokenOf } from './format';
 import { t, useLocale } from './i18n';
-import type { FixtureIndexEntry, Graph } from './types';
+import type { AppEntry, Graph } from './types';
 
-import index from './fixtures/index.json';
-import noHook from './fixtures/01-no-hook.json';
-import hookFee from './fixtures/02-hook-takes-fee.json';
-import hookReach from './fixtures/03-hook-with-reach.json';
-import dense from './fixtures/04-dense.json';
-import twoHooks from './fixtures/05-two-hooks.json';
-import multihop from './fixtures/06-multihop-three-hooks.json';
+import appsJson from './fixtures/apps.json';
 
-const GRAPHS: Record<string, Graph> = {
-  '01-no-hook': noHook as Graph,
-  '02-hook-takes-fee': hookFee as Graph,
-  '03-hook-with-reach': hookReach as Graph,
-  '04-dense': dense as Graph,
-  '05-two-hooks': twoHooks as Graph,
-  '06-multihop-three-hooks': multihop as Graph,
-};
+// 플로우 픽스처는 슬러그가 곧 파일명이라 글롭으로 한 번에 집는다.
+const GRAPHS: Record<string, Graph> = Object.fromEntries(
+  Object.entries(import.meta.glob('./fixtures/*.json', { eager: true, import: 'default' }))
+    .filter(([path]) => !path.endsWith('apps.json'))
+    .map(([path, mod]) => [path.replace('./fixtures/', '').replace('.json', ''), mod as Graph]),
+);
 
-const FIXTURES = index as FixtureIndexEntry[];
-const DEFAULT_SLUG = '03-hook-with-reach';
+const APPS = appsJson as AppEntry[];
+const DEFAULT_APP = 'aegis';
 
 // 체인 선택. 복원 엔진은 이미 체인 무관(M0에서 Base 98/98 검증)이지만,
 // 픽스처와 예시가 Unichain뿐이라 나머지는 로드맵 표시로만 잠가둔다 (기획서 §8 M5).
@@ -39,12 +32,19 @@ const CHAINS = [
 
 export default function App() {
   const [locale, setLocale] = useLocale();
-  const [slug, setSlug] = useState(DEFAULT_SLUG);
+  const [appId, setAppId] = useState(DEFAULT_APP);
+  const [slug, setSlug] = useState(() => APPS.find((a) => a.id === DEFAULT_APP)?.flows[0]?.slug ?? APPS[0].flows[0].slug);
   const [copied, setCopied] = useState(false);
   const [chainOpen, setChainOpen] = useState(false);
   const chainRef = useRef<HTMLDivElement>(null);
-  const graph = GRAPHS[slug];
-  const meta = FIXTURES.find((f) => f.slug === slug);
+  const app = APPS.find((a) => a.id === appId) ?? APPS[0];
+  const meta = app.flows.find((f) => f.slug === slug) ?? app.flows[0];
+  const graph = GRAPHS[meta.slug];
+
+  const selectApp = (a: AppEntry) => {
+    setAppId(a.id);
+    setSlug(a.flows[0].slug);
+  };
 
   const copyHash = () => {
     navigator.clipboard?.writeText(graph.txHash).then(() => {
@@ -202,21 +202,46 @@ export default function App() {
             )}
           </section>
 
-          <section className="side-section side-examples">
-            <h2>{t(locale, 'examples.label')}</h2>
-            <div className="example-list">
-              {FIXTURES.map((f) => (
-                <button key={f.slug} className={f.slug === slug ? 'is-active' : ''} onClick={() => setSlug(f.slug)}>
-                  <span className="example-title">{f.title[locale]}</span>
-                  <span className="example-meta">{t(locale, 'examples.meta', { nodes: f.nodes, hooks: f.hooks })}</span>
-                </button>
-              ))}
+          <section className="side-section side-apps">
+            <h2>{t(locale, 'apps.label')}</h2>
+            <div className="app-list">
+              {APPS.map((a) => {
+                const active = a.id === app.id;
+                return (
+                  <div key={a.id} className={`app-entry${active ? ' is-active' : ''}`}>
+                    <button className="app-head" onClick={() => selectApp(a)} aria-expanded={active}>
+                      <span className="app-name">{a.name[locale]}</span>
+                      <span className="app-tagline">{a.tagline[locale]}</span>
+                      {a.flows.length > 1 && (
+                        <span className="app-flow-count">{t(locale, 'apps.flows', { n: a.flows.length })}</span>
+                      )}
+                    </button>
+                    {active && (
+                      <div className="app-body">
+                        <p className="app-desc">{a.description[locale]}</p>
+                        <div className="flow-list">
+                          {a.flows.map((f) => (
+                            <button
+                              key={f.slug}
+                              className={f.slug === meta.slug ? 'is-active' : ''}
+                              onClick={() => setSlug(f.slug)}
+                            >
+                              <span className="flow-title">{f.title[locale]}</span>
+                              <span className="flow-meta">{t(locale, 'flow.meta', { nodes: f.nodes, hooks: f.hooks })}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </section>
         </aside>
 
         <section className="canvas">
-          <Diagram key={slug} graph={graph} locale={locale} />
+          <Diagram key={meta.slug} graph={graph} locale={locale} />
           <div className="canvas-foot">
             <p className="legend">
               <span className="swatch swatch-flow" /> {t(locale, 'legend.settled')}

@@ -456,25 +456,36 @@ body {
   color: var(--text-secondary);
 }
 
-/* --- 예시 목록 --- */
+/* --- 앱 목록 (M2' 카탈로그) --- */
 
-.side-examples {
+.side-apps {
   margin-top: auto;
 }
 
-.example-list {
+.app-list {
   display: flex;
   flex-direction: column;
   gap: 5px;
 }
 
-.example-list button {
+.app-entry {
+  border: 1px solid transparent;
+  border-radius: 10px;
+}
+
+.app-entry.is-active {
+  border-color: var(--hook);
+  background: color-mix(in srgb, var(--hook) 6%, var(--surface-1));
+}
+
+.app-head {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  width: 100%;
   padding: 8px 11px;
-  border: 1px solid transparent;
-  border-radius: 9px;
+  border: 0;
+  border-radius: 10px;
   background: transparent;
   font: inherit;
   text-align: left;
@@ -482,23 +493,74 @@ body {
   color: var(--text-secondary);
 }
 
-.example-list button:hover {
+.app-entry:not(.is-active) .app-head:hover {
   background: var(--surface-2);
 }
 
-.example-list button.is-active {
-  border-color: var(--hook);
-  background: color-mix(in srgb, var(--hook) 7%, var(--surface-1));
+.app-name {
+  font-size: 12.5px;
+  font-weight: 600;
   color: var(--text-primary);
 }
 
-.example-list .example-title {
-  font-size: 12.5px;
+.app-tagline {
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+
+.app-flow-count {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.app-body {
+  padding: 0 8px 8px;
+}
+
+.app-desc {
+  margin: 0 3px 7px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.flow-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.flow-list button {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 6px 9px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+.flow-list button:hover {
+  background: var(--surface-2);
+}
+
+.flow-list button.is-active {
+  border-color: color-mix(in srgb, var(--hook) 45%, transparent);
+  background: var(--surface-1);
+  color: var(--text-primary);
+}
+
+.flow-list .flow-title {
+  font-size: 11.5px;
   font-weight: 550;
 }
 
-.example-list .example-meta {
-  font-size: 10.5px;
+.flow-list .flow-meta {
+  font-size: 10px;
   color: var(--text-muted);
 }
 
