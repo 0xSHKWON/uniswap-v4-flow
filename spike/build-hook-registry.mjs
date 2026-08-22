@@ -16,7 +16,7 @@ for (const hash of hashes) {
   let r;
   try {
     r = reconstruct(await trace(hash), { poolManager: PM });
-  } catch (e) {
+  } catch {
     process.stderr.write('x');
     continue;
   }

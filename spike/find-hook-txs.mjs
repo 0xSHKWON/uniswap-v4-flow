@@ -52,7 +52,7 @@ for (const h of hashes) {
   try {
     rows.push(summarize(h, await trace(h)));
     process.stderr.write('.');
-  } catch (e) {
+  } catch {
     process.stderr.write('x');
   }
 }

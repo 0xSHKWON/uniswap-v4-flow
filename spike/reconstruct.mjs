@@ -8,7 +8,7 @@ import {
   selector, words, retWords, toAddress, toUint, toInt,
   unpackBalanceDelta, unpackBeforeSwapDelta,
   decodeSwapCall, decodeModifyLiquidityCall, decodeBeforeSwapCall, decodeAfterSwapCall,
-  walk, walkEffective, eq,
+  walkEffective, eq,
 } from './v4.mjs';
 
 const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
@@ -75,7 +75,7 @@ export function reconstruct(root, { poolManager = POOL_MANAGER.unichain } = {}) 
 
   const note = (step) => { steps.push({ seq: seq++, ...step }); return step; };
 
-  for (const { frame, depth, path } of walkEffective(root)) {
+  for (const { frame, depth } of walkEffective(root)) {
     const sel = selector(frame.input);
     const to = frame.to?.toLowerCase();
     const from = frame.from?.toLowerCase();

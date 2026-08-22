@@ -8,7 +8,7 @@
 import { readFileSync } from 'node:fs';
 import { trace } from './rpc.mjs';
 import { reconstruct, externalTransfers } from './reconstruct.mjs';
-import { POOL_MANAGER, NATIVE } from './v4.mjs';
+import { POOL_MANAGER } from './v4.mjs';
 
 const CHAIN = process.env.CHAIN ?? 'unichain';
 const PM = POOL_MANAGER[CHAIN];
