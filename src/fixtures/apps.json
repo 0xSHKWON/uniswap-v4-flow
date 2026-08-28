@@ -70,7 +70,7 @@
         "nodes": 9,
         "edges": 10,
         "hooks": 1,
-        "hiddenValueEdges": 2,
+        "hiddenValueEdges": 1,
         "file": "aegis-swap.json",
         "balanced": true
       },
@@ -88,7 +88,7 @@
         "nodes": 8,
         "edges": 42,
         "hooks": 1,
-        "hiddenValueEdges": 6,
+        "hiddenValueEdges": 3,
         "file": "aegis-v3-busy.json",
         "balanced": true
       },
@@ -106,7 +106,7 @@
         "nodes": 14,
         "edges": 30,
         "hooks": 2,
-        "hiddenValueEdges": 6,
+        "hiddenValueEdges": 3,
         "file": "aegis-two-hooks.json",
         "balanced": true
       }
@@ -145,7 +145,7 @@
         "nodes": 17,
         "edges": 22,
         "hooks": 1,
-        "hiddenValueEdges": 2,
+        "hiddenValueEdges": 0,
         "file": "euler-swap.json",
         "balanced": true
       },
@@ -163,7 +163,7 @@
         "nodes": 22,
         "edges": 47,
         "hooks": 3,
-        "hiddenValueEdges": 4,
+        "hiddenValueEdges": 0,
         "file": "euler-multihop.json",
         "balanced": true
       }
@@ -259,7 +259,7 @@
         "nodes": 3,
         "edges": 6,
         "hooks": 1,
-        "hiddenValueEdges": 2,
+        "hiddenValueEdges": 1,
         "file": "volfee-swap.json",
         "balanced": true
       }
@@ -495,7 +495,7 @@
         "nodes": 7,
         "edges": 10,
         "hooks": 1,
-        "hiddenValueEdges": 1,
+        "hiddenValueEdges": 0,
         "file": "doppler-curve-swap.json",
         "balanced": true
       },
@@ -552,7 +552,7 @@
         "nodes": 12,
         "edges": 16,
         "hooks": 1,
-        "hiddenValueEdges": 3,
+        "hiddenValueEdges": 2,
         "file": "clanker-swap.json",
         "balanced": true
       }
@@ -591,7 +591,7 @@
         "nodes": 6,
         "edges": 11,
         "hooks": 1,
-        "hiddenValueEdges": 2,
+        "hiddenValueEdges": 1,
         "file": "launchhook-swap.json",
         "balanced": true
       }
