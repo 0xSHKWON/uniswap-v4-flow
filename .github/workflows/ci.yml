@@ -27,5 +27,7 @@ jobs:
 
       - run: npm run lint
 
+      - run: npm test
+
       # tsc -b && vite build — type errors fail the build.
       - run: npm run build

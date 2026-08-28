@@ -371,7 +371,7 @@ for (const app of APPS) {
     graph.tokens = await resolveTokens(graph);
     writeAll(`${flow.slug}.json`, JSON.stringify(graph, null, 2));
     const hookNodes = graph.nodes.filter((n) => n.type === 'hook').length;
-    const hiddenEdges = graph.edges.filter((e) => e.engineer?.note && e.amount).length;
+    const hiddenEdges = graph.edges.filter((e) => e.hidden && e.amount).length;
     flows.push({ ...flow, nodes: graph.nodes.length, edges: graph.edges.length, hooks: hookNodes, hiddenValueEdges: hiddenEdges, file: `${flow.slug}.json`, balanced: graph.balanced });
     console.log(`${flow.slug.padEnd(20)} nodes=${String(graph.nodes.length).padStart(2)} edges=${String(graph.edges.length).padStart(2)} hooks=${hookNodes} hidden=${hiddenEdges} balanced=${graph.balanced}`);
   }
