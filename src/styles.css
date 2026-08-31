@@ -507,6 +507,18 @@ body {
   color: var(--text-secondary);
 }
 
+.app-link {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--hook);
+  text-decoration: none;
+}
+
+.app-link:hover {
+  text-decoration: underline;
+}
+
 .flow-list {
   display: flex;
   flex-direction: column;

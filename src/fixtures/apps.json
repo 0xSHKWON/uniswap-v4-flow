@@ -2,6 +2,7 @@
   {
     "id": "baseline",
     "chain": "unichain",
+    "url": "https://developers.uniswap.org/docs/protocols/v4/overview",
     "name": {
       "ko": "훅 없는 v4",
       "en": "Plain v4"
@@ -39,6 +40,7 @@
   {
     "id": "aegis",
     "chain": "unichain",
+    "url": "https://docs.aegis.markets/",
     "name": {
       "ko": "Aegis",
       "en": "Aegis"
@@ -115,6 +117,7 @@
   {
     "id": "eulerswap",
     "chain": "unichain",
+    "url": "https://www.euler.finance/",
     "name": {
       "ko": "EulerSwap",
       "en": "EulerSwap"
@@ -172,6 +175,7 @@
   {
     "id": "backgeo",
     "chain": "unichain",
+    "url": "https://github.com/RigoBlock/back-geo-oracle",
     "name": {
       "ko": "BackGeoOracle",
       "en": "BackGeoOracle"
@@ -229,6 +233,7 @@
   {
     "id": "volatility-fee",
     "chain": "unichain",
+    "url": null,
     "name": {
       "ko": "Volatility Fee Hook",
       "en": "Volatility Fee Hook"
@@ -268,6 +273,7 @@
   {
     "id": "limit-order",
     "chain": "unichain",
+    "url": null,
     "name": {
       "ko": "Limit Order Hook",
       "en": "Limit Order Hook"
@@ -326,6 +332,7 @@
   {
     "id": "unidentified",
     "chain": "unichain",
+    "url": null,
     "name": {
       "ko": "미확인 훅",
       "en": "Unidentified hooks"
@@ -387,6 +394,7 @@
   {
     "id": "zora",
     "chain": "base",
+    "url": "https://zora.co/",
     "name": {
       "ko": "Zora",
       "en": "Zora"
@@ -464,6 +472,7 @@
   {
     "id": "doppler",
     "chain": "base",
+    "url": "https://www.doppler.lol/",
     "name": {
       "ko": "Doppler",
       "en": "Doppler"
@@ -522,6 +531,7 @@
   {
     "id": "clanker",
     "chain": "base",
+    "url": "https://www.clanker.world/",
     "name": {
       "ko": "Clanker",
       "en": "Clanker"
@@ -561,6 +571,7 @@
   {
     "id": "launchhook",
     "chain": "base",
+    "url": null,
     "name": {
       "ko": "LaunchHook",
       "en": "LaunchHook"

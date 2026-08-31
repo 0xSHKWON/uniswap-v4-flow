@@ -87,6 +87,8 @@ export interface AppEntry {
   id: string;
   /** 이 앱이 관측된 체인. 카탈로그는 체인별로 필터된다 (M5). */
   chain: string;
+  /** 공식 사이트/문서 — "이 앱이 뭐지?"의 답. 프로젝트 미상이면 null. */
+  url: string | null;
   name: LocalizedText;
   tagline: LocalizedText;
   description: LocalizedText;

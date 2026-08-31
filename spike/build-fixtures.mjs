@@ -15,6 +15,7 @@ const APPS = [
   {
     id: 'baseline',
     chain: 'unichain',
+    url: 'https://developers.uniswap.org/docs/protocols/v4/overview',
     name: { ko: '훅 없는 v4', en: 'Plain v4' },
     tagline: { ko: '기준선 — 훅이 없는 스왑', en: 'The baseline — a swap with no hook' },
     description: {
@@ -37,6 +38,7 @@ const APPS = [
   {
     id: 'aegis',
     chain: 'unichain',
+    url: 'https://docs.aegis.markets/',
     name: { ko: 'Aegis', en: 'Aegis' },
     tagline: { ko: '수수료를 청구권으로 쌓는 AMM 훅', en: 'AMM hook that banks fees as claims' },
     description: {
@@ -77,6 +79,7 @@ const APPS = [
   {
     id: 'eulerswap',
     chain: 'unichain',
+    url: 'https://www.euler.finance/',
     name: { ko: 'EulerSwap', en: 'EulerSwap' },
     tagline: { ko: 'Euler 볼트를 유동성으로 쓰는 AMM', en: 'AMM backed by Euler vaults' },
     description: {
@@ -108,6 +111,7 @@ const APPS = [
   {
     id: 'backgeo',
     chain: 'unichain',
+    url: 'https://github.com/RigoBlock/back-geo-oracle',
     name: { ko: 'BackGeoOracle', en: 'BackGeoOracle' },
     tagline: { ko: '스왑 가격을 기록하는 오라클 훅', en: 'Oracle hook that records swap prices' },
     description: {
@@ -139,6 +143,7 @@ const APPS = [
   {
     id: 'volatility-fee',
     chain: 'unichain',
+    url: null,
     name: { ko: 'Volatility Fee Hook', en: 'Volatility Fee Hook' },
     tagline: { ko: '변동성에 따라 수수료를 바꾸는 훅', en: 'Fees that move with volatility' },
     description: {
@@ -161,6 +166,7 @@ const APPS = [
   {
     id: 'limit-order',
     chain: 'unichain',
+    url: null,
     name: { ko: 'Limit Order Hook', en: 'Limit Order Hook' },
     tagline: { ko: '풀 가격에 지정가 주문을 얹는 훅', en: 'Limit orders on top of pool price' },
     description: {
@@ -192,6 +198,7 @@ const APPS = [
   {
     id: 'unidentified',
     chain: 'unichain',
+    url: null,
     name: { ko: '미확인 훅', en: 'Unidentified hooks' },
     tagline: { ko: '신원을 확인하지 못한 훅들', en: 'Hooks we could not identify' },
     description: {
@@ -230,6 +237,7 @@ const APPS = [
   {
     id: 'zora',
     chain: 'base',
+    url: 'https://zora.co/',
     name: { ko: 'Zora', en: 'Zora' },
     tagline: { ko: '크리에이터 코인의 수수료 순환 훅', en: 'Fee recycling for creator coins' },
     description: {
@@ -274,6 +282,7 @@ const APPS = [
   {
     id: 'doppler',
     chain: 'base',
+    url: 'https://www.doppler.lol/',
     name: { ko: 'Doppler', en: 'Doppler' },
     tagline: { ko: '본딩 커브 토큰 런치 인프라', en: 'Bonding-curve token launch infra' },
     description: {
@@ -305,6 +314,7 @@ const APPS = [
   {
     id: 'clanker',
     chain: 'base',
+    url: 'https://www.clanker.world/',
     name: { ko: 'Clanker', en: 'Clanker' },
     tagline: { ko: '토큰 런치 수수료 훅', en: 'Token launch fee hook' },
     description: {
@@ -327,6 +337,7 @@ const APPS = [
   {
     id: 'launchhook',
     chain: 'base',
+    url: null,
     name: { ko: 'LaunchHook', en: 'LaunchHook' },
     tagline: { ko: 'Base 최다 관측 훅 — 프로젝트 미상', en: 'Most-seen hook on Base — project unknown' },
     description: {

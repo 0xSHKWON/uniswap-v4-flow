@@ -14,6 +14,13 @@ describe('catalog ↔ fixture consistency', () => {
     expect(new Set(slugs).size).toBe(slugs.length);
   });
 
+  test('app urls are https or explicitly null', () => {
+    for (const a of apps) {
+      expect(a).toHaveProperty('url');
+      if (a.url !== null) expect(a.url).toMatch(/^https:\/\//);
+    }
+  });
+
   test('every fixture file is referenced by exactly one flow', () => {
     const slugs = new Set(flows.map(({ flow }) => flow.slug));
     for (const f of fixtureFiles) expect(slugs).toContain(f.replace(/\.json$/, ''));

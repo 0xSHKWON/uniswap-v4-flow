@@ -273,6 +273,12 @@ export default function App() {
           <section className="side-section">
             <h2>{t(locale, 'side.app')}</h2>
             <p className="app-desc">{app.description[locale]}</p>
+            {/* 도메인을 그대로 보여준다 — 언어 중립이고, 어디로 가는지 먼저 말해준다. */}
+            {app.url && (
+              <a className="app-link" href={app.url} target="_blank" rel="noopener noreferrer">
+                {new URL(app.url).hostname.replace(/^www\./, '')} ↗
+              </a>
+            )}
             {app.flows.length > 1 && (
               <div className="flow-list">
                 {app.flows.map((f) => (
