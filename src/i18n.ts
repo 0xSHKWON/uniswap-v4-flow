@@ -57,9 +57,6 @@ const en = {
 
   'side.app': 'App',
   'side.tx': 'Transaction',
-  'sum.moves': '{n} value movements',
-  'sum.move1': '1 value movement',
-  'sum.hiddenShort': '{n} with no Transfer event',
   'sum.hooks': 'Hooks',
 
   'zoom.in': 'Zoom in',
@@ -139,9 +136,6 @@ const ko: Record<StringKey, string> = {
 
   'side.app': '앱',
   'side.tx': '트랜잭션',
-  'sum.moves': '값 이동 {n}건',
-  'sum.move1': '값 이동 1건',
-  'sum.hiddenShort': 'Transfer 이벤트 없는 이동 {n}건',
   'sum.hooks': '훅',
 
   'zoom.in': '확대',

@@ -141,19 +141,20 @@ export default function App() {
     setChainOpen(false);
   };
 
-  // 요약 통계 — 전부 그래프 JSON에서 유도한다. RPC 없음.
-  const summary = useMemo(() => {
-    const settlements = graph.edges.filter((e) => e.layer === 'settlement' && e.amount);
-    const hiddenCount = settlements.filter((e) => e.hidden).length;
-    const hooks = graph.nodes
-      .filter((n) => n.type === 'hook')
-      .map((n) => ({
-        address: n.address ?? '',
-        known: n.known ?? null,
-        traits: describeHookKeys(n.permissions).map((k) => t(locale, k)),
-      }));
-    return { movements: settlements.length, hiddenCount, hooks };
-  }, [graph, locale]);
+  // 사이드바 훅 목록 — 그래프 JSON에서 유도한다. RPC 없음.
+  // (이동 건수 요약은 뺐다: 다이어그램이 화살표를 줄기로 합치므로
+  //  엣지 수와 눈에 보이는 화살표 수가 달라서 오히려 혼동을 줬다.)
+  const hookList = useMemo(
+    () =>
+      graph.nodes
+        .filter((n) => n.type === 'hook')
+        .map((n) => ({
+          address: n.address ?? '',
+          known: n.known ?? null,
+          traits: describeHookKeys(n.permissions).map((k) => t(locale, k)),
+        })),
+    [graph, locale],
+  );
 
   return (
     <div className="viz-root">
@@ -308,22 +309,13 @@ export default function App() {
             </a>
             <h3 className="side-title">{meta.title[locale]}</h3>
             <p className="side-blurb">{meta.blurb[locale]}</p>
-            <p className="sum-line">
-              {t(locale, summary.movements === 1 ? 'sum.move1' : 'sum.moves', { n: summary.movements })}
-              {summary.hiddenCount > 0 && (
-                <>
-                  {' · '}
-                  <em>{t(locale, 'sum.hiddenShort', { n: summary.hiddenCount })}</em>
-                </>
-              )}
-            </p>
           </section>
 
-          {summary.hooks.length > 0 && (
+          {hookList.length > 0 && (
             <section className="side-section">
               <h2>{t(locale, 'sum.hooks')}</h2>
               <ul className="hook-list">
-                {summary.hooks.map((h) => (
+                {hookList.map((h) => (
                   <li key={h.address} className={h.known ? 'has-name' : ''}>
                     {h.known && <strong>{h.known}</strong>}
                     <code>{shortAddress(h.address)}</code>
