@@ -5,7 +5,7 @@
 // 오른쪽 풀블리드 캔버스. 입력창(M4')은 사이드바의 트랜잭션 섹션 자리에 들어온다.
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Diagram, type Mode } from './Diagram';
-import { describeHookKeys, shortAddress, tokenOf } from './format';
+import { describeHookKeys, shortAddress } from './format';
 import { t, useLocale } from './i18n';
 import type { AppEntry, Graph } from './types';
 
@@ -74,6 +74,12 @@ function selectionToURL(chain: string, appId: string, slug: string) {
   history.replaceState(null, '', url);
 }
 
+/** 해시 칩이 여는 체인별 익스플로러. Etherscan 계열이라 /tx/<hash> 형식이 같다. */
+const EXPLORERS: Record<string, string> = {
+  unichain: 'https://uniscan.xyz',
+  base: 'https://basescan.org',
+};
+
 // 체인 선택. 복원 엔진은 체인 무관(M0에서 Base 98/98 검증) — 카탈로그가 있는 체인만 활성화한다.
 const CHAINS = [
   { id: 'unichain', label: 'Unichain', color: '#f50db4', live: true },
@@ -107,7 +113,6 @@ export default function App() {
   const [locale, setLocale] = useLocale();
   const [sel, setSel] = useState(selectionFromURL);
   const [mode, setModeState] = useState<Mode>(modeFromURL);
-  const [copied, setCopied] = useState(false);
   const setMode = (m: Mode) => {
     setModeState(m);
     modeToURL(m);
@@ -136,20 +141,10 @@ export default function App() {
     setChainOpen(false);
   };
 
-  const copyHash = () => {
-    navigator.clipboard?.writeText(graph.txHash).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1200);
-    });
-  };
-
   // 요약 통계 — 전부 그래프 JSON에서 유도한다. RPC 없음.
   const summary = useMemo(() => {
     const settlements = graph.edges.filter((e) => e.layer === 'settlement' && e.amount);
     const hiddenCount = settlements.filter((e) => e.hidden).length;
-    const symbols = [
-      ...new Set(settlements.map((e) => tokenOf(graph.tokens, e.token).symbol).filter(Boolean)),
-    ];
     const hooks = graph.nodes
       .filter((n) => n.type === 'hook')
       .map((n) => ({
@@ -157,7 +152,7 @@ export default function App() {
         known: n.known ?? null,
         traits: describeHookKeys(n.permissions).map((k) => t(locale, k)),
       }));
-    return { movements: settlements.length, hiddenCount, symbols, hooks };
+    return { movements: settlements.length, hiddenCount, hooks };
   }, [graph, locale]);
 
   return (
@@ -297,10 +292,20 @@ export default function App() {
 
           <section className="side-section">
             <h2>{t(locale, 'side.tx')}</h2>
-            <button className="tx-chip" onClick={copyHash} title={graph.txHash}>
+            {/* 칩 클릭 = 익스플로러에서 이 트랜잭션 열기. 예전엔 해시 복사였는데
+                눌렀을 때 기대하는 건 "가서 보는 것"이다. 전체 해시는 title로 남긴다. */}
+            <a
+              className="tx-chip"
+              href={`${EXPLORERS[graph.chain]}/tx/${graph.txHash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={graph.txHash}
+              aria-label={t(locale, 'hash.explorer')}
+            >
               <span className="chain">{graph.chain}</span>
-              <code>{copied ? t(locale, 'hash.copied') : `${graph.txHash.slice(0, 10)}…${graph.txHash.slice(-8)}`}</code>
-            </button>
+              <code>{`${graph.txHash.slice(0, 10)}…${graph.txHash.slice(-8)}`}</code>
+              <span className="tx-chip-out" aria-hidden="true">↗</span>
+            </a>
             <h3 className="side-title">{meta.title[locale]}</h3>
             <p className="side-blurb">{meta.blurb[locale]}</p>
             <p className="sum-line">
@@ -312,18 +317,6 @@ export default function App() {
                 </>
               )}
             </p>
-            {summary.symbols.length > 0 && (
-              <div className="side-row">
-                <span className="side-row-label">{t(locale, 'sum.tokens')}</span>
-                <div className="token-chips">
-                  {summary.symbols.map((s) => (
-                    <span key={s} className="token-chip">
-                      {s}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
           </section>
 
           {summary.hooks.length > 0 && (
