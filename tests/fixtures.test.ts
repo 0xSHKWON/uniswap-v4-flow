@@ -1,6 +1,8 @@
 // 카탈로그(apps.json)와 픽스처 파일이 서로 어긋나지 않는지.
 // UI는 이 정합성을 전제로 동작한다 — 슬러그로 글롭을 찾고, 메타 숫자를 그대로 그린다.
 // 픽스처를 재생성(spike/build-fixtures.mjs)한 뒤 여기가 깨지면 파이프라인 버그다.
+import { readFileSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, expect, test } from 'vitest';
 import { allGraphs, apps, fixtureFiles, loadGraph } from './helpers';
 
@@ -32,6 +34,23 @@ describe('catalog ↔ fixture consistency', () => {
       expect(g.balanced).toBe(flow.balanced);
     },
   );
+});
+
+// build-fixtures.mjs는 같은 내용을 src/fixtures와 spike/fixtures 양쪽에 쓴다.
+// 한쪽만 고치면 이 대조가 깨진다 — 실제로 한 번 그랬다 (커밋 53d1238의 CI 실패).
+describe('src ↔ spike fixture copies stay in sync', () => {
+  const SPIKE = join(import.meta.dirname, '../spike/fixtures');
+
+  test('same file list on both sides', () => {
+    const spikeFiles = readdirSync(SPIKE).filter((f) => f.endsWith('.json'));
+    expect(spikeFiles.sort()).toEqual([...fixtureFiles, 'apps.json'].sort());
+  });
+
+  test.each([...fixtureFiles, 'apps.json'])('%s: identical content', (file) => {
+    const src = JSON.parse(readFileSync(join(import.meta.dirname, '../src/fixtures', file), 'utf8'));
+    const spike = JSON.parse(readFileSync(join(SPIKE, file), 'utf8'));
+    expect(src).toEqual(spike);
+  });
 });
 
 describe('graph structural invariants', () => {
