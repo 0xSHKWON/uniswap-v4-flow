@@ -393,6 +393,13 @@ body {
   gap: 10px;
 }
 
+/* 구역(앱 · 트랜잭션 · 훅) 사이 구분선 — 섹션이 경계 없이 이어지면
+   사이드바 전체가 한 덩어리로 읽혀서 정신없다. */
+.side-section + .side-section {
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+}
+
 .side-section h2 {
   margin: 0;
   font-size: 10.5px;
