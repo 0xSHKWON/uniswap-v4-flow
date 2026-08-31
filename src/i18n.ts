@@ -56,7 +56,9 @@ const en = {
   'hash.explorer': 'View on the block explorer',
 
   'side.app': 'App',
+  'side.flows': 'Flows',
   'side.tx': 'Transaction',
+  'side.flow': 'This flow',
   'sum.hooks': 'Hooks',
 
   'zoom.in': 'Zoom in',
@@ -135,7 +137,9 @@ const ko: Record<StringKey, string> = {
   'hash.explorer': '블록 익스플로러에서 보기',
 
   'side.app': '앱',
+  'side.flows': '흐름',
   'side.tx': '트랜잭션',
+  'side.flow': '이 흐름',
   'sum.hooks': '훅',
 
   'zoom.in': '확대',

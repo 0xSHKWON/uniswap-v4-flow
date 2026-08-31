@@ -275,7 +275,13 @@ export default function App() {
                 {new URL(app.url).hostname.replace(/^www\./, '')} ↗
               </a>
             )}
-            {app.flows.length > 1 && (
+          </section>
+
+          {/* 구역마다 제목 하나, 구역 사이엔 선 하나 — 사이드바 정돈 규칙.
+              흐름 목록·현재 흐름 설명을 독립 구역으로 쪼갠 것도 그 때문. */}
+          {app.flows.length > 1 && (
+            <section className="side-section">
+              <h2>{t(locale, 'side.flows')}</h2>
               <div className="flow-list">
                 {app.flows.map((f) => (
                   <button
@@ -288,8 +294,8 @@ export default function App() {
                   </button>
                 ))}
               </div>
-            )}
-          </section>
+            </section>
+          )}
 
           <section className="side-section">
             <h2>{t(locale, 'side.tx')}</h2>
@@ -307,6 +313,10 @@ export default function App() {
               <code>{`${graph.txHash.slice(0, 10)}…${graph.txHash.slice(-8)}`}</code>
               <span className="tx-chip-out" aria-hidden="true">↗</span>
             </a>
+          </section>
+
+          <section className="side-section">
+            <h2>{t(locale, 'side.flow')}</h2>
             <h3 className="side-title">{meta.title[locale]}</h3>
             <p className="side-blurb">{meta.blurb[locale]}</p>
           </section>
