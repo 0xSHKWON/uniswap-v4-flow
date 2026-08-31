@@ -168,6 +168,47 @@ export default function App() {
             <h1>{t(locale, 'title')}</h1>
           </div>
 
+          {/* 체인이 앱 목록을 거르므로 체인 → 앱 순으로 왼쪽에 나란히 둔다. */}
+          <div className="chain-select" ref={chainRef}>
+            <button
+              className="chain-trigger"
+              aria-haspopup="menu"
+              aria-expanded={chainOpen}
+              aria-label={t(locale, 'chain.select')}
+              onClick={() => setChainOpen((v) => !v)}
+            >
+              <span className="chain-dot" style={{ background: currentChain.color }} />
+              {currentChain.label}
+              <span className="chain-caret" aria-hidden="true">
+                ▾
+              </span>
+            </button>
+            {chainOpen && (
+              <div className="chain-menu" role="menu">
+                {CHAINS.map((c) => (
+                  <button
+                    key={c.id}
+                    role="menuitemradio"
+                    aria-checked={c.id === sel.chain}
+                    disabled={!c.live}
+                    className={c.id === sel.chain ? 'is-current' : ''}
+                    onClick={() => c.live && selectChain(c.id)}
+                  >
+                    <span className="chain-dot" style={{ background: c.color }} />
+                    <span className="chain-name">{c.label}</span>
+                    {c.id === sel.chain ? (
+                      <span className="chain-check" aria-hidden="true">
+                        ✓
+                      </span>
+                    ) : c.live ? null : (
+                      <span className="chain-soon">{t(locale, 'chain.soon')}</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
           {/* 앱 선택은 상단으로 — 예전엔 사이드바 목록이었는데 카드가 펼쳐지고 접히며
               사이드바 전체 폭이 흔들렸다. 드롭다운은 그 흔들림을 없애고, 사이드바는
               현재 흐름의 인스펙터(설명·트랜잭션·훅)로 안정된다. */}
@@ -213,46 +254,6 @@ export default function App() {
             <button className={mode === 'engineer' ? 'is-active' : ''} onClick={() => setMode('engineer')}>
               {t(locale, 'mode.engineer')}
             </button>
-          </div>
-
-          <div className="chain-select" ref={chainRef}>
-            <button
-              className="chain-trigger"
-              aria-haspopup="menu"
-              aria-expanded={chainOpen}
-              aria-label={t(locale, 'chain.select')}
-              onClick={() => setChainOpen((v) => !v)}
-            >
-              <span className="chain-dot" style={{ background: currentChain.color }} />
-              {currentChain.label}
-              <span className="chain-caret" aria-hidden="true">
-                ▾
-              </span>
-            </button>
-            {chainOpen && (
-              <div className="chain-menu" role="menu">
-                {CHAINS.map((c) => (
-                  <button
-                    key={c.id}
-                    role="menuitemradio"
-                    aria-checked={c.id === sel.chain}
-                    disabled={!c.live}
-                    className={c.id === sel.chain ? 'is-current' : ''}
-                    onClick={() => c.live && selectChain(c.id)}
-                  >
-                    <span className="chain-dot" style={{ background: c.color }} />
-                    <span className="chain-name">{c.label}</span>
-                    {c.id === sel.chain ? (
-                      <span className="chain-check" aria-hidden="true">
-                        ✓
-                      </span>
-                    ) : c.live ? null : (
-                      <span className="chain-soon">{t(locale, 'chain.soon')}</span>
-                    )}
-                  </button>
-                ))}
-              </div>
-            )}
           </div>
 
           <div className="lang-toggle" role="group" aria-label="Language">
